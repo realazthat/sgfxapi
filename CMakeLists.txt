@@ -4,21 +4,33 @@ project(gfxapi)
 set(CMAKE_MODULE_PATH "${PROJECT_SOURCE_DIR}/cmake" ${CMAKE_MODULE_PATH})
 
 
-set(GLFW3_INCLUDE_DIR ${GLFW3_INCLUDE_DIR} "K:/realz/dump/code/glfw/glfw-3.1.1.bin.WIN32/glfw-3.1.1.bin.WIN32/include")
-set(GLFW3_LIB_DIR ${GLFW3_LIB_DIR} "K:/realz/dump/code/glfw/glfw-3.1.1.bin.WIN32/glfw-3.1.1.bin.WIN32/lib-mingw")
+set(GLFW3_INCLUDE_DIR "K:/realz/dump/code/glfw/glfw-3.1.1.bin.WIN64/glfw-3.1.1.bin.WIN64/include"
+    CACHE STRING "Paths to glfw3 includes")
+set(GLFW3_LIB_DIR "K:/realz/dump/code/glfw/glfw-3.1.1.bin.WIN64/glfw-3.1.1.bin.WIN64/lib-mingw"
+    CACHE STRING "Paths to glfw3 libs")
+set(GLFW3_LIB "glfw3"
+    CACHE STRING "Lib for glfw3")
 
-set(MGL_INCLUDE_DIR ${MGL_INCLUDE_DIR} "K:/realz/dump/code/mathgeolib/MathGeoLib-master/MathGeoLib-master/src/")
-set(MGL_LIB_DIR ${MGL_LIB_DIR} "K:/realz/dump/code/mathgeolib/MathGeoLib-master/MathGeoLib-master/build64")
+set(MGL_INCLUDE_DIR "K:/realz/dump/code/mathgeolib/MathGeoLib-master/MathGeoLib-master/src"
+    CACHE STRING "Paths to MathGeoLib includes")
+set(MGL_LIB_DIR "K:/realz/dump/code/mathgeolib/MathGeoLib-master/MathGeoLib-master/build64"
+    CACHE STRING "Paths to MathGeoLib libs")
+set(MGL_LIB "MathGeoLib"
+    CACHE STRING "Lib for MathGeoLib")
 
-set(GLU_INCLUDE_DIR ${GLU_INCLUDE_DIR} "")
-set(GLU_LIB_DIR ${GLU_LIB_DIR} "")
+set(GLU_INCLUDE_DIR "" CACHE STRING "Paths to glut includes")
+set(GLU_LIB_DIR "" CACHE STRING "Paths to glut libs")
+set(GLU_LIB "glu32" CACHE STRING "Paths to glut libs")
+set(GLUT_INCLUDE_DIR "" CACHE STRING "Paths to glut includes")
+set(GLUT_LIB_DIR "" CACHE STRING "Paths to glut libs")
+set(GLUT_LIB "glut" CACHE STRING "Lib for glut")
+set(GLEW_INCLUDE_DIR "" CACHE STRING "Paths to glew includes")
+set(GLEW_LIB_DIR "" CACHE STRING "Paths to glew libs")
+set(GLEW_LIB "glew32" CACHE STRING "Lib for glew")
+set(CUBELIB_INCLUDE_DIR "K:/realz/dump/code/cubelib/repo/include" CACHE STRING "Paths to cubelib includes")
+set(CUBELIB_LIB_DIR "" CACHE STRING "Paths to cubelib libs")
+set(CUBELIB_LIB "" CACHE STRING "Lib for cubelib")
 
-
-set(GLUT_INCLUDE_DIR ${GLUT_INCLUDE_DIR} "")
-set(GLUT_LIB_DIR ${GLUT_LIB_DIR} "")
-
-set(CUBELIB_INCLUDE_DIR ${CUBELIB_INCLUDE_DIR} "")
-set(CUBELIB_LIB_DIR ${CUBELIB_LIB_DIR} "")
 
 
 include(CXX11)
@@ -43,7 +55,7 @@ endif()
 
 #find_package(SDL REQUIRED)
 
-include_directories(include include/glew src
+include_directories(include src
 
 ${GLFW3_INCLUDE_DIR}
 ${GLEW_INCLUDE_DIR}
@@ -57,7 +69,8 @@ ${GLFW3_LIB_DIR}
 ${GLEW_INCLUDE_DIR}
 ${GLU_INCLUDE_DIR}
 ${GLUT_LIB_DIR}
-${MGL_LIB_DIR})
+${MGL_LIB_DIR}
+${CUBELIB_LIB_DIR})
 
 
 
@@ -69,14 +82,21 @@ ${MGL_LIB_DIR})
 add_library(gfxapi src/gfxapi)
 
 
-target_link_libraries(gfxapi MathGeoLib)
+target_link_libraries(gfxapi ${MGL_LIB} ${GLFW3_LIB} ${GLU_LIB} ${GLEW_LIB} ${GLUT_LIB} gdi32 opengl32 )
+
+
+add_library(gfxapi-drawutils src/drawutils.cpp)
+
+
+target_link_libraries(gfxapi-drawutils ${MGL_LIB} ${GLFW3_LIB} ${GLU_LIB} ${GLEW_LIB} ${GLUT_LIB} gdi32 opengl32 )
 
 
 
 add_executable(gfxdemo src/gfxdemo.cpp src/gfxapi.cpp src/drawutils.cpp)
 
 
-target_link_libraries(gfxdemo gfxapi MathGeoLib glfw3 opengl32 glu32 glew32 glut)
+target_link_libraries(gfxdemo gfxapi gfxapi-drawutils ${MGL_LIB}  ${GLFW3_LIB} ${GLU_LIB} ${GLEW_LIB} ${GLUT_LIB}
+                        gdi32 opengl32)
 
 
 
