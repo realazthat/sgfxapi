@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 2.8)
-project(gfxapi)
+project(sgfxapi)
 
 set(CMAKE_MODULE_PATH "${PROJECT_SOURCE_DIR}/cmake" ${CMAKE_MODULE_PATH})
 
@@ -79,23 +79,23 @@ ${CUBELIB_LIB_DIR})
 
 
 #-------------------
-add_library(gfxapi src/gfxapi)
+add_library(sgfxapi src/gfxapi)
 
 
-target_link_libraries(gfxapi ${MGL_LIB} ${GLFW3_LIB} ${GLU_LIB} ${GLEW_LIB} ${GLUT_LIB} gdi32 opengl32 )
+target_link_libraries(sgfxapi ${MGL_LIB} ${GLFW3_LIB} ${GLU_LIB} ${GLEW_LIB} ${GLUT_LIB} gdi32 opengl32 )
 
 
-add_library(gfxapi-drawutils src/drawutils.cpp)
+add_library(sgfxapi-drawutils src/drawutils.cpp)
 
 
-target_link_libraries(gfxapi-drawutils ${MGL_LIB} ${GLFW3_LIB} ${GLU_LIB} ${GLEW_LIB} ${GLUT_LIB} gdi32 opengl32 )
+target_link_libraries(sgfxapi-drawutils ${MGL_LIB} ${GLFW3_LIB} ${GLU_LIB} ${GLEW_LIB} ${GLUT_LIB} gdi32 opengl32 )
 
 
 
-add_executable(gfxdemo src/gfxdemo.cpp src/gfxapi.cpp src/drawutils.cpp)
+add_executable(sgfxdemo src/gfxdemo.cpp src/gfxapi.cpp src/drawutils.cpp)
 
 
-target_link_libraries(gfxdemo gfxapi gfxapi-drawutils ${MGL_LIB}  ${GLFW3_LIB} ${GLU_LIB} ${GLEW_LIB} ${GLUT_LIB}
+target_link_libraries(sgfxdemo sgfxapi sgfxapi-drawutils ${MGL_LIB}  ${GLFW3_LIB} ${GLU_LIB} ${GLEW_LIB} ${GLUT_LIB}
                         gdi32 opengl32)
 
 
