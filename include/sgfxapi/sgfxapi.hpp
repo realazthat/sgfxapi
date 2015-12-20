@@ -1,8 +1,8 @@
-#ifndef _GFXAPI_H
-#define _GFXAPI_H
+#ifndef SGFXAPI_SGFXAPI_H
+#define SGFXAPI_SGFXAPI_H 1
 
 
-#include "gfxapi.glcommon.hpp"
+#include "sgfxapi/sgfxapi.glcommon.hpp"
 
 #include <stdint.h>
 
@@ -16,7 +16,7 @@
 #include "MathGeoLib.h"
 
 
-namespace GfxApi {
+namespace SGFXAPI {
 
 class VertexBuffer;
 class IndexBuffer;

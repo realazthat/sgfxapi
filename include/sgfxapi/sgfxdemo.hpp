@@ -1,7 +1,6 @@
-#ifndef _MAINCLASS_H
-#define _MAINCLASS_H
+#ifndef SGFXAPI_SGFXDEMO_HPP
+#define SGFXAPI_SGFXDEMO_HPP 1
 
-//#include "GfxApi.hpp"
 
 #include <string>
 #include <MathGeoLib.h>
@@ -15,7 +14,7 @@ void cleanupText2D();
 
 struct GLFWwindow;
 
-namespace GfxApi
+namespace SGFXAPI
 {
     class Mesh;
     class Graphics;
@@ -53,7 +52,7 @@ private:
 
     GLFWwindow* m_pWindow;
 
-    std::shared_ptr<GfxApi::Graphics> m_graphics;
+    std::shared_ptr<SGFXAPI::Graphics> m_graphics;
 
     bool m_exiting;
 
@@ -65,11 +64,11 @@ private:
 
     Frustum m_cameraFrozen;
 
-    //std::shared_ptr<GfxApi::Input> m_pInput;
+    //std::shared_ptr<SGFXAPI::Input> m_pInput;
 
     tick_t m_lastTick;
 
-    std::vector< std::shared_ptr<GfxApi::Mesh> > meshes;
+    std::vector< std::shared_ptr<SGFXAPI::Mesh> > meshes;
 
 
 };

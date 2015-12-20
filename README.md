@@ -1,15 +1,15 @@
 
-gfxapi
+sgfxapi
 ---
 
-{one liner}
+Simple wrapper around opengl 4, based off of [clb](http://clb.demon.fi)'s [gfxapi docs](http://clb.demon.fi/gfxapi/).
 
 {Long Description}
 
 
 
 
-Library Requirements
+Library Dependencies
 ----
 
 
@@ -36,23 +36,23 @@ How to install some of these via msys2/mingw-w64:
 Project Parts/Build Targets
 ----
 
-* gfxapi
-* gfxapi-drawutils
-* gfxdemo
+* sgfxapi
+* sgfxapi-drawutils
+* sgfxdemo
 
-gfxapi
+sgfxapi
 ------
 
 The actual library.
 
 
-gfxapi-drawutils
+sgfxapi-drawutils
 ------
 
 A utility library for drawing some simple things, and some useful default shaders.
 
 
-gfxdemo
+sgfxdemo
 ------
 
 A demo application that renders stuff.
@@ -70,7 +70,7 @@ Tested with `msys2/mingw-w64 64-bit shell` on Windows 7.
 
 #####With codelite:
 
-You can open the 3 projects, `gfxapi.project`, `gfxapi-drawutils.project`, and `gfxdemo`.
+You can open the 3 projects, `sgfxapi.project`, `sgfxapi-drawutils.project`, and `sgfxdemo.project`.
 
 You will have to go to each project's settings and set the correct include directories, and the correct linker directories.
 
@@ -103,7 +103,7 @@ like `pacman -S mingw64/mingw-w64-x86_64-ntldd-git`) from within msys2 to locate
 Assuming you have a msys2 or linux-like environment, with a gcc-style compiler (clang would
 likely also work this way):
 
-    cd gfxapi
+    cd sgfxapi
     
     mkdir build
     
@@ -139,9 +139,9 @@ likely also work this way):
     
     
     #to compile each target separately:
-    make gfxapi
-    make gfxapi-drawutils
-    make gfxdemo
+    make sgfxapi
+    make sgfxapi-drawutils
+    make sgfxdemo
     
     #to compile them all at once:
     make
@@ -150,13 +150,13 @@ likely also work this way):
     cp /path/to/glfw3-libs/glfw3.dll .
 
     #execute
-    ./gfxdemo
+    ./sgfxdemo
 
     #if you want this to run outside of the msys2/mingw-w64 environment, then you must additionally copy
     # over any dependant dlls that are part of the environment.
     
     #this displays all the dependancies.
-    ldd gfxdemo
+    ldd sgfxdemo
 
     #copy over any of the results that are part of the environment
     cp /mingw64/bin/libstdc++-6.dll .

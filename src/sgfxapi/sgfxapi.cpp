@@ -1,4 +1,4 @@
-#include "gfxapi.hpp"
+#include "sgfxapi/sgfxapi.hpp"
 
 #include <GLFW/glfw3.h>
 
@@ -16,7 +16,7 @@
 #include <algorithm>
 
 
-namespace GfxApi {
+namespace SGFXAPI {
 
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -2627,4 +2627,4 @@ std::shared_ptr<ShaderProgram> DefaultTextureShader()
 }
 
 
-}
+} //namespace sgfxapi

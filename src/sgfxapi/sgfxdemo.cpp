@@ -1,7 +1,6 @@
-#include "gfxdemo.hpp"
-
-#include "gfxapi.hpp"
-#include "drawutils.hpp"
+#include "sgfxapi/sgfxdemo.hpp"
+#include "sgfxapi/sgfxapi.hpp"
+#include "sgfxapi/sgfxapi-drawutils.hpp"
 
 #include <GLFW/glfw3.h>
 
@@ -13,7 +12,7 @@
 
 MainClass::MainClass() :
     m_exiting(false),
-    m_windowTitle("GfxApiDemo")
+    m_windowTitle("SGFXAPI Demo")
 {
 
 }
@@ -92,7 +91,7 @@ bool MainClass::init()
     initGLFW(1920, 1080);
     initGLEW();
 
-    m_graphics = std::make_shared<GfxApi::Graphics>();
+    m_graphics = std::make_shared<SGFXAPI::Graphics>();
 
 
     initCamera();
@@ -246,7 +245,7 @@ void MainClass::onTick()
 
 
 
-    GfxApi::ClearBindings();
+    SGFXAPI::ClearBindings();
     for (auto& mesh_ptr : meshes)
     {
         auto& mesh = *mesh_ptr;
@@ -281,7 +280,7 @@ void MainClass::onTick()
 
         mesh.Draw();
     }
-    GfxApi::ClearBindings();
+    SGFXAPI::ClearBindings();
 
     // Swap front and back buffers 
     glfwSwapBuffers(m_pWindow);

@@ -1,19 +1,17 @@
 
-#include "drawutils.hpp"
-
-#include <cmath>
-
-#include <vector>
-#include <memory>
-#include "gfxapi.hpp"
+#include "sgfxapi/sgfxapi-drawutils.hpp"
+#include "sgfxapi/sgfxapi.hpp"
 #include "cubelib.h"
 
+#include <cmath>
+#include <vector>
+#include <memory>
 
-std::shared_ptr<GfxApi::Mesh> axes(float width, float length)
+std::shared_ptr<SGFXAPI::Mesh> axes(float width, float length)
 {
     
 
-  using namespace GfxApi;
+  using namespace SGFXAPI;
   Mesh::UnBindAll();
 
 
@@ -122,10 +120,10 @@ std::shared_ptr<GfxApi::Mesh> axes(float width, float length)
 }
 
 
-std::shared_ptr<GfxApi::Mesh> simpletri()
+std::shared_ptr<SGFXAPI::Mesh> simpletri()
 {
 
-  using namespace GfxApi;
+  using namespace SGFXAPI;
   Mesh::UnBindAll();
 
 
@@ -217,10 +215,10 @@ std::shared_ptr<GfxApi::Mesh> simpletri()
 }
 
 #if 0
-std::shared_ptr<GfxApi::Mesh> cube(float length)
+std::shared_ptr<SGFXAPI::Mesh> cube(float length)
 {
 
-  using namespace GfxApi;
+  using namespace SGFXAPI;
   Mesh::UnbindVAO();
 
 
@@ -298,9 +296,9 @@ std::shared_ptr<GfxApi::Mesh> cube(float length)
 
 
 
-std::shared_ptr<GfxApi::Mesh> reguizdemo()
+std::shared_ptr<SGFXAPI::Mesh> reguizdemo()
 {
-  using namespace GfxApi;
+  using namespace SGFXAPI;
   Mesh::UnBindAll();
   //////////////////////////////////
   //////////////////////////////////
@@ -368,10 +366,10 @@ std::shared_ptr<GfxApi::Mesh> reguizdemo()
 
 
 
-std::shared_ptr<GfxApi::Mesh> basictexture()
+std::shared_ptr<SGFXAPI::Mesh> basictexture()
 {
 
-  using namespace GfxApi;
+  using namespace SGFXAPI;
   Mesh::UnBindAll();
 
   auto mesh = std::make_shared<Mesh>(PrimitiveType::TriangleList);
@@ -503,9 +501,9 @@ std::shared_ptr<GfxApi::Mesh> basictexture()
 
 
 
-std::shared_ptr<GfxApi::ShaderProgram> SSTQRGBDShader()
+std::shared_ptr<SGFXAPI::ShaderProgram> SSTQRGBDShader()
 {
-  using namespace GfxApi;
+  using namespace SGFXAPI;
 
   static std::shared_ptr<ShaderProgram> sp;
   if (!sp)
@@ -556,9 +554,9 @@ std::shared_ptr<GfxApi::ShaderProgram> SSTQRGBDShader()
 }
 
 
-std::shared_ptr<GfxApi::Texture> gentesttexture(int width = 100, int height = 100)
+std::shared_ptr<SGFXAPI::Texture> gentesttexture(int width = 100, int height = 100)
 {
-  using namespace GfxApi;
+  using namespace SGFXAPI;
 
   int depth = 1;
 
@@ -595,10 +593,10 @@ std::shared_ptr<GfxApi::Texture> gentesttexture(int width = 100, int height = 10
 }
 
 
-std::shared_ptr<GfxApi::Mesh> SSTQRGBD(bool indexed)
+std::shared_ptr<SGFXAPI::Mesh> SSTQRGBD(bool indexed)
 {
 
-  using namespace GfxApi;
+  using namespace SGFXAPI;
   Mesh::UnBindAll();
 
   auto mesh = std::make_shared<Mesh>(PrimitiveType::TriangleList);
@@ -713,10 +711,10 @@ std::shared_ptr<GfxApi::Mesh> SSTQRGBD(bool indexed)
 
 
 
-std::shared_ptr<GfxApi::Mesh> SSTQRGBD2(bool indexed)
+std::shared_ptr<SGFXAPI::Mesh> SSTQRGBD2(bool indexed)
 {
 
-  using namespace GfxApi;
+  using namespace SGFXAPI;
   Mesh::UnBindAll();
 
   auto mesh = std::make_shared<Mesh>(PrimitiveType::TriangleList);
