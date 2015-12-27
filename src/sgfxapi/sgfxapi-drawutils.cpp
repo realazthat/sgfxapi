@@ -1,7 +1,7 @@
 
 #include "sgfxapi/sgfxapi-drawutils.hpp"
 #include "sgfxapi/sgfxapi.hpp"
-#include "cubelib.h"
+#include "cubelib/cubelib.h"
 
 #include <cmath>
 #include <vector>
