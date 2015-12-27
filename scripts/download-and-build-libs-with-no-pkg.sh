@@ -40,3 +40,10 @@ bash ./scripts/download-and-build-mathgeolib.sh
 cd "$PROJECT_PATH"
 bash ./scripts/download-and-build-freeglut.sh
 
+
+#############################################################################
+## get/build glfw
+#############################################################################
+
+cd "$PROJECT_PATH"
+bash ./scripts/download-and-build-glfw.sh

@@ -17,25 +17,24 @@ PROJECT_PATH=$PWD
 
 
 #############################################################################
-## get/build freeglut
+## get/build glfw
 #############################################################################
 
 
 cd "$PROJECT_PATH"
 cd libs
 
-mkdir -p freeglut && cd freeglut
+mkdir -p glfw && cd glfw
 
-rm -rf ./freeglut/
-git clone https://github.com/dcnieho/FreeGLUT.git
-cd FreeGLUT
-git checkout "575feb5"
+rm -rf ./glfw/
+git clone https://github.com/glfw/glfw.git
+cd glfw
+git checkout "cf6c11c"
 
 mkdir -p build
 cd build
 
-cmake -G"$CMAKE_GENERATOR" ../freeglut/freeglut
+cmake -G"$CMAKE_GENERATOR" ..
 cmake . -DCMAKE_BUILD_TYPE="$CMAKE_BUILD_TYPE"
-cmake --build . --target freeglut
-#cmake --build . --target freeglut_static
+cmake --build . --target glfw
 

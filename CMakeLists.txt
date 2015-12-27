@@ -1,19 +1,19 @@
-cmake_minimum_required(VERSION 2.8)
+cmake_minimum_required(VERSION 3.1.0 FATAL_ERROR)
 project(sgfxapi)
 
 set(CMAKE_MODULE_PATH "${PROJECT_SOURCE_DIR}/cmake" ${CMAKE_MODULE_PATH})
 
 
-set(GLFW3_INCLUDE_DIR "K:/realz/dump/code/glfw/glfw-3.1.1.bin.WIN64/glfw-3.1.1.bin.WIN64/include"
+set(GLFW3_INCLUDE_DIR "./libs/glfw/glfw/include"
     CACHE STRING "Paths to glfw3 includes")
-set(GLFW3_LIB_DIR "K:/realz/dump/code/glfw/glfw-3.1.1.bin.WIN64/glfw-3.1.1.bin.WIN64/lib-mingw"
+set(GLFW3_LIB_DIR "./libs/glfw/glfw/build"
     CACHE STRING "Paths to glfw3 libs")
 set(GLFW3_LIB "glfw3"
     CACHE STRING "Lib for glfw3")
 
-set(MGL_INCLUDE_DIR "K:/realz/dump/code/mathgeolib/MathGeoLib-master/MathGeoLib-master/src"
+set(MGL_INCLUDE_DIR "./libs/mathgeolib/MathGeoLib/src"
     CACHE STRING "Paths to MathGeoLib includes")
-set(MGL_LIB_DIR "K:/realz/dump/code/mathgeolib/MathGeoLib-master/MathGeoLib-master/build64"
+set(MGL_LIB_DIR "./libs/mathgeolib/MathGeoLib/build"
     CACHE STRING "Paths to MathGeoLib libs")
 set(MGL_LIB "MathGeoLib"
     CACHE STRING "Lib for MathGeoLib")
@@ -21,13 +21,13 @@ set(MGL_LIB "MathGeoLib"
 set(GLU_INCLUDE_DIR "" CACHE STRING "Paths to glut includes")
 set(GLU_LIB_DIR "" CACHE STRING "Paths to glut libs")
 set(GLU_LIB "glu32" CACHE STRING "Paths to glut libs")
-set(GLUT_INCLUDE_DIR "" CACHE STRING "Paths to glut includes")
-set(GLUT_LIB_DIR "" CACHE STRING "Paths to glut libs")
+set(GLUT_INCLUDE_DIR "./libs/freeglut/FreeGLUT/build;./libs/freeglut/FreeGLUT/freeglut/freeglut/include" CACHE STRING "Paths to glut includes")
+set(GLUT_LIB_DIR "./libs/freeglut/FreeGLUT/build/lib" CACHE STRING "Paths to glut libs")
 set(GLUT_LIB "glut" CACHE STRING "Lib for glut")
 set(GLEW_INCLUDE_DIR "" CACHE STRING "Paths to glew includes")
 set(GLEW_LIB_DIR "" CACHE STRING "Paths to glew libs")
 set(GLEW_LIB "glew32" CACHE STRING "Lib for glew")
-set(CUBELIB_INCLUDE_DIR "K:/realz/dump/code/cubelib/repo/include" CACHE STRING "Paths to cubelib includes")
+set(CUBELIB_INCLUDE_DIR "./libs/cubelib/cubelib/include" CACHE STRING "Paths to cubelib includes")
 set(CUBELIB_LIB_DIR "" CACHE STRING "Paths to cubelib libs")
 set(CUBELIB_LIB "" CACHE STRING "Lib for cubelib")
 
@@ -75,28 +75,102 @@ ${CUBELIB_LIB_DIR})
 
 
 
-#-------------------
 
-
-#-------------------
-add_library(sgfxapi src/gfxapi)
+################################################################################
+add_library(sgfxapi src/sgfxapi/sgfxapi.cpp)
 
 
 target_link_libraries(sgfxapi ${MGL_LIB} ${GLFW3_LIB} ${GLU_LIB} ${GLEW_LIB} ${GLUT_LIB} gdi32 opengl32 )
 
 
-add_library(sgfxapi-drawutils src/drawutils.cpp)
+################################################################################
+add_library(sgfxapi-drawutils src/sgfxapi/sgfxapi-drawutils.cpp)
 
 
 target_link_libraries(sgfxapi-drawutils ${MGL_LIB} ${GLFW3_LIB} ${GLU_LIB} ${GLEW_LIB} ${GLUT_LIB} gdi32 opengl32 )
 
+################################################################################
+
+add_executable(sgfxdemo src/sgfxapi/sgfxdemo.cpp )
 
 
-add_executable(sgfxdemo src/gfxdemo.cpp src/gfxapi.cpp src/drawutils.cpp)
+target_link_libraries(sgfxdemo sgfxapi sgfxapi-drawutils ${MGL_LIB}
+    ${GLFW3_LIB} ${GLU_LIB} ${GLEW_LIB} ${GLUT_LIB} gdi32 opengl32)
+
+################################################################################
 
 
-target_link_libraries(sgfxdemo sgfxapi sgfxapi-drawutils ${MGL_LIB}  ${GLFW3_LIB} ${GLU_LIB} ${GLEW_LIB} ${GLUT_LIB}
-                        gdi32 opengl32)
+
+
+
+
+
+
+
+
+
+
+set(DOCS_HEADERS include/sgfxapi/sgfxapi.hpp include/sgfxapi/sgfxapi-drawutils.hpp include/sgfxapi/sgfxdemo.hpp)
+set(DOCS_SOURCES include/sgfxapi/sgfxapi.cpp src/sgfxapi/sgfxapi-drawutils.cpp)
+
+
+set(CLDOC "cldoc" CACHE STRING "User specified '/path/to/cldoc'")
+
+if(NOT DOCS_OUTPUT_DIR)
+    set(DOCS_OUTPUT_DIR "gendocs" CACHE STRING "Generated documentation output directory" FORCE)
+endif()
+
+if(NOT DOCS_DIR)
+    set(DOCS_DIR "" CACHE STRING "Location of external documentation files to be merged in" FORCE)
+endif()
+
+if(NOT ${CLDOC} STREQUAL "CLDOC-NOTFOUND")
+    if(NOT ${DOCS_DIR} STREQUAL "")
+        set(CLDOC_MERGE "--merge ${DOCS_DIR}")
+    else()
+        set(CLDOC_MERGE "")
+    endif()
+
+    
+
+    add_custom_target(docs COMMAND
+        ${CLDOC} generate
+        ${CMAKE_CXX_FLAGS}
+        -I${PROJECT_SOURCE_DIR}
+        --
+        ${CLDOC_MERGE}
+        --output ${DOCS_OUTPUT_DIR}
+        ${DOCS_HEADERS}
+        ${DOCS_SOURCES}
+        WORKING_DIRECTORY ${PROJECT_SOURCE_DIR}
+    )
+
+    set_target_properties(docs PROPERTIES
+        EXCLUDE_FROM_ALL 1
+        EXCLUDE_FROM_DEFAULT_BUILD 1
+    )
+
+    add_custom_target(serve_docs COMMAND
+        ${CLDOC} serve -- ${DOCS_OUTPUT_DIR}
+        WORKING_DIRECTORY ${PROJECT_SOURCE_DIR}
+    )
+
+    set_target_properties(docs PROPERTIES
+        EXCLUDE_FROM_ALL 1
+        EXCLUDE_FROM_DEFAULT_BUILD 1
+    )
+
+    add_dependencies(serve_docs docs)
+else()
+    message(STATUS
+    "Documentation will not be generated"
+    )
+endif()
+
+
+
+
+
 
 
 
