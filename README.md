@@ -9,10 +9,14 @@ Simple wrapper around opengl 4, based off of [clb](http://clb.demon.fi)'s [gfxap
 
 
 
-Library Dependencies
+Dependencies
 ----
 
+Build system:
 
+* CMake >= 3.1 (if using CMake)
+
+Libraries:
 
 * [MathGeoLib](http://clb.demon.fi/MathGeoLib/nightly/), tested with master from 2015/08/26.
 * [glfw3](http://www.glfw.org/docs/latest/), tested with glfw-3.1.1.bin.WIN64 binary distribution.
