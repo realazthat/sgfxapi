@@ -309,11 +309,33 @@ public:
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-
+/* This class describes an element type of each entry in a VertexBuffer.
+ * 
+ * VertexBuffers consist of a series of entries, each of which may have several elements.
+ * As an example would be a vertex buffer might contain an entry for each vertex containing
+ * (normal, color, texture coordinates). A VetexDeclaration describes the data layout
+ * of these entries, and a VertexElement describes each element in the VertexDeclaration.
+ * 
+ */
 class VertexElement
 {
 public:
-    ///See http://www.informit.com/articles/article.aspx?p=2033340&seqNum=3 for info on dst_type.
+
+    /* Constructs a VertexElement.
+     * @semantic the "point" of the element. I'm not exactly sure what opengl does with this information,
+     *          and i sometimes abuse them to mean the wrong thing to pass in data that i want.
+     * @src_type the base type of the source array; that is the array that will be copied from the CPU, if any.
+     * @count the number of elements; so a "color" might be of "type" `UNSIGNED_SHORT` and of `count` 3.
+     * @name the name of the vertex element; it should be descriptive, like "color", "normal", or "extra-data1" etc.
+     *          and no two names should conflict for the all the vertex-data (possibly multiple VertexBuffers and
+     *          VertexDeclarations) when rendering.
+     * @normalized if the destination data is a floating point, and the source data is of integer type, setting this to true
+     *          will automatically convert the data to be in the range of [0,1] for unsigned types, or [-1,1] for signed
+     *          types.
+     * @dst_type the type to convert to/store on the GPU; defaults to the same type on the CPU; opengl itself will sometimes
+     *          unexpectedly convert it to something else first, even if your shader is expecting the same type as the CPU,
+     *          and lose information as a result. See See http://www.informit.com/articles/article.aspx?p=2033340&seqNum=3
+     */
     VertexElement( VertexDataSemantic semantic
                  , VertexDataType src_type, int count
                  , const std::string& name
