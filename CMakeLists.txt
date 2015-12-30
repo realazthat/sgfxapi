@@ -33,27 +33,17 @@ set(CUBELIB_LIB "" CACHE STRING "Lib for cubelib")
 
 
 
-include(CXX11)
-check_for_cxx11_compiler(CXX11_COMPILER)
-
-if(CXX11_COMPILER)
-    enable_cxx11()
-else()
-    message(FATAL_ERROR "The compiler ${CMAKE_CXX_COMPILER} seems to have no C++11 support. Please try again with a more recent compiler version.")
-endif()
 
 if (MSVC)
     add_definitions(-DNOMINMAX -D_CRT_SECURE_NO_WARNINGS)
 endif()
 
-set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${Vc_ARCHITECTURE_FLAGS}")
 
 if (CMAKE_COMPILER_IS_GNUCXX)
     set(CXX_WARNINGS "-Wall -Wextra -Wpointer-arith -Wcast-align -fstrict-aliasing -Wno-unused-local-typedefs")
     set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${CXX_WARNINGS} -fvisibility-inlines-hidden")
 endif()
 
-#find_package(SDL REQUIRED)
 
 include_directories(include src
 
@@ -79,16 +69,15 @@ ${CUBELIB_LIB_DIR})
 ################################################################################
 add_library(sgfxapi src/sgfxapi/sgfxapi.cpp)
 
-
 target_link_libraries(sgfxapi ${MGL_LIB} ${GLFW3_LIB} ${GLU_LIB} ${GLEW_LIB} ${GLUT_LIB} gdi32 opengl32 )
 
-
+set_property(TARGET sgfxapi PROPERTY CXX_STANDARD 11)
 ################################################################################
 add_library(sgfxapi-drawutils src/sgfxapi/sgfxapi-drawutils.cpp)
 
-
 target_link_libraries(sgfxapi-drawutils ${MGL_LIB} ${GLFW3_LIB} ${GLU_LIB} ${GLEW_LIB} ${GLUT_LIB} gdi32 opengl32 )
 
+set_property(TARGET sgfxapi-drawutils PROPERTY CXX_STANDARD 11)
 ################################################################################
 
 add_executable(sgfxdemo src/sgfxapi/sgfxdemo.cpp )
@@ -97,6 +86,7 @@ add_executable(sgfxdemo src/sgfxapi/sgfxdemo.cpp )
 target_link_libraries(sgfxdemo sgfxapi sgfxapi-drawutils ${MGL_LIB}
     ${GLFW3_LIB} ${GLU_LIB} ${GLEW_LIB} ${GLUT_LIB} gdi32 opengl32)
 
+set_property(TARGET sgfxdemo PROPERTY CXX_STANDARD 11)
 ################################################################################
 
 
@@ -111,7 +101,7 @@ target_link_libraries(sgfxdemo sgfxapi sgfxapi-drawutils ${MGL_LIB}
 
 
 set(DOCS_HEADERS include/sgfxapi/sgfxapi.hpp include/sgfxapi/sgfxapi-drawutils.hpp include/sgfxapi/sgfxdemo.hpp)
-set(DOCS_SOURCES include/sgfxapi/sgfxapi.cpp src/sgfxapi/sgfxapi-drawutils.cpp)
+set(DOCS_SOURCES src/sgfxapi/sgfxapi.cpp src/sgfxapi/sgfxapi-drawutils.cpp)
 
 
 set(CLDOC "cldoc" CACHE STRING "User specified '/path/to/cldoc'")
@@ -131,19 +121,31 @@ if(NOT ${CLDOC} STREQUAL "CLDOC-NOTFOUND")
         set(CLDOC_MERGE "")
     endif()
 
-    
 
-    add_custom_target(docs COMMAND
-        ${CLDOC} generate
-        ${CMAKE_CXX_FLAGS}
-        -I${PROJECT_SOURCE_DIR}
-        --
-        ${CLDOC_MERGE}
-        --output ${DOCS_OUTPUT_DIR}
-        ${DOCS_HEADERS}
-        ${DOCS_SOURCES}
-        WORKING_DIRECTORY ${PROJECT_SOURCE_DIR}
+
+
+    set(CLDOC_CMAKE_CXX_FLAGS "-std=c++11")
+    set(CLDOC_GENERATE_SCRIPT_TEMPLATE "${CMAKE_CURRENT_SOURCE_DIR}/cmake/build-docs.in")
+    set(CLDOC_GENERATE_SCRIPT "${CMAKE_CURRENT_BINARY_DIR}/build-docs.cmake")
+     
+    #file(WRITE ${CLDOC_GENERATE_SCRIPT_TEMPLATE} [[
+    #    set(MY_INCLUDES "$<TARGET_PROPERTY:sgfxdemo,INCLUDE_DIRECTORIES>")
+    #    message("My include directories are: ${MY_INCLUDES}")
+    #]])
+    
+    
+    configure_file("${CLDOC_GENERATE_SCRIPT_TEMPLATE}" "${CLDOC_GENERATE_SCRIPT}" @ONLY)
+    
+    #set(CLDOC_INCLUDE_FLAGS "-I$<JOIN:$<TARGET_PROPERTY:sgfxdemo,INCLUDE_DIRECTORIES>, -I>")
+    file(GENERATE OUTPUT ${CLDOC_GENERATE_SCRIPT}
+        INPUT ${CLDOC_GENERATE_SCRIPT}
     )
+     
+    add_custom_target(docs ALL
+        COMMAND ${CMAKE_COMMAND} -P ${CLDOC_GENERATE_SCRIPT}
+    )
+
+    
 
     set_target_properties(docs PROPERTIES
         EXCLUDE_FROM_ALL 1
