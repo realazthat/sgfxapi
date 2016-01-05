@@ -24,7 +24,7 @@ Libraries:
     tested with 1.12.0-3, from the `msys2/mingw-w64 64-bit` environment installed via pacman.
 * `glut`, or `freeglut`, tested with `freeglut`, from the `msys2/mingw-w64 64-bit` environment, installed via pacman.
 * `glu`
-* `cubelib`
+* `corner-cases/cubelib`
 
 
 

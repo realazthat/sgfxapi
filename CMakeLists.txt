@@ -27,9 +27,9 @@ set(GLUT_LIB "glut" CACHE STRING "Lib for glut")
 set(GLEW_INCLUDE_DIR "" CACHE STRING "Paths to glew includes")
 set(GLEW_LIB_DIR "" CACHE STRING "Paths to glew libs")
 set(GLEW_LIB "glew32" CACHE STRING "Lib for glew")
-set(CUBELIB_INCLUDE_DIR "./libs/cubelib/cubelib/include" CACHE STRING "Paths to cubelib includes")
-set(CUBELIB_LIB_DIR "" CACHE STRING "Paths to cubelib libs")
-set(CUBELIB_LIB "" CACHE STRING "Lib for cubelib")
+set(CUBELIB_INCLUDE_DIR "./libs/corner-cases/corner-cases/include" CACHE STRING "Paths to corner-cases/cubelib includes")
+set(CUBELIB_LIB_DIR "" CACHE STRING "Paths to corner-cases/cubelib libs")
+set(CUBELIB_LIB "" CACHE STRING "Lib for corner-cases/cubelib")
 
 
 
@@ -95,79 +95,6 @@ set_property(TARGET sgfxdemo PROPERTY CXX_STANDARD 11)
 
 
 
-
-
-
-
-
-set(DOCS_HEADERS include/sgfxapi/sgfxapi.hpp include/sgfxapi/sgfxapi-drawutils.hpp include/sgfxapi/sgfxdemo.hpp)
-set(DOCS_SOURCES src/sgfxapi/sgfxapi.cpp src/sgfxapi/sgfxapi-drawutils.cpp)
-
-
-set(CLDOC "cldoc" CACHE STRING "User specified '/path/to/cldoc'")
-
-if(NOT DOCS_OUTPUT_DIR)
-    set(DOCS_OUTPUT_DIR "gendocs" CACHE STRING "Generated documentation output directory" FORCE)
-endif()
-
-if(NOT DOCS_DIR)
-    set(DOCS_DIR "" CACHE STRING "Location of external documentation files to be merged in" FORCE)
-endif()
-
-if(NOT ${CLDOC} STREQUAL "CLDOC-NOTFOUND")
-    if(NOT ${DOCS_DIR} STREQUAL "")
-        set(CLDOC_MERGE "--merge ${DOCS_DIR}")
-    else()
-        set(CLDOC_MERGE "")
-    endif()
-
-
-
-
-    set(CLDOC_CMAKE_CXX_FLAGS "-std=c++11")
-    set(CLDOC_GENERATE_SCRIPT_TEMPLATE "${CMAKE_CURRENT_SOURCE_DIR}/cmake/build-docs.in")
-    set(CLDOC_GENERATE_SCRIPT "${CMAKE_CURRENT_BINARY_DIR}/build-docs.cmake")
-     
-    #file(WRITE ${CLDOC_GENERATE_SCRIPT_TEMPLATE} [[
-    #    set(MY_INCLUDES "$<TARGET_PROPERTY:sgfxdemo,INCLUDE_DIRECTORIES>")
-    #    message("My include directories are: ${MY_INCLUDES}")
-    #]])
-    
-    
-    configure_file("${CLDOC_GENERATE_SCRIPT_TEMPLATE}" "${CLDOC_GENERATE_SCRIPT}" @ONLY)
-    
-    #set(CLDOC_INCLUDE_FLAGS "-I$<JOIN:$<TARGET_PROPERTY:sgfxdemo,INCLUDE_DIRECTORIES>, -I>")
-    file(GENERATE OUTPUT ${CLDOC_GENERATE_SCRIPT}
-        INPUT ${CLDOC_GENERATE_SCRIPT}
-    )
-     
-    add_custom_target(docs ALL
-        COMMAND ${CMAKE_COMMAND} -P ${CLDOC_GENERATE_SCRIPT}
-    )
-
-    
-
-    set_target_properties(docs PROPERTIES
-        EXCLUDE_FROM_ALL 1
-        EXCLUDE_FROM_DEFAULT_BUILD 1
-    )
-
-    add_custom_target(serve_docs COMMAND
-        ${CLDOC} serve -- ${DOCS_OUTPUT_DIR}
-        WORKING_DIRECTORY ${PROJECT_SOURCE_DIR}
-    )
-
-    set_target_properties(docs PROPERTIES
-        EXCLUDE_FROM_ALL 1
-        EXCLUDE_FROM_DEFAULT_BUILD 1
-    )
-
-    add_dependencies(serve_docs docs)
-else()
-    message(STATUS
-    "Documentation will not be generated"
-    )
-endif()
 
 
 
