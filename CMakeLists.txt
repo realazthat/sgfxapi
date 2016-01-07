@@ -6,7 +6,7 @@ set(CMAKE_MODULE_PATH "${PROJECT_SOURCE_DIR}/cmake" ${CMAKE_MODULE_PATH})
 
 set(GLFW3_INCLUDE_DIR "./libs/glfw/glfw/include"
     CACHE STRING "Paths to glfw3 includes")
-set(GLFW3_LIB_DIR "./libs/glfw/glfw/build"
+set(GLFW3_LIB_DIR "./libs/glfw3/glfw/build"
     CACHE STRING "Paths to glfw3 libs")
 set(GLFW3_LIB "glfw3"
     CACHE STRING "Lib for glfw3")

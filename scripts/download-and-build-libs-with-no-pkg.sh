@@ -46,4 +46,4 @@ bash ./scripts/download-and-build-freeglut.sh
 #############################################################################
 
 cd "$PROJECT_PATH"
-bash ./scripts/download-and-build-glfw.sh
+bash ./scripts/download-and-build-glfw3.sh

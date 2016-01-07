@@ -24,7 +24,7 @@ PROJECT_PATH=$PWD
 cd "$PROJECT_PATH"
 cd libs
 
-mkdir -p glfw && cd glfw
+mkdir -p glfw3 && cd glfw3
 
 rm -rf ./glfw/
 git clone https://github.com/glfw/glfw.git
