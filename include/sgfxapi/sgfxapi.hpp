@@ -343,13 +343,48 @@ public:
                  , GPUVertexDataType dst_type = GPUVertexDataType::DEFAULT_TO_SRC);
     ~VertexElement(void);
 
+    /**
+     * @brief Calculates the size, in bytes, of this element, taking the @c type and @c count into account.
+     * @return The size in bytes.
+     */
     int SizeBytes() const;
+    /**
+     * @brief The count.
+     * @return The count.
+     */
     int SizeElems() const;
+    /**
+     * @brief The semantic of this VertexElement.
+     * @return The VertexDataSemantic.
+     */
     VertexDataSemantic Semantic() const;
+    /**
+     * @brief The type of the source (CPU-side) data.
+     * @return The VertexDataType.
+     */
     VertexDataType SrcType() const;
+    /**
+     * @brief The type of the gpu data.
+     * @return The VertexDataType.
+     */
     GPUVertexDataType DstType() const;
+    
+    /**
+     * @brief If the source type is an integer-like type, and the target type is a flaot-like
+     *      type, then the converion will optionally "normalize" the data; where "normalize"
+     *      here means to make each float be in the range [0,1] (for unsigned source)
+     *      or [-1,1] (for signed source), and the mapping is SOURCE_TYPE_MIN will be the lower
+     *      part of the range, and SOURCE_TYPE_MAX will be the upper part of the range. See docs on
+     *      [glVertexAttribPointer](https://www.opengl.org/sdk/docs/man/html/glVertexAttribPointer.xhtml)
+     *      in the section on `normalized`.
+     * @return true if the conversion should normalize the data, false otherwise. 
+     */
     bool Normalized() const;
 
+    /**
+     * @brief The name of the VertexElement.
+     * @return The name.
+     */
     const std::string& Name() const;
     
     //void save_to_file(std::ostream& out);
@@ -376,7 +411,16 @@ private:
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-
+/**
+ * @class VertexDeclaration
+ * @author realz
+ * @date 09/01/2016
+ * @file sgfxapi.hpp
+ * @brief Holds a list of VertexElement descriptions; the list
+ *          describes the contents of a single VertexBuffer which can subsequently be used
+ *          in the shader
+ *          
+ */
 class VertexDeclaration
 {
 public:
