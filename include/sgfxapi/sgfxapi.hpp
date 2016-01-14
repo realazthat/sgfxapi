@@ -309,7 +309,7 @@ public:
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-/* This class describes an element type of each entry in a VertexBuffer.
+/** This class describes an element type of each entry in a VertexBuffer.
  * 
  * VertexBuffers consist of a series of entries, each of which may have several elements.
  * As an example would be a vertex buffer might contain an entry for each vertex containing
@@ -321,20 +321,20 @@ class VertexElement
 {
 public:
 
-    /* Constructs a VertexElement.
-     * @semantic the "point" of the element. I'm not exactly sure what opengl does with this information,
+    /** Constructs a VertexElement.
+     * @param semantic the "point" of the element. I'm not exactly sure what opengl does with this information,
      *          and i sometimes abuse them to mean the wrong thing to pass in data that i want.
-     * @src_type the base type of the source array; that is the array that will be copied from the CPU, if any.
-     * @count the number of elements; so a "color" might be of "type" `UNSIGNED_SHORT` and of `count` 3.
-     * @name the name of the vertex element; it should be descriptive, like "color", "normal", or "extra-data1" etc.
+     * @param src_type the base type of the source array; that is the array that will be copied from the CPU, if any.
+     * @param count the number of elements; so a "color" might be of "type" `UNSIGNED_SHORT` and of `count` 3.
+     * @param name the name of the vertex element; it should be descriptive, like "color", "normal", or "extra-data1" etc.
      *          and no two names should conflict for the all the vertex-data (possibly multiple VertexBuffers and
      *          VertexDeclarations) when rendering.
-     * @normalized if the destination data is a floating point, and the source data is of integer type, setting this to true
+     * @param normalized if the destination data is a floating point, and the source data is of integer type, setting this to true
      *          will automatically convert the data to be in the range of [0,1] for unsigned types, or [-1,1] for signed
      *          types.
-     * @dst_type the type to convert to/store on the GPU; defaults to the same type on the CPU; opengl itself will sometimes
+     * @param dst_type the type to convert to/store on the GPU; defaults to the same type on the CPU; opengl itself will sometimes
      *          unexpectedly convert it to something else first, even if your shader is expecting the same type as the CPU,
-     *          and lose information as a result. See See http://www.informit.com/articles/article.aspx?p=2033340&seqNum=3
+     *          and lose information as a result. See http://www.informit.com/articles/article.aspx?p=2033340&seqNum=3
      */
     VertexElement( VertexDataSemantic semantic
                  , VertexDataType src_type, int count
@@ -371,7 +371,7 @@ public:
     
     /**
      * @brief If the source type is an integer-like type, and the target type is a flaot-like
-     *      type, then the converion will optionally "normalize" the data; where "normalize"
+     *      type, then the conversion will optionally "normalize" the data; where "normalize"
      *      here means to make each float be in the range [0,1] (for unsigned source)
      *      or [-1,1] (for signed source), and the mapping is SOURCE_TYPE_MIN will be the lower
      *      part of the range, and SOURCE_TYPE_MAX will be the upper part of the range. See docs on
@@ -413,10 +413,10 @@ private:
 
 /**
  * @class VertexDeclaration
- * @author realz
- * @date 09/01/2016
- * @file sgfxapi.hpp
- * @brief Holds a list of VertexElement descriptions; the list
+ * @brief Describes the structure of the vertex stream.
+ *
+ * 
+ * Holds a list of VertexElement descriptions; the list
  *          describes the contents of a single VertexBuffer which can subsequently be used
  *          in the shader
  *          
@@ -727,6 +727,10 @@ private:
     int m_index;
 };
 
+/**
+ * @brief Describes how the GPU should sample the texture.
+ *
+ */
 struct TextureSampler
 {
     TextureSampler(const TextureSampler&) = delete;
