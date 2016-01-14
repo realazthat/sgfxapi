@@ -15,3 +15,4 @@ CASE_SENSE_NAMES        = NO
 JAVADOC_AUTOBRIEF       = YES
 ALIASES                 = "rst=\verbatim embed:rst"
 ALIASES                 += "endrst=\endverbatim"
+STRIP_FROM_INC_PATH     = "@PROJECT_SOURCE_DIR@/include"
