@@ -9,39 +9,40 @@ SGFXAPI Reference Documentation
 |                                                  |                                                  |                                                  |
 |**Texturing**                                     |**Shading**                                       |**Geometry**                                      |
 |                                                  |                                                  |                                                  |
-|* .. doxygenclass:: SGFXAPI::Texture              |* .. doxygenclass:: SGFXAPI::Shader               |* .. doxygenclass:: SGFXAPI::VertexBuffer         |
-|     :project: sgfxapi                            |     :project: sgfxapi                            |     :project: sgfxapi                            |
-|     :outline:                                    |     :outline:                                    |     :outline:                                    |
+|* .. doxygenclass:: SGFXAPI::Texture              |* .. doxygenclass:: SGFXAPI::Shader               |* :cpp:class:`SGFXAPI::VertexBuffer`              |
+|     :project: sgfxapi                            |     :project: sgfxapi                            |                                                  |
+|     :outline:                                    |     :outline:                                    |                                                  |
 |                                                  |                                                  |                                                  |
-|  Class represents a texture on the CPU and on    |  A shader program, which is used to program the  |  Represents a vertex stream, the raw vertex data |
-|  the GPU.                                        |  graphics pipeline.                              |  that gets sent to the GPU.                      |
+|  Class represents a texture on the CPU and on    |  A shader program, which is used to program the  |  Stores a CPU and/or GPU-side array of vertices. |
+|  the GPU.                                        |  graphics pipeline.                              |                                                  |
 |* .. doxygenstruct:: SGFXAPI::TextureSampler      |                                                  |                                                  |
 |     :project: sgfxapi                            |                                                  |                                                  |
 |     :outline:                                    |                                                  |                                                  |
-|                                                  |                                                  |* .. doxygenclass:: SGFXAPI::IndexBuffer          |
-|  Contains properties telling the GPU how to      |                                                  |     :project: sgfxapi                            |
-|  sample the texture.                             |                                                  |     :outline:                                    |
-|                                                  |                                                  |                                                  |
-|                                                  |                                                  |  The raw buffer of triangle indices that gets    |
-|                                                  |                                                  |  to the GPU.                                     |
-|                                                  |                                                  |                                                  |
-|                                                  |                                                  |* .. doxygenclass:: SGFXAPI::VertexDeclaration    |
-|                                                  |                                                  |     :project: sgfxapi                            |
-|                                                  |                                                  |     :outline:                                    |
-|                                                  |                                                  |                                                  |
-|                                                  |                                                  |  Something something                             |
-|                                                  |                                                  |                                                  |
-|                                                  |                                                  |                                                  |
-|                                                  |                                                  |* :ref:`VertexElement`                            |
+|                                                  |                                                  |* :cpp:class:`SGFXAPI::IndexBuffer`               |
+|  Contains properties telling the GPU how to      |                                                  |                                                  |
+|  sample the texture.                             |                                                  |  Stores a CPU and/or GPU side array of geometry  |
+|                                                  |                                                  |  index data.                                     |
 |                                                  |                                                  |                                                  |
 |                                                  |                                                  |                                                  |
 |                                                  |                                                  |                                                  |
-|                                                  |                                                  |  Something something                             |
+|                                                  |                                                  |                                                  |
+|                                                  |                                                  |* :cpp:class:`SGFXAPI::VertexDeclaration`         |
+|                                                  |                                                  |                                                  |
+|                                                  |                                                  |  Specifies the structure of a vertex stream.     |
 |                                                  |                                                  |                                                  |
 |                                                  |                                                  |                                                  |
-|                                                  |                                                  |* .. doxygenclass:: SGFXAPI::Mesh                 |
-|                                                  |                                                  |     :project: sgfxapi                            |
-|                                                  |                                                  |     :outline:                                    |
+|                                                  |                                                  |                                                  |
+|                                                  |                                                  |                                                  |
+|                                                  |                                                  |* :cpp:class:`SGFXAPI::VertexElement`             |
+|                                                  |                                                  |                                                  |
+|                                                  |                                                  |  Specifies the semantic and format of a single   |
+|                                                  |                                                  |  element in a vertex data stream.                |
+|                                                  |                                                  |                                                  |
+|                                                  |                                                  |                                                  |
+|                                                  |                                                  |                                                  |
+|                                                  |                                                  |* :cpp:class:`SGFXAPI::Mesh`                      |
+|                                                  |                                                  |                                                  |
+|                                                  |                                                  |                                                  |
 |                                                  |                                                  |  Something something                             |
 |                                                  |                                                  |                                                  |
 |                                                  |                                                  |                                                  |
