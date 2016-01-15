@@ -12,6 +12,7 @@
 #include <sstream>
 #include <iostream>
 #include <fstream>
+#include <sstream>
 
 #include <algorithm>
 
@@ -423,6 +424,81 @@ const char* toGLSTR(PrimitiveIndexType primitiveindextype)
 }
 
 
+////////////////////////////////////////////////////////////////////////////////
+
+const char* toSTR(VertexDataSemantic semantic)
+{
+    switch (semantic)
+    {
+        case (VertexDataSemantic::COLOR):
+            return "COLOR";
+        case (VertexDataSemantic::COLOR2):
+            return "COLOR2";
+        case (VertexDataSemantic::NORMAL):
+            return "NORMAL";
+        case (VertexDataSemantic::TCOORD):
+            return "TCOORD";
+        case (VertexDataSemantic::VCOORD):
+            return "VCOORD";
+    }
+    
+    assert(false);
+    return "UNKNOWN";
+}
+
+
+const char* toSTR(VertexDataType type)
+{
+    switch (type)
+    {
+        case (VertexDataType::BYTE):
+            return "BYTE";
+        case (VertexDataType::UNSIGNED_BYTE):
+            return "UNSIGNED_BYTE";
+        case (VertexDataType::SHORT):
+            return "SHORT";
+        case (VertexDataType::UNSIGNED_SHORT):
+            return "UNSIGNED_SHORT";
+        case (VertexDataType::INT):
+            return "INT";
+        case (VertexDataType::UNSIGNED_INT):
+            return "UNSIGNED_INT";
+        case (VertexDataType::FLOAT):
+            return "FLOAT";
+        case (VertexDataType::DOUBLE):
+            return "DOUBLE";
+    }
+    
+    assert(false);
+    return "UNKNOWN";
+}
+
+const char* toSTR(GPUVertexDataType type)
+{
+    switch (type)
+    {
+        case (GPUVertexDataType::DEFAULT_TO_SRC):
+            return "DEFAULT_TO_SRC";
+        case (GPUVertexDataType::INT):
+            return "INT";
+        case (GPUVertexDataType::FLOAT):
+            return "FLOAT";
+        case (GPUVertexDataType::DOUBLE):
+            return "DOUBLE";
+    }
+    
+    assert(false);
+    return "UNKNOWN";
+}
+
+
+
+////////////////////////////////////////////////////////////////////////////////
+
+
+
+
+
 
 Graphics::Graphics() 
 {
@@ -457,7 +533,7 @@ void Graphics::Clear(bool clearDepth, bool clearStencil, bool clearColor,
         
 }
 
-////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////
 
 
 VertexElement::VertexElement( VertexDataSemantic semantic
@@ -603,6 +679,39 @@ int VertexElement::SizeElems() const
     return m_count;
 }
 
+
+std::string VertexElement::ToString() const
+{
+    std::ostringstream ostr;
+    ostr << *this;
+    return ostr.str();
+}
+
+::std::ostream& operator<<(::std::ostream&out, const VertexElement& element)
+{
+    // "semantic: (semantic), name: (name), type: (type), count: (num)"
+    out << toSTR(element.Semantic()) << ", name: " << element.Name()
+        << ", type: " << toSTR(element.SrcType());
+    switch (element.DstType())
+    {
+        case (GPUVertexDataType::DEFAULT_TO_SRC):
+            out << " => " << toSTR(element.SrcType());
+            break;
+        
+        case (GPUVertexDataType::INT):
+            assert(element.SrcType() != VertexDataType::FLOAT);
+            assert(element.SrcType() != VertexDataType::DOUBLE);
+            out << " => " << toSTR(element.SrcType());
+            break;
+        case (GPUVertexDataType::FLOAT):
+        case (GPUVertexDataType::DOUBLE):
+            out << " => " << toSTR(element.DstType());
+            break;
+        
+    }
+    
+    out << ", count: " << element.SizeElems();
+}
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 

@@ -5,6 +5,7 @@
 #include "sgfxapi/sgfxapi.glcommon.hpp"
 
 #include <stdint.h>
+#include <iosfwd>
 
 //#include <boost/format.hpp>
 //#include <boost/noncopyable.hpp>
@@ -292,6 +293,10 @@ GLenum toGLBinding(TextureType texturetype);
 
 const char* toGLSTR(PrimitiveIndexType indextype);
 
+const char* toSTR(VertexDataSemantic semantic);
+const char* toSTR(VertexDataType type);
+const char* toSTR(GPUVertexDataType type);
+
 GPUVertexDataType toDefaultGPUDataType(VertexDataType src_type);
 
 class Graphics
@@ -304,7 +309,6 @@ public:
                float red = 0.f, float green = 0.f, float blue = 0.f, float alpha = 0.f,
                float depthValue = 1.f, int stencilValue = 0);
 };
-
 
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -393,7 +397,7 @@ public:
     //void dump_to_console();
     
     /**
-    * Returns a string of format "(semantic): : (name) semantic: (type), count: (num)".
+    * Returns a string of format "(semantic: (semantic), name: (name), type: (type), count: (num))".
     */
     std::string ToString() const;
     bool Valid() const;
@@ -409,16 +413,17 @@ private:
 };
 
 
+/**
+* Prints a string of format "(semantic: (semantic), name: (name), type: (type), count: (num))".
+*/
+::std::ostream& operator<<(::std::ostream&out, const VertexElement& element);
+
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 /**
  * @class VertexDeclaration
- * @author realz
- * @date 09/01/2016
- * @file sgfxapi.hpp
  * @brief Holds a list of VertexElement descriptions; the list
- *          describes the contents of a single VertexBuffer which can subsequently be used
- *          in the shader
+ *          describes the contents of each vertex in a single VertexBuffer.
  *          
  */
 class VertexDeclaration
@@ -647,8 +652,6 @@ public:
     PixelBuffer(Usage usage, std::size_t bytes, bool allocateCpu=true);
     ~PixelBuffer();
 
-    //void loadDDS(const char * imagepath);
-    //void loadBMP(const char * imagepath, int index);
 
     int LogicalBufferSizeBytes() const;
     int GpuSizeInBytes() const;
@@ -670,7 +673,7 @@ public:
 
 
     /**
-     * Uploads data
+     * Uploads data to the GPU, assuming there is a CPU buffer.
      */
     void UpdateToGpu();
     void UpdateToGpu(const uint8_t* data, int bytes, int gpuoffset=0);
@@ -726,6 +729,8 @@ struct TextureUnit
 private:
     int m_index;
 };
+
+
 
 struct TextureSampler
 {
