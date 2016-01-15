@@ -6,7 +6,11 @@
 SGFXAPI
 ===================================
 
- **A small and simple wrapper around opengl4, in the spirit of clb's `gfxapi <http://clb.demon.fi/gfxapi/>`_**
+
+A small and simple wrapper around opengl4, in the spirit of clb's `gfxapi <http://clb.demon.fi/gfxapi/>`_
+
+
+
 
 Contents:
 
@@ -14,7 +18,6 @@ Contents:
    :maxdepth: 2
    
    reference
-   VertexElement
   
 #.. doxygenindex::
 #   :project: sgfxapi
