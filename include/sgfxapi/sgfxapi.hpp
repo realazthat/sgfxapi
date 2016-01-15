@@ -730,6 +730,22 @@ private:
 /**
  * @brief Describes how the GPU should sample the texture.
  *
+ * See [OpenGL 3.3 Sampler Objects: Control your Texture Units](http://www.geeks3d.com/20110908/opengl-3-3-sampler-objects-control-your-texture-units/)
+ *
+ * Usage:
+ * \code{.cpp}
+ * auto sampler = std::make_shared<TextureSampler>();
+ * 
+ * // the texture should wrap around in the u-direction
+ * sampler->addressU = TextureAddressMode::TextureAddressWrap;
+ * // the texture should take the border-value if it goes over the texture border in the v-direction.
+ * sampler->addressV = TextureAddressMode::TextureAddressBorderClamp;
+ *
+ * sampler->GenerateParams();
+ *
+ * auto mesh_texture = std::make_shared<MeshTexture>(texture, texture_unit, sampler, sampler_name);
+ * \endcode
+ *
  */
 struct TextureSampler
 {
@@ -753,9 +769,15 @@ struct TextureSampler
     TextureFilterMode mipFilter;
     TextureFilterMode magFilter;
 
-
+    /**
+     * This should be called after construction, and/or after changing any member values
+     * and before using this object for rendering. GenerateParams() "saves" the values
+     * to the GPU-side.
+     *
+     */
     void GenerateParams();
 
+    /// Retrieve the opengl handle for the sampler.
     GLuint Handle() const;
 
 private:
@@ -763,6 +785,12 @@ private:
 };
 
 
+/**
+ *
+ *
+ *
+ *
+ */
 struct TextureFormat
 {
     TextureFormat(TextureElementType elementtype, TexturePixelFormat pixelformat)
@@ -944,7 +972,7 @@ private:
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 /**
- * Just a container that bundles together the texture, texture unit, sampler, and shader name.
+ * Just a container that bundles together the texture, texture unit, sampler, and texture name (for retrieval in the shader).
  */
 struct MeshTexture{
     MeshTexture(  std::shared_ptr<Texture> texture
@@ -962,6 +990,8 @@ struct MeshTexture{
     std::shared_ptr<TextureSampler> sampler;
     std::string sampler_name;
 };
+
+
 class Mesh
 {
     Mesh(const Mesh&) = delete;
