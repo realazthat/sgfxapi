@@ -21,6 +21,8 @@ if [ "$TRAVIS_REPO_SLUG" == "realazthat/sgfxapi" ] && [ "$TRAVIS_PULL_REQUEST" =
   git clone --quiet --branch=gh-pages https://${GH_TOKEN}@github.com/realazthat/sgfxapi gh-pages > /dev/null
 
   cd gh-pages
+  touch .nojekyll
+  
   git rm -rf --ignore-unmatch "./$TRAVIS_BRANCH/sphinx-docs"
   mkdir -p "./$TRAVIS_BRANCH/sphinx-docs"
   cp -Rf "$DOCS_PATH" "./$TRAVIS_BRANCH/sphinx-docs/"
