@@ -22,9 +22,11 @@ add_custom_target(doxygen
 
 #see http://stackoverflow.com/a/11249722/586784
 
+
 macro(add_sphinx_target TARGET_NAME BUILDER COMMENT_STR)
+
     add_custom_target(${TARGET_NAME}
-    COMMAND sphinx-build
+        COMMAND sphinx-build
                     -E
                     -D"breathe_projects.sgfxapi=../doxyxml"
                     -c ${CMAKE_CURRENT_BINARY_DIR}/source/
@@ -34,7 +36,6 @@ macro(add_sphinx_target TARGET_NAME BUILDER COMMENT_STR)
         DEPENDS doxygen
         COMMENT ${COMMENT_STR}
     )
-
 endmacro(add_sphinx_target)
 
 

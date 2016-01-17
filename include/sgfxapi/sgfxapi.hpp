@@ -409,6 +409,8 @@ private:
 };
 
 
+
+
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 /**
@@ -932,7 +934,11 @@ private:
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-
+/**
+ * Bundles up shaders and links them into a single "program" for the GPU pipeline to use.
+ *
+ *
+ */
 class ShaderProgram
 {
     ShaderProgram(const ShaderProgram&) = delete;
@@ -941,6 +947,12 @@ public:
     explicit ShaderProgram();
     ~ShaderProgram();
     
+    /**
+     * Attaches a shader to this ShaderProgram.
+     * 
+     * Note on lifetimes: it is safe to delete the shader right after attaching it to the ShaderProgram.
+     *
+     */
     void Attach(Shader& shader);
     
     int GetUniformLocation(const char* name);
@@ -992,6 +1004,11 @@ struct MeshTexture{
 };
 
 
+/**
+ * Bundles together one or more VertexBuffer objects, an optional IndexBuffer, a ShaderProgram,
+ * and one or more Texture objects, and bounds them together into a "VAO" for rendering.
+ *
+ */
 class Mesh
 {
     Mesh(const Mesh&) = delete;
@@ -1009,13 +1026,15 @@ public:
     void GenerateVAO(int startVertexOffset=0);
     void LinkShaders();
     
-    ///Bind the VAO
+    /**
+     * Bind the VAO.
+     */
     void Bind();
     ///Unbind the VAO
     void UnBind();
 
     bool IsBound() const;
-
+    
     static void UnBindAll();
     
     void Draw(int numIndices=-1, int startIndexOffset=0);
