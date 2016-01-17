@@ -1,7 +1,6 @@
 cmake_minimum_required(VERSION 3.1.0 FATAL_ERROR)
 project(sgfxapi)
 
-set(CMAKE_MODULE_PATH "${PROJECT_SOURCE_DIR}/cmake" ${CMAKE_MODULE_PATH})
 
 
 set(GLFW3_INCLUDE_DIR "./libs/glfw/glfw/include"
@@ -33,7 +32,7 @@ set(CUBELIB_LIB "" CACHE STRING "Lib for corner-cases/cubelib")
 
 
 
-
+#
 if (MSVC)
     add_definitions(-DNOMINMAX -D_CRT_SECURE_NO_WARNINGS)
 endif()
@@ -43,6 +42,8 @@ if (CMAKE_COMPILER_IS_GNUCXX)
     set(CXX_WARNINGS "-Wall -Wextra -Wpointer-arith -Wcast-align -fstrict-aliasing -Wno-unused-local-typedefs")
     set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${CXX_WARNINGS} -fvisibility-inlines-hidden")
 endif()
+
+add_subdirectory(docs)
 
 
 include_directories(include src

@@ -2362,7 +2362,6 @@ int Texture::LogicalSizeBytes(int width, int height, int depth, TextureFormat fo
 
 
 
-///http://www.geeks3d.com/20110908/opengl-3-3-sampler-objects-control-your-texture-units/
 TextureSampler::TextureSampler()
     : addressU(TextureAddressMode::TextureAddressWrap)
     , addressV(TextureAddressMode::TextureAddressWrap)
