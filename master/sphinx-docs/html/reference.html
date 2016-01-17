@@ -1,0 +1,127 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>SGFXAPI Reference Documentation &mdash; sgfxapi NONE documentation</title>
+    
+    <link rel="stylesheet" href="_static/haiku.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    './',
+        VERSION:     'NONE',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="_static/jquery.js"></script>
+    <script type="text/javascript" src="_static/underscore.js"></script>
+    <script type="text/javascript" src="_static/doctools.js"></script>
+    <script type="text/javascript" src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <link rel="top" title="sgfxapi NONE documentation" href="index.html" />
+    <link rel="prev" title="SGFXAPI" href="index.html" /> 
+  </head>
+  <body role="document">
+      <div class="header" role="banner"><h1 class="heading"><a href="index.html">
+          <span>sgfxapi NONE documentation</span></a></h1>
+        <h2 class="heading"><span>SGFXAPI Reference Documentation</span></h2>
+      </div>
+      <div class="topnav" role="navigation" aria-label="top navigation">
+      
+        <p>
+        «&#160;&#160;<a href="index.html">SGFXAPI</a>
+        &#160;&#160;::&#160;&#160;
+        <a class="uplink" href="index.html">Contents</a>
+        </p>
+
+      </div>
+      <div class="content">
+        
+        
+  <div class="section" id="sgfxapi-reference-documentation">
+<h1>SGFXAPI Reference Documentation<a class="headerlink" href="#sgfxapi-reference-documentation" title="Permalink to this headline">¶</a></h1>
+<table border="1" class="docutils">
+<colgroup>
+<col width="33%" />
+<col width="33%" />
+<col width="33%" />
+</colgroup>
+<tbody valign="top">
+<tr class="row-odd"><td><p class="first"><strong>Texturing</strong></p>
+<ul class="last">
+<li><p class="first"><a class="reference internal" href="Texture.html#_CPPv2N7SGFXAPI7TextureE" title="SGFXAPI::Texture"><code class="xref cpp cpp-class docutils literal"><span class="pre">SGFXAPI::Texture</span></code></a></p>
+<p>Class represents a texture on the CPU and on
+the GPU.</p>
+</li>
+<li><p class="first"><a class="reference internal" href="TextureSampler.html#_CPPv2N7SGFXAPI14TextureSamplerE" title="SGFXAPI::TextureSampler"><code class="xref cpp cpp-class docutils literal"><span class="pre">SGFXAPI::TextureSampler</span></code></a></p>
+<p>Contains properties telling the GPU how to
+sample the texture.</p>
+</li>
+<li><p class="first"><a class="reference internal" href="MeshTexture.html#_CPPv2N7SGFXAPI11MeshTextureE" title="SGFXAPI::MeshTexture"><code class="xref cpp cpp-class docutils literal"><span class="pre">SGFXAPI::MeshTexture</span></code></a></p>
+<p>Container that bundles together the texture
+texture unit, sampler, and texture name</p>
+</li>
+<li><p class="first"><a class="reference internal" href="PixelBuffer.html#_CPPv2N7SGFXAPI11PixelBufferE" title="SGFXAPI::PixelBuffer"><code class="xref cpp cpp-class docutils literal"><span class="pre">SGFXAPI::PixelBuffer</span></code></a></p>
+<p>A stream of pixels that can be used to read and
+write pixel data between the CPU and GPU.</p>
+</li>
+</ul>
+</td>
+<td><p class="first"><strong>Shading</strong></p>
+<ul class="last">
+<li><p class="first"><a class="reference internal" href="Shader.html#_CPPv2N7SGFXAPI6ShaderE" title="SGFXAPI::Shader"><code class="xref cpp cpp-class docutils literal"><span class="pre">SGFXAPI::Shader</span></code></a></p>
+<p>A shader program, which is used to program the
+graphics pipeline.</p>
+</li>
+</ul>
+</td>
+<td><p class="first"><strong>Geometry</strong></p>
+<ul class="last">
+<li><p class="first"><a class="reference internal" href="VertexBuffer.html#_CPPv2N7SGFXAPI12VertexBufferE" title="SGFXAPI::VertexBuffer"><code class="xref cpp cpp-class docutils literal"><span class="pre">SGFXAPI::VertexBuffer</span></code></a></p>
+<p>Stores a CPU and/or GPU-side array of vertices.</p>
+</li>
+<li><p class="first"><a class="reference internal" href="IndexBuffer.html#_CPPv2N7SGFXAPI11IndexBufferE" title="SGFXAPI::IndexBuffer"><code class="xref cpp cpp-class docutils literal"><span class="pre">SGFXAPI::IndexBuffer</span></code></a></p>
+<p>Stores a CPU and/or GPU side array of geometry
+index data.</p>
+</li>
+<li><p class="first"><a class="reference internal" href="VertexDeclaration.html#_CPPv2N7SGFXAPI17VertexDeclarationE" title="SGFXAPI::VertexDeclaration"><code class="xref cpp cpp-class docutils literal"><span class="pre">SGFXAPI::VertexDeclaration</span></code></a></p>
+<p>Specifies the structure of a vertex stream.</p>
+</li>
+<li><p class="first"><a class="reference internal" href="VertexElement.html#_CPPv2N7SGFXAPI13VertexElementE" title="SGFXAPI::VertexElement"><code class="xref cpp cpp-class docutils literal"><span class="pre">SGFXAPI::VertexElement</span></code></a></p>
+<p>Specifies the semantic and format of a single
+element in a vertex data stream.</p>
+</li>
+<li><p class="first"><a class="reference internal" href="Mesh.html#_CPPv2N7SGFXAPI4MeshE" title="SGFXAPI::Mesh"><code class="xref cpp cpp-class docutils literal"><span class="pre">SGFXAPI::Mesh</span></code></a></p>
+<p>Something something</p>
+</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+
+
+      </div>
+      <div class="bottomnav" role="navigation" aria-label="bottom navigation">
+      
+        <p>
+        «&#160;&#160;<a href="index.html">SGFXAPI</a>
+        &#160;&#160;::&#160;&#160;
+        <a class="uplink" href="index.html">Contents</a>
+        </p>
+
+      </div>
+
+    <div class="footer" role="contentinfo">
+        &copy; Copyright 2016, Azriel Fasten.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.3.4.
+    </div>
+  </body>
+</html>
