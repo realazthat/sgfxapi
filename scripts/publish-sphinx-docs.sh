@@ -5,7 +5,7 @@ set -exv
 PROJECT_PATH="$PWD"
 
 
-PUBLISH_BRANCHES="master develop"
+PUBLISH_BRANCHES="master develop sphinx-docs"
 if [ "$TRAVIS_REPO_SLUG" == "realazthat/sgfxapi" ] && [ "$TRAVIS_PULL_REQUEST" == "false" ] && [[ $PUBLISH_BRANCHES =~ "$TRAVIS_BRANCH" ]]; then
 
   echo -e "Publishing docs/sphinx/html...\n"
