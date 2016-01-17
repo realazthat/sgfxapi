@@ -29,15 +29,15 @@ SGFXAPI Reference Documentation
 |                                                  |                                                  |* :cpp:class:`SGFXAPI::VertexDeclaration`         |
 |                                                  |                                                  |                                                  |
 |                                                  |                                                  |  Specifies the structure of a vertex stream.     |
-|  Cntainer that bundles together the texture      |                                                  |                                                  |
+|  Container that bundles together the texture     |                                                  |                                                  |
 |  texture unit, sampler, and texture name         |                                                  |                                                  |
 |                                                  |                                                  |                                                  |
-|                                                  |                                                  |                                                  |
+|* :cpp:class:`SGFXAPI::PixelBuffer`               |                                                  |                                                  |
 |                                                  |                                                  |* :cpp:class:`SGFXAPI::VertexElement`             |
 |                                                  |                                                  |                                                  |
 |                                                  |                                                  |  Specifies the semantic and format of a single   |
-|                                                  |                                                  |  element in a vertex data stream.                |
-|                                                  |                                                  |                                                  |
+|  A stream of pixels that can be used to read and |                                                  |  element in a vertex data stream.                |
+|  write pixel data between the CPU and GPU.       |                                                  |                                                  |
 |                                                  |                                                  |                                                  |
 |                                                  |                                                  |                                                  |
 |                                                  |                                                  |* :cpp:class:`SGFXAPI::Mesh`                      |
