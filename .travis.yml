@@ -16,7 +16,7 @@ env:
   matrix:
     - CMAKE_BUILD_TYPE=Release SGFXAPI_BUILD_TYPE=Release
     - CMAKE_BUILD_TYPE=Debug SGFXAPI_BUILD_TYPE=Debug
-    ""
+
 
 addons:
   apt:
@@ -58,6 +58,7 @@ script:
     - cmake --build . --target docs-html
     #- cmake --build . --target unittests
     #- ./unittests
+
 after_success:
     - bash ./scripts/publish-sphinx-docs.sh
 
