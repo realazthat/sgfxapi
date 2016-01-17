@@ -1,0 +1,60 @@
+sudo: required
+dist: trusty
+
+language: cpp
+compiler:
+  - gcc
+  #- clang
+env:
+
+  global:
+    #GH_TOKEN
+    - secure: kNWIuNdZ7JpeiFcbarTfZkGf1QbqQqHF/Zq+9mRMofXcnmAM1w7SklFmkZbl03OnjEWQrWvpabEp6Ro0JUmkltOZhJ768EnEwoOt7BJ5edgaEQiDZgToVdTJhXTC/sIlQz+KaxpLZpiJXGbn1Um4NQa1RT/BVFI/U+G0/jH0A2YuGVobAlD7SFbgKkqufBpn/lASClw+x2iBZ0Zdw5+f3D6zvVBWeSjLJnYuqJm5fySpY9PUOlJo8NJ0HMgxj0OCDJNrd0WrfOqlSzljWn+R1EnIxJcovFKq+3EiQBKV5UqfV3X8+mQg/C/4QLwVCOdiAubs4ik33Z4q9aksXeBCr+52RKNqgQmIb1Tnuj+9ARFF1LC0TrPFdfwcLrTdoqmTaX6usIefPMQmbfwt+5YUTZSb4VIpjql8dqVLHjuUB1GzEw325cY63vZ9GXHKj95jIbUScowVFPYQgTikwkqWjpMCurRFbK7Vzm5VdQlf4iA8S1A0JdbqBFDAGNn2E/T6ocjXppYnLZP8L9B5Zhv+icPnBkq2QdfQZJKprJ/lPBWE1NeFXYkY5Xhd2hElc7GTFFX9Q+y8A2/4A2vSiR7BejhkxivOgbNsFE34drb6T6k1BPvTU6ZwliOxEK5IHcuwrN91gcNw8I2WlFHZhIDN6ArarZ5UpqSjAdHC7Y09z/0=
+    - CMAKE_GENERATOR="Unix Makefiles"
+    - CMAKE_DEPS_BUILD_TYPE=Release
+    - GTEST_BUILD_TYPE=Release
+  matrix:
+    - CMAKE_BUILD_TYPE=Release SGFXAPI_BUILD_TYPE=Release
+    - CMAKE_BUILD_TYPE=Debug SGFXAPI_BUILD_TYPE=Debug
+    ""
+
+addons:
+  apt:
+    sources:
+    - ubuntu-toolchain-r-test
+    packages:
+    - gcc-4.8
+    - g++-4.8
+    - clang
+    - doxygen
+    #- libosmesa6
+    #- libglapi-mesa
+    #- mesa-utils
+    #- libglew-dev
+    #- libglfw-dev
+
+install:
+    - if [ "$CXX" = "g++" ]; then export CXX="g++-4.8" CC="gcc-4.8"; fi
+    #takes too long, we'll download the binaries instead.
+    #- sudo bash ./scripts/build-install-cmake3.sh
+    #- sudo bash ./scripts/download-install-cmake3.sh
+    - CMAKE_GENERATOR="$CMAKE_GENERATOR" CMAKE_BUILD_TYPE="$GTEST_BUILD_TYPE" bash ./scripts/download-and-build-googletest.sh
+    - CMAKE_GENERATOR="$CMAKE_GENERATOR" CMAKE_BUILD_TYPE="$CMAKE_DEPS_BUILD_TYPE" bash ./scripts/download-and-build-corner-cases.sh
+    - CMAKE_GENERATOR="$CMAKE_GENERATOR" CMAKE_BUILD_TYPE="$CMAKE_DEPS_BUILD_TYPE" bash ./scripts/download-and-build-mathgeolib.sh
+    
+    - CMAKE_GENERATOR="$CMAKE_GENERATOR" CMAKE_BUILD_TYPE="$CMAKE_DEPS_BUILD_TYPE" bash ./scripts/download-and-build-glfw3.sh
+    - CMAKE_GENERATOR="$CMAKE_GENERATOR" CMAKE_BUILD_TYPE="$CMAKE_DEPS_BUILD_TYPE" bash ./scripts/download-and-build-freeglut.sh
+
+    - CMAKE_GENERATOR="$CMAKE_GENERATOR" CMAKE_BUILD_TYPE="$CMAKE_DEPS_BUILD_TYPE" bash ./scripts/download-and-build-libs-with-no-pkg.sh
+    - CMAKE_GENERATOR="$CMAKE_GENERATOR" CMAKE_BUILD_TYPE="$CMAKE_DEPS_BUILD_TYPE" bash ./scripts/download-unittest-data.sh
+
+
+script:
+    - mkdir -p build && cd build
+    - cmake -G "$CMAKE_GENERATOR" .. "-DGTEST_LIB=gtest;pthread" -DCMAKE_VERBOSE_MAKEFILE=1 -DCMAKE_BUILD_TYPE="$CMAKE_BUILD_TYPE"
+    - cmake --build . --target docs-html
+    #- cmake --build . --target unittests
+    #- ./unittests
+after_success:
+    - bash ./scripts/publish-sphinx-docs.sh
+
