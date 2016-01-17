@@ -4,9 +4,19 @@ sgfxapi
 
 Simple wrapper around opengl 4, based off of [clb](http://clb.demon.fi)'s [gfxapi docs](http://clb.demon.fi/gfxapi/).
 
-{Long Description}
+The wrapper can help users understand the requirements of OpenGL4 API and to learn the OpenGL4 API.
 
 
+License
+----
+Libraries have their own license.
+
+Some specific files might have their own license included in them; in this case those files fall under
+that license. Some directories might have their own license; in that case those directories will have
+a README, LICENSE, COPYING or similar file related to licensing.
+
+As for the rest of the project, code written by me in this project is released under the
+[MIT License](https://opensource.org/licenses/MIT).
 
 
 Dependencies
@@ -15,6 +25,9 @@ Dependencies
 Build system:
 
 * CMake >= 3.1 (if using CMake)
+* doxygen for documentation generation
+* sphinx (python) for documentation generation
+* breathe (python) for documentation generation
 
 Libraries:
 
@@ -24,7 +37,8 @@ Libraries:
     tested with 1.12.0-3, from the `msys2/mingw-w64 64-bit` environment installed via pacman.
 * `glut`, or `freeglut`, tested with `freeglut`, from the `msys2/mingw-w64 64-bit` environment, installed via pacman.
 * `glu`
-* `corner-cases/cubelib`
+* [corner-cases/cubelib](https://github.com/realazthat/corner-cases)
+    * Useful library to reason about corners, edges, sides, of an imaginary cube
 
 
 
@@ -109,32 +123,44 @@ likely also work this way):
 
     cd sgfxapi
     
-    mkdir build
     
-    cd build
     
-    cmake -G"MSYS Makefiles" ..
+    #install dependencies, there are some bash scripts provided in the ./scripts/ directory
+    # that will download and build many of the dependencies and put them in the ./libs directory
+    # the scripts are meant for the continuous integration system, but you can run them yourself
+    # or read them for assistance.
     
-    #optionally set include dirs and lib dirs, if they are not installed in the system
-    cmake . -DGLFW3_INCLUDE_DIR=/path/to/glfw3/include -DGLFW3_LIB_DIR=/path/to/glfw3/lib
+    #optionally install or download and build googletest (only matters if you are going to run the unittests)
+    #note, choose the appropriate generator
+    #see the bash scripts for for more details
+    CMAKE_GENERATOR="MSYS Makefiles" CMAKE_BUILD_TYPE="Debug" bash ./scripts/download-and-build-googletest.sh
+    #... etc. install dependencies
     
-    #other variables cmake will understand:
-    #MGL_INCLUDE_DIR, MGL_LIB_DIR, MGL_LIB. these are the MathGeoLib paths.
-    #GLFW3_INCLUDE_DIR, GLFW3_LIB_DIR, GLFW3_LIB. these are the glfw3 paths.
-    #GLU_INCLUDE_DIR, GLU_LIB_DIR, GLU_LIB.
-    #GLUT_INCLUDE_DIR, GLUT_LIB_DIR, GLUT_LIB.
-    #GLEW_INCLUDE_DIR, GLEW_LIB_DIR, GLEW_LIB.
-    #CUBELIB_INCLUDE_DIR.
-    #The rest of the required libraries, if any, are expected to be installed in the global
-    # include and lib dirs for this compiler. You should also be able to see this list, and
-    # any other variables by running `cmake-gui .`
     
-    #so for example, if we are using freeglut via msys2, we need to specify the name of the
-    # glut library as `freeglut`, but since it is installed in the system, the paths
-    # to freeglut can be left out.
+    #make a build directory
+    mkdir -p build && cd build
+    
+    
+    #note, choose the appropriate generator
+    cmake -G"MSYS Makefiles" .. -DCMAKE_BUILD_TYPE="Debug"
+    
+    #if you built the dependencies and put them in the libs directory, then you are good to build
+    
+    #if you installed the dependencies to the system, you are prolly good to build
+
+    #if you built the dependencies yourself outside the expected ./libs subdirectories, then you will need to
+    # define/override the paths to the projects (which by default point to the ./libs directory)
+    # for example, like so:
+    cmake -L # list all the user-definable variables
+    cmake . -DGLFW3_INCLUDE_DIR=/path/to/cppformat/include -DGLFW3_LIB=glfw3 -DGLFW3_LIB_DIR=/path/to/glfw/build/src
+    # .. and so on for each dependency that is not in the ./libs directory and not installed in the system
+
+    
+    #furthermore, if we are using freeglut via msys2, we need to specify the name of the
+    # glut library as `freeglut`
     cmake . -DGLUT_LIB=freeglut
     
-    #alternatively, you can set these via the GUI
+    #alternatively, we can set these via the GUI
     cmake-gui .
     
     #set the various include and lib directories that are not installed in the system
@@ -143,23 +169,24 @@ likely also work this way):
     
     
     #to compile each target separately:
-    make sgfxapi
-    make sgfxapi-drawutils
-    make sgfxdemo
+    cmake --build . --target sgfxapi
+    cmake --build . --target sgfxapi-drawutils
+    cmake --build . --target sgfxdemo
     
     #to compile them all at once:
-    make
+    cmake --build .
     
     #copy over all the lib dlls that are not installed in the system
     cp /path/to/glfw3-libs/glfw3.dll .
+    # ...etc.
 
     #execute
     ./sgfxdemo
 
     #if you want this to run outside of the msys2/mingw-w64 environment, then you must additionally copy
-    # over any dependant dlls that are part of the environment.
+    # over any dependant dlls that are part of the mingw environment.
     
-    #this displays all the dependancies.
+    #this displays all the dependencies.
     ldd sgfxdemo
 
     #copy over any of the results that are part of the environment

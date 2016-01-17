@@ -5,6 +5,7 @@
 #include "sgfxapi/sgfxapi.glcommon.hpp"
 
 #include <stdint.h>
+#include <iosfwd>
 
 //#include <boost/format.hpp>
 //#include <boost/noncopyable.hpp>
@@ -292,6 +293,10 @@ GLenum toGLBinding(TextureType texturetype);
 
 const char* toGLSTR(PrimitiveIndexType indextype);
 
+const char* toSTR(VertexDataSemantic semantic);
+const char* toSTR(VertexDataType type);
+const char* toSTR(GPUVertexDataType type);
+
 GPUVertexDataType toDefaultGPUDataType(VertexDataType src_type);
 
 class Graphics
@@ -306,10 +311,9 @@ public:
 };
 
 
-
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-/* This class describes an element type of each entry in a VertexBuffer.
+/** This class describes an element type of each entry in a VertexBuffer.
  * 
  * VertexBuffers consist of a series of entries, each of which may have several elements.
  * As an example would be a vertex buffer might contain an entry for each vertex containing
@@ -321,20 +325,20 @@ class VertexElement
 {
 public:
 
-    /* Constructs a VertexElement.
-     * @semantic the "point" of the element. I'm not exactly sure what opengl does with this information,
+    /** Constructs a VertexElement.
+     * @param semantic the "point" of the element. I'm not exactly sure what opengl does with this information,
      *          and i sometimes abuse them to mean the wrong thing to pass in data that i want.
-     * @src_type the base type of the source array; that is the array that will be copied from the CPU, if any.
-     * @count the number of elements; so a "color" might be of "type" `UNSIGNED_SHORT` and of `count` 3.
-     * @name the name of the vertex element; it should be descriptive, like "color", "normal", or "extra-data1" etc.
+     * @param src_type the base type of the source array; that is the array that will be copied from the CPU, if any.
+     * @param count the number of elements; so a "color" might be of "type" `UNSIGNED_SHORT` and of `count` 3.
+     * @param name the name of the vertex element; it should be descriptive, like "color", "normal", or "extra-data1" etc.
      *          and no two names should conflict for the all the vertex-data (possibly multiple VertexBuffers and
      *          VertexDeclarations) when rendering.
-     * @normalized if the destination data is a floating point, and the source data is of integer type, setting this to true
+     * @param normalized if the destination data is a floating point, and the source data is of integer type, setting this to true
      *          will automatically convert the data to be in the range of [0,1] for unsigned types, or [-1,1] for signed
      *          types.
-     * @dst_type the type to convert to/store on the GPU; defaults to the same type on the CPU; opengl itself will sometimes
+     * @param dst_type the type to convert to/store on the GPU; defaults to the same type on the CPU; opengl itself will sometimes
      *          unexpectedly convert it to something else first, even if your shader is expecting the same type as the CPU,
-     *          and lose information as a result. See See http://www.informit.com/articles/article.aspx?p=2033340&seqNum=3
+     *          and lose information as a result. See http://www.informit.com/articles/article.aspx?p=2033340&seqNum=3
      */
     VertexElement( VertexDataSemantic semantic
                  , VertexDataType src_type, int count
@@ -371,7 +375,7 @@ public:
     
     /**
      * @brief If the source type is an integer-like type, and the target type is a flaot-like
-     *      type, then the converion will optionally "normalize" the data; where "normalize"
+     *      type, then the conversion will optionally "normalize" the data; where "normalize"
      *      here means to make each float be in the range [0,1] (for unsigned source)
      *      or [-1,1] (for signed source), and the mapping is SOURCE_TYPE_MIN will be the lower
      *      part of the range, and SOURCE_TYPE_MAX will be the upper part of the range. See docs on
@@ -393,7 +397,7 @@ public:
     //void dump_to_console();
     
     /**
-    * Returns a string of format "(semantic): : (name) semantic: (type), count: (num)".
+    * Returns a string of format "(semantic: (semantic), name: (name), type: (type), count: (num))".
     */
     std::string ToString() const;
     bool Valid() const;
@@ -409,16 +413,17 @@ private:
 };
 
 
+/**
+* Prints a string of format "(semantic: (semantic), name: (name), type: (type), count: (num))".
+*/
+::std::ostream& operator<<(::std::ostream&out, const VertexElement& element);
+
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 /**
  * @class VertexDeclaration
- * @author realz
- * @date 09/01/2016
- * @file sgfxapi.hpp
  * @brief Holds a list of VertexElement descriptions; the list
- *          describes the contents of a single VertexBuffer which can subsequently be used
- *          in the shader
+ *          describes the contents of each vertex in a single VertexBuffer.
  *          
  */
 class VertexDeclaration
@@ -437,10 +442,11 @@ public:
     */
     int Stride() const;
 
-    ///Alias for Stride()
     //int SizeBytes() const;
     
-    
+    /**
+     * Get at the elements.
+     */
     const std::vector<VertexElement>& Elements() const;
     
     //void save_to_file(std::ostream& out);
@@ -647,8 +653,6 @@ public:
     PixelBuffer(Usage usage, std::size_t bytes, bool allocateCpu=true);
     ~PixelBuffer();
 
-    //void loadDDS(const char * imagepath);
-    //void loadBMP(const char * imagepath, int index);
 
     int LogicalBufferSizeBytes() const;
     int GpuSizeInBytes() const;
@@ -670,7 +674,7 @@ public:
 
 
     /**
-     * Uploads data
+     * Uploads data to the GPU, assuming there is a CPU buffer.
      */
     void UpdateToGpu();
     void UpdateToGpu(const uint8_t* data, int bytes, int gpuoffset=0);
@@ -727,6 +731,26 @@ private:
     int m_index;
 };
 
+/**
+ * @brief Describes how the GPU should sample the texture.
+ *
+ * See [OpenGL 3.3 Sampler Objects: Control your Texture Units](http://www.geeks3d.com/20110908/opengl-3-3-sampler-objects-control-your-texture-units/)
+ *
+ * Usage:
+ * \code{.cpp}
+ * auto sampler = std::make_shared<TextureSampler>();
+ * 
+ * // the texture should wrap around in the u-direction
+ * sampler->addressU = TextureAddressMode::TextureAddressWrap;
+ * // the texture should take the border-value if it goes over the texture border in the v-direction.
+ * sampler->addressV = TextureAddressMode::TextureAddressBorderClamp;
+ *
+ * sampler->GenerateParams();
+ *
+ * auto mesh_texture = std::make_shared<MeshTexture>(texture, texture_unit, sampler, sampler_name);
+ * \endcode
+ *
+ */
 struct TextureSampler
 {
     TextureSampler(const TextureSampler&) = delete;
@@ -749,9 +773,15 @@ struct TextureSampler
     TextureFilterMode mipFilter;
     TextureFilterMode magFilter;
 
-
+    /**
+     * This should be called after construction, and/or after changing any member values
+     * and before using this object for rendering. GenerateParams() "saves" the values
+     * to the GPU-side.
+     *
+     */
     void GenerateParams();
 
+    /// Retrieve the opengl handle for the sampler.
     GLuint Handle() const;
 
 private:
@@ -759,6 +789,12 @@ private:
 };
 
 
+/**
+ *
+ *
+ *
+ *
+ */
 struct TextureFormat
 {
     TextureFormat(TextureElementType elementtype, TexturePixelFormat pixelformat)
@@ -900,7 +936,11 @@ private:
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-
+/**
+ * Bundles up shaders and links them into a single "program" for the GPU pipeline to use.
+ *
+ *
+ */
 class ShaderProgram
 {
     ShaderProgram(const ShaderProgram&) = delete;
@@ -909,6 +949,12 @@ public:
     explicit ShaderProgram();
     ~ShaderProgram();
     
+    /**
+     * Attaches a shader to this ShaderProgram.
+     * 
+     * Note on lifetimes: it is safe to delete the shader right after attaching it to the ShaderProgram.
+     *
+     */
     void Attach(Shader& shader);
     
     int GetUniformLocation(const char* name);
@@ -940,7 +986,7 @@ private:
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 /**
- * Just a container that bundles together the texture, texture unit, sampler, and shader name.
+ * Just a container that bundles together the texture, texture unit, sampler, and texture name (for retrieval in the shader).
  */
 struct MeshTexture{
     MeshTexture(  std::shared_ptr<Texture> texture
@@ -958,6 +1004,13 @@ struct MeshTexture{
     std::shared_ptr<TextureSampler> sampler;
     std::string sampler_name;
 };
+
+
+/**
+ * Bundles together one or more VertexBuffer objects, an optional IndexBuffer, a ShaderProgram,
+ * and one or more Texture objects, and bounds them together into a "VAO" for rendering.
+ *
+ */
 class Mesh
 {
     Mesh(const Mesh&) = delete;
@@ -966,32 +1019,78 @@ public:
     explicit Mesh(PrimitiveType primType);
     ~Mesh();
     
+    /// Add VertexBuffer objects to the Mesh via this public member.
     std::vector<std::shared_ptr<VertexBuffer> > vbs;
+    /// Set the IndexBuffer to the mesh - if using indexed geometry - via this public member.
     std::shared_ptr<IndexBuffer> ib;
+    /// Set the ShaderProgram to the mesh via this public member.
     std::shared_ptr<ShaderProgram> sp;
+    /// Add ShaderProgram objects to the mesh via this public member.
     std::vector<std::shared_ptr<MeshTexture> > textures;
     
-
+    
+    /**
+     * Call this once, after the mesh's properties are set, before calling LinkShaders().
+     * 
+     * @param startVertexOffset tells the mesh which vertex is the 0th vertex of the mesh.
+     *          The IndexBuffer will count off this starting vertex if the mesh is indexed.
+     *          Otherwise, the mesh will start at the vertex indicated, in groups of 3 vertices,
+     *          with one group of 3 vertices per triangle. Default is 0th vertex.
+     */
     void GenerateVAO(int startVertexOffset=0);
+    
+    /**
+     * Call this once, after the mesh has generated a VAO, and before ever calling Bind().
+     *
+     */
     void LinkShaders();
     
-    ///Bind the VAO
+    /**
+     * Bind the VAO. Call this to bind the Mesh; before calling Draw(), the mesh must be bound.
+     */
     void Bind();
     ///Unbind the VAO
     void UnBind();
-
+    
+    /**
+     * Check if the Mesh is bound.
+     *
+     *
+     * @returns true if the Mesh is bound, else returns false.
+     *
+     * @see Mesh::Bind()
+     */
     bool IsBound() const;
-
+    
+    /// Static method to unbind all VAOs.
+    /// @see Mesh::Bind(), Mesh::IsBound()
     static void UnBindAll();
     
+    /**
+     * Draw the Mesh.
+     *
+     * Mesh must be bound before calling this. The ShaderProgram of this mesh (Mesh::sp)
+     * should be "in use" (call ShaderProgram::Use()) before drawing to render properly.
+     *
+     * @param numIndices the number of indices to use for this mesh; default is -1 which means
+     *          all of the indices in the IndexBuffer if using indexed geometry,
+     *          or all of the implicit indices/triangles in the VertexBuffer objects if not using indexed
+     *          geometry.
+     * @param startIndexOffset the start index to use for this mesh; default is 0 which means
+     *          the first index in the IndexBuffer if using indexed geometry,
+     *          or all of the implicit indices/triangles in the VertexBuffer.
+     *
+     * @see Mesh::Bind(), Mesh::sp, ShaderProgram::Use()
+     */
     void Draw(int numIndices=-1, int startIndexOffset=0);
 
     void CheckValid() const;
     void CheckValidVBO(int startVertexOffset=0) const;
 
-    ///This loops through all the indices and checks that they are valid
+    ///This loops through all the indices and checks that they are valid.
     void CheckIndexBounds(int numIndices=-1, int startIndexOffset=0) const;
 
+    ///Return the effective vertex-declaration across all VBOs in the mesh.
     const VertexDeclaration& Declaration() const;
 
     /**
