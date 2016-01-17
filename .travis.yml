@@ -27,6 +27,8 @@ addons:
     - g++-4.8
     - clang
     - doxygen
+    - python3
+    - python3-pip
     #- libosmesa6
     #- libglapi-mesa
     #- mesa-utils
@@ -47,7 +49,8 @@ install:
 
     - CMAKE_GENERATOR="$CMAKE_GENERATOR" CMAKE_BUILD_TYPE="$CMAKE_DEPS_BUILD_TYPE" bash ./scripts/download-and-build-libs-with-no-pkg.sh
     - CMAKE_GENERATOR="$CMAKE_GENERATOR" CMAKE_BUILD_TYPE="$CMAKE_DEPS_BUILD_TYPE" bash ./scripts/download-unittest-data.sh
-
+    - pip3 install sphinx
+    - pip3 install breathe
 
 script:
     - mkdir -p build && cd build
