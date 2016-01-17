@@ -1,0 +1,123 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>&lt;no title&gt; &mdash; sgfxapi NONE documentation</title>
+    
+    <link rel="stylesheet" href="_static/haiku.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    './',
+        VERSION:     'NONE',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="_static/jquery.js"></script>
+    <script type="text/javascript" src="_static/underscore.js"></script>
+    <script type="text/javascript" src="_static/doctools.js"></script>
+    <script type="text/javascript" src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <link rel="top" title="sgfxapi NONE documentation" href="index.html" /> 
+  </head>
+  <body role="document">
+      <div class="header" role="banner"><h1 class="heading"><a href="index.html">
+          <span>sgfxapi NONE documentation</span></a></h1>
+        <h2 class="heading"><span>&lt;no title&gt;</span></h2>
+      </div>
+      <div class="topnav" role="navigation" aria-label="top navigation">
+      
+        <p>
+        <a class="uplink" href="index.html">Contents</a>
+        </p>
+
+      </div>
+      <div class="content">
+        
+        
+  <dl class="class">
+<dt id="_CPPv2N7SGFXAPI7TextureE">
+<span id="SGFXAPI::Texture"></span><span class="target" id="sgfxapiclass_s_g_f_x_a_p_i_1_1_texture"></span><em class="property">class </em><code class="descclassname">SGFXAPI::</code><code class="descname">Texture</code><a class="headerlink" href="#_CPPv2N7SGFXAPI7TextureE" title="Permalink to this definition">¶</a></dt>
+<dd><div class="breathe-sectiondef container">
+<p class="breathe-sectiondef-title rubric">Public Functions</p>
+<dl class="function">
+<dt id="_CPPv2N7SGFXAPI7Texture7TextureE11TextureType21TextureInternalFormat13ResourceUsageiiiii">
+<span id="SGFXAPI::Texture::Texture__TextureType.TextureInternalFormat.ResourceUsage.i.i.i.i.i"></span><span class="target" id="sgfxapiclass_s_g_f_x_a_p_i_1_1_texture_1a4dcc4389ad0a974307988f97eccaefc8"></span><code class="descname">Texture</code><span class="sig-paren">(</span>TextureType <em>texture_type</em>, TextureInternalFormat <em>internal_format</em>, ResourceUsage <em>usage</em>, int <em>width</em>, int <em>height</em>, int <em>depth</em>, int <em>mipmaps</em>, int <em>rowalignment</em><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv2N7SGFXAPI7Texture7TextureE11TextureType21TextureInternalFormat13ResourceUsageiiiii" title="Permalink to this definition">¶</a></dt>
+<dd><p><dl class="docutils">
+<dt><strong>Parameters</strong></dt>
+<dd><ul class="breatheparameterlist first last">
+<li><code class="first docutils literal"><span class="pre">texture_type</span></code> - <p>The type of texture, 1D,2D,3D/arrays etc. </p>
+</li>
+<li><code class="first docutils literal"><span class="pre">internal_format</span></code> - <p>A suggestion to the GPU of the type of format to store the image in, internally, on the GPU. </p>
+</li>
+<li><code class="first docutils literal"><span class="pre">usage</span></code> - <p>If this texture parameters will change (they won&#8217;t, because the parameters are set in the ctor). </p>
+</li>
+<li><code class="first docutils literal"><span class="pre">width</span></code> - <p>The width of the image; for 1D, the length of the image. </p>
+</li>
+<li><code class="first docutils literal"><span class="pre">height</span></code> - <p>The height of the image, for 1D, this will be 1. </p>
+</li>
+<li><code class="first docutils literal"><span class="pre">depth</span></code> - <p>The depth of the image, for 1D,2D, this will be 1. </p>
+</li>
+<li><code class="first docutils literal"><span class="pre">mipmaps</span></code> - <p>The number of mipmaps this texture will have. </p>
+</li>
+<li><code class="first docutils literal"><span class="pre">rowalignment</span></code> - <p>The uploaded data will have this rowalignment. See <code class="docutils literal"><a class="reference internal" href="#sgfxapiclass_s_g_f_x_a_p_i_1_1_texture_1aed915f85474de0dbf9c6f29b906ce6b4"><span><span class="pre">UpdateToGpu()</span></span></a></code>. Defaults to 4. </p>
+</li>
+</ul>
+</dd>
+</dl>
+</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="_CPPv2N7SGFXAPI7Texture11UpdateToGpuEiii13TextureFormatPK7uint8_t6size_tiRKNSt6stringE">
+<span id="SGFXAPI::Texture::UpdateToGpu__i.i.i.TextureFormat.uint8_tCP.s.i.ssCR"></span><span class="target" id="sgfxapiclass_s_g_f_x_a_p_i_1_1_texture_1aed915f85474de0dbf9c6f29b906ce6b4"></span>void <code class="descname">UpdateToGpu</code><span class="sig-paren">(</span>int <em>width</em>, int <em>height</em>, int <em>depth</em>, TextureFormat <em>textureFormat</em>, <em class="property">const</em> uint8_t *<em>data</em>, size_t <em>dataBytesSize</em>, int <em>level</em>, <em class="property">const</em> std::string &amp;<em>debugName</em><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv2N7SGFXAPI7Texture11UpdateToGpuEiii13TextureFormatPK7uint8_t6size_tiRKNSt6stringE" title="Permalink to this definition">¶</a></dt>
+<dd><p>Set a mipmap level of the texture. </p>
+<p><dl class="docutils">
+<dt><strong>Parameters</strong></dt>
+<dd><ul class="breatheparameterlist first last">
+<li><code class="first docutils literal"><span class="pre">textureFormat</span></code> - <p>The format of the data being uploaded. The data will be stored according to the <code class="docutils literal"><span class="pre">internal_format</span></code> parameter in the ctor. </p>
+</li>
+<li><code class="first docutils literal"><span class="pre">data</span></code> - <p>pointer to a buffer with the data for the texture. If a PBO is bound, data is the offset into the PBO. </p>
+</li>
+<li><code class="first docutils literal"><span class="pre">dataBytesSize</span></code> - <p>the size of the entire buffer. This is basically rowsize*width*height, where rowsize is (sizeperpixel*width) adjusted for <code class="docutils literal"><span class="pre">rowalignment</span></code>, specified in the ctor. </p>
+</li>
+<li><code class="first docutils literal"><span class="pre">level</span></code> - <p>this specifies the mipmap level to upload the data for. Level 0 <em>must</em> be uploaded. Other levels are optional, depending on the <code class="docutils literal"><span class="pre">mipmaps</span></code> parameter specified in the ctor. Call <code class="docutils literal"><a class="reference internal" href="#sgfxapiclass_s_g_f_x_a_p_i_1_1_texture_1ab4f1fa52af06537fd8b756fb31507ed1"><span><span class="pre">GenMipmaps()</span></span></a></code> to automatically generate the mipmaps from level 0. </p>
+</li>
+</ul>
+</dd>
+</dl>
+</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="_CPPv2N7SGFXAPI7Texture10GenMipmapsEv">
+<span id="SGFXAPI::Texture::GenMipmaps"></span><span class="target" id="sgfxapiclass_s_g_f_x_a_p_i_1_1_texture_1ab4f1fa52af06537fd8b756fb31507ed1"></span>void <code class="descname">GenMipmaps</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv2N7SGFXAPI7Texture10GenMipmapsEv" title="Permalink to this definition">¶</a></dt>
+<dd><p>Automatically generate mipmaps. </p>
+</dd></dl>
+
+</div>
+</dd></dl>
+
+
+
+      </div>
+      <div class="bottomnav" role="navigation" aria-label="bottom navigation">
+      
+        <p>
+        <a class="uplink" href="index.html">Contents</a>
+        </p>
+
+      </div>
+
+    <div class="footer" role="contentinfo">
+        &copy; Copyright 2016, Azriel Fasten.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.3.4.
+    </div>
+  </body>
+</html>

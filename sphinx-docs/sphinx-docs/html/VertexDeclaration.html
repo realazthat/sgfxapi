@@ -1,0 +1,88 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>&lt;no title&gt; &mdash; sgfxapi NONE documentation</title>
+    
+    <link rel="stylesheet" href="_static/haiku.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    './',
+        VERSION:     'NONE',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="_static/jquery.js"></script>
+    <script type="text/javascript" src="_static/underscore.js"></script>
+    <script type="text/javascript" src="_static/doctools.js"></script>
+    <script type="text/javascript" src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <link rel="top" title="sgfxapi NONE documentation" href="index.html" /> 
+  </head>
+  <body role="document">
+      <div class="header" role="banner"><h1 class="heading"><a href="index.html">
+          <span>sgfxapi NONE documentation</span></a></h1>
+        <h2 class="heading"><span>&lt;no title&gt;</span></h2>
+      </div>
+      <div class="topnav" role="navigation" aria-label="top navigation">
+      
+        <p>
+        <a class="uplink" href="index.html">Contents</a>
+        </p>
+
+      </div>
+      <div class="content">
+        
+        
+  <dl class="class">
+<dt id="_CPPv2N7SGFXAPI17VertexDeclarationE">
+<span id="SGFXAPI::VertexDeclaration"></span><span class="target" id="sgfxapiclass_s_g_f_x_a_p_i_1_1_vertex_declaration"></span><em class="property">class </em><code class="descclassname">SGFXAPI::</code><code class="descname">VertexDeclaration</code><a class="headerlink" href="#_CPPv2N7SGFXAPI17VertexDeclarationE" title="Permalink to this definition">¶</a></dt>
+<dd><p>Describes the structure of the vertex stream. </p>
+<p>Holds a list of <a class="reference internal" href="VertexElement.html#sgfxapiclass_s_g_f_x_a_p_i_1_1_vertex_element"><span>VertexElement</span></a> descriptions; the list describes the contents of a single <a class="reference internal" href="VertexBuffer.html#sgfxapiclass_s_g_f_x_a_p_i_1_1_vertex_buffer"><span>VertexBuffer</span></a> which can subsequently be used in the shader </p>
+<div class="breathe-sectiondef container">
+<p class="breathe-sectiondef-title rubric">Public Functions</p>
+<dl class="function">
+<dt id="_CPPv2N7SGFXAPI17VertexDeclaration3AddE13VertexElement">
+<span id="SGFXAPI::VertexDeclaration::Add__VertexElement"></span><span class="target" id="sgfxapiclass_s_g_f_x_a_p_i_1_1_vertex_declaration_1a3fe28765debcde620703460b7304a49c"></span>void <code class="descname">Add</code><span class="sig-paren">(</span><a class="reference internal" href="VertexElement.html#_CPPv2N7SGFXAPI13VertexElementE" title="SGFXAPI::VertexElement">VertexElement</a> <em>elem</em><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv2N7SGFXAPI17VertexDeclaration3AddE13VertexElement" title="Permalink to this definition">¶</a></dt>
+<dd><p>Adds a new data element to the end of the element list. </p>
+</dd></dl>
+
+<dl class="function">
+<dt id="_CPPv2N7SGFXAPI17VertexDeclaration6StrideEv">
+<span id="SGFXAPI::VertexDeclaration::Stride"></span><span class="target" id="sgfxapiclass_s_g_f_x_a_p_i_1_1_vertex_declaration_1a8925a7b12e33014d4eb4a0eba53f666d"></span>int <code class="descname">Stride</code><span class="sig-paren">(</span><span class="sig-paren">)</span> const<a class="headerlink" href="#_CPPv2N7SGFXAPI17VertexDeclaration6StrideEv" title="Permalink to this definition">¶</a></dt>
+<dd><p>The size of a single vertex in the stream in bytes, including any padding. </p>
+</dd></dl>
+
+<dl class="function">
+<dt id="_CPPv2N7SGFXAPI17VertexDeclaration8ElementsEv">
+<span id="SGFXAPI::VertexDeclaration::Elements"></span><span class="target" id="sgfxapiclass_s_g_f_x_a_p_i_1_1_vertex_declaration_1a5a56a65e5f40e8b55649d6b96b8179d9"></span><em class="property">const</em> std::vector&lt;<a class="reference internal" href="VertexElement.html#_CPPv2N7SGFXAPI13VertexElementE" title="SGFXAPI::VertexElement">VertexElement</a>&gt; &amp;<code class="descname">Elements</code><span class="sig-paren">(</span><span class="sig-paren">)</span> const<a class="headerlink" href="#_CPPv2N7SGFXAPI17VertexDeclaration8ElementsEv" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get at the elements. </p>
+</dd></dl>
+
+</div>
+</dd></dl>
+
+
+
+      </div>
+      <div class="bottomnav" role="navigation" aria-label="bottom navigation">
+      
+        <p>
+        <a class="uplink" href="index.html">Contents</a>
+        </p>
+
+      </div>
+
+    <div class="footer" role="contentinfo">
+        &copy; Copyright 2016, Azriel Fasten.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.3.4.
+    </div>
+  </body>
+</html>
