@@ -4,9 +4,19 @@ sgfxapi
 
 Simple wrapper around opengl 4, based off of [clb](http://clb.demon.fi)'s [gfxapi docs](http://clb.demon.fi/gfxapi/).
 
-{Long Description}
+The wrapper can help users understand the requirements of OpenGL4 API and to learn the OpenGL4 API.
 
 
+License
+----
+Libraries have their own license.
+
+Some specific files might have their own license included in them; in this case those files fall under
+that license. Some directories might have their own license; in that case those directories will have
+a README, LICENSE, COPYING or similar file related to licensing.
+
+As for the rest of the project, code written by me in this project is released under the
+[MIT License](https://opensource.org/licenses/MIT).
 
 
 Dependencies
@@ -15,6 +25,9 @@ Dependencies
 Build system:
 
 * CMake >= 3.1 (if using CMake)
+* doxygen for documentation generation
+* sphinx (python) for documentation generation
+* breathe (python) for documentation generation
 
 Libraries:
 
@@ -24,7 +37,8 @@ Libraries:
     tested with 1.12.0-3, from the `msys2/mingw-w64 64-bit` environment installed via pacman.
 * `glut`, or `freeglut`, tested with `freeglut`, from the `msys2/mingw-w64 64-bit` environment, installed via pacman.
 * `glu`
-* `corner-cases/cubelib`
+* [corner-cases/cubelib](https://github.com/realazthat/corner-cases)
+    * Useful library to reason about corners, edges, sides, of an imaginary cube
 
 
 
