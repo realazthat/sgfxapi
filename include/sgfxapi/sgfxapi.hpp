@@ -439,10 +439,11 @@ public:
     */
     int Stride() const;
 
-    ///Alias for Stride()
     //int SizeBytes() const;
     
-    
+    /**
+     * Get at the elements.
+     */
     const std::vector<VertexElement>& Elements() const;
     
     //void save_to_file(std::ostream& out);
@@ -1017,34 +1018,78 @@ public:
     explicit Mesh(PrimitiveType primType);
     ~Mesh();
     
+    /// Add VertexBuffer objects to the Mesh via this public member.
     std::vector<std::shared_ptr<VertexBuffer> > vbs;
+    /// Set the IndexBuffer to the mesh - if using indexed geometry - via this public member.
     std::shared_ptr<IndexBuffer> ib;
+    /// Set the ShaderProgram to the mesh via this public member.
     std::shared_ptr<ShaderProgram> sp;
+    /// Add ShaderProgram objects to the mesh via this public member.
     std::vector<std::shared_ptr<MeshTexture> > textures;
     
-
+    
+    /**
+     * Call this once, after the mesh's properties are set, before calling LinkShaders().
+     * 
+     * @param startVertexOffset tells the mesh which vertex is the 0th vertex of the mesh.
+     *          The IndexBuffer will count off this starting vertex if the mesh is indexed.
+     *          Otherwise, the mesh will start at the vertex indicated, in groups of 3 vertices,
+     *          with one group of 3 vertices per triangle. Default is 0th vertex.
+     */
     void GenerateVAO(int startVertexOffset=0);
+    
+    /**
+     * Call this once, after the mesh has generated a VAO, and before ever calling Bind().
+     *
+     */
     void LinkShaders();
     
     /**
-     * Bind the VAO.
+     * Bind the VAO. Call this to bind the Mesh; before calling Draw(), the mesh must be bound.
      */
     void Bind();
     ///Unbind the VAO
     void UnBind();
-
+    
+    /**
+     * Check if the Mesh is bound.
+     *
+     *
+     * @returns true if the Mesh is bound, else returns false.
+     *
+     * @see Mesh::Bind()
+     */
     bool IsBound() const;
     
+    /// Static method to unbind all VAOs.
+    /// @see Mesh::Bind(), Mesh::IsBound()
     static void UnBindAll();
     
+    /**
+     * Draw the Mesh.
+     *
+     * Mesh must be bound before calling this. The ShaderProgram of this mesh (Mesh::sp)
+     * should be "in use" (call ShaderProgram::Use()) before drawing to render properly.
+     *
+     * @param numIndices the number of indices to use for this mesh; default is -1 which means
+     *          all of the indices in the IndexBuffer if using indexed geometry,
+     *          or all of the implicit indices/triangles in the VertexBuffer objects if not using indexed
+     *          geometry.
+     * @param startIndexOffset the start index to use for this mesh; default is 0 which means
+     *          the first index in the IndexBuffer if using indexed geometry,
+     *          or all of the implicit indices/triangles in the VertexBuffer.
+     *
+     * @see Mesh::Bind(), Mesh::sp, ShaderProgram::Use()
+     */
     void Draw(int numIndices=-1, int startIndexOffset=0);
 
     void CheckValid() const;
     void CheckValidVBO(int startVertexOffset=0) const;
 
-    ///This loops through all the indices and checks that they are valid
+    ///This loops through all the indices and checks that they are valid.
     void CheckIndexBounds(int numIndices=-1, int startIndexOffset=0) const;
 
+    ///Return the effective vertex-declaration across all VBOs in the mesh.
     const VertexDeclaration& Declaration() const;
 
     /**
