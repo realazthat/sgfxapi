@@ -1,0 +1,195 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>&lt;no title&gt; &mdash; sgfxapi NONE documentation</title>
+    
+    <link rel="stylesheet" href="_static/haiku.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    './',
+        VERSION:     'NONE',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="_static/jquery.js"></script>
+    <script type="text/javascript" src="_static/underscore.js"></script>
+    <script type="text/javascript" src="_static/doctools.js"></script>
+    <script type="text/javascript" src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <link rel="top" title="sgfxapi NONE documentation" href="index.html" /> 
+  </head>
+  <body role="document">
+      <div class="header" role="banner"><h1 class="heading"><a href="index.html">
+          <span>sgfxapi NONE documentation</span></a></h1>
+        <h2 class="heading"><span>&lt;no title&gt;</span></h2>
+      </div>
+      <div class="topnav" role="navigation" aria-label="top navigation">
+      
+        <p>
+        <a class="uplink" href="index.html">Contents</a>
+        </p>
+
+      </div>
+      <div class="content">
+        
+        
+  <dl class="class">
+<dt id="_CPPv2N7SGFXAPI4MeshE">
+<span id="SGFXAPI::Mesh"></span><span class="target" id="sgfxapiclass_s_g_f_x_a_p_i_1_1_mesh"></span><em class="property">class </em><code class="descclassname">SGFXAPI::</code><code class="descname">Mesh</code><a class="headerlink" href="#_CPPv2N7SGFXAPI4MeshE" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bundles together one or more <a class="reference internal" href="VertexBuffer.html#sgfxapiclass_s_g_f_x_a_p_i_1_1_vertex_buffer"><span>VertexBuffer</span></a> objects, an optional <a class="reference internal" href="IndexBuffer.html#sgfxapiclass_s_g_f_x_a_p_i_1_1_index_buffer"><span>IndexBuffer</span></a>, a <a class="reference internal" href="ShaderProgram.html#sgfxapiclass_s_g_f_x_a_p_i_1_1_shader_program"><span>ShaderProgram</span></a>, and one or more <a class="reference internal" href="Texture.html#sgfxapiclass_s_g_f_x_a_p_i_1_1_texture"><span>Texture</span></a> objects, and bounds them together into a &#8220;VAO&#8221; for rendering. </p>
+<div class="breathe-sectiondef container">
+<p class="breathe-sectiondef-title rubric">Public Functions</p>
+<dl class="function">
+<dt id="_CPPv2N7SGFXAPI4Mesh11GenerateVAOEi">
+<span id="SGFXAPI::Mesh::GenerateVAO__i"></span><span class="target" id="sgfxapiclass_s_g_f_x_a_p_i_1_1_mesh_1a1f8bcc4f169d3e5fbf8c19bb1ee3f6f7"></span>void <code class="descname">GenerateVAO</code><span class="sig-paren">(</span>int <em>startVertexOffset</em><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv2N7SGFXAPI4Mesh11GenerateVAOEi" title="Permalink to this definition">¶</a></dt>
+<dd><p>Call this once, after the mesh&#8217;s properties are set, before calling <a class="reference internal" href="#sgfxapiclass_s_g_f_x_a_p_i_1_1_mesh_1ade6ef0d876c5bc081e8784c230581d69"><span>LinkShaders()</span></a>. </p>
+<p><dl class="docutils">
+<dt><strong>Parameters</strong></dt>
+<dd><ul class="breatheparameterlist first last">
+<li><code class="first docutils literal"><span class="pre">startVertexOffset</span></code> - <p>tells the mesh which vertex is the 0th vertex of the mesh. The <a class="reference internal" href="IndexBuffer.html#sgfxapiclass_s_g_f_x_a_p_i_1_1_index_buffer"><span>IndexBuffer</span></a> will count off this starting vertex if the mesh is indexed. Otherwise, the mesh will start at the vertex indicated, in groups of 3 vertices, with one group of 3 vertices per triangle. Default is 0th vertex. </p>
+</li>
+</ul>
+</dd>
+</dl>
+</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="_CPPv2N7SGFXAPI4Mesh11LinkShadersEv">
+<span id="SGFXAPI::Mesh::LinkShaders"></span><span class="target" id="sgfxapiclass_s_g_f_x_a_p_i_1_1_mesh_1ade6ef0d876c5bc081e8784c230581d69"></span>void <code class="descname">LinkShaders</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv2N7SGFXAPI4Mesh11LinkShadersEv" title="Permalink to this definition">¶</a></dt>
+<dd><p>Call this once, after the mesh has generated a VAO, and before ever calling <a class="reference internal" href="#sgfxapiclass_s_g_f_x_a_p_i_1_1_mesh_1af8c1f9a64b6256d97a170aeefae51214"><span>Bind()</span></a>. </p>
+</dd></dl>
+
+<dl class="function">
+<dt id="_CPPv2N7SGFXAPI4Mesh4BindEv">
+<span id="SGFXAPI::Mesh::Bind"></span><span class="target" id="sgfxapiclass_s_g_f_x_a_p_i_1_1_mesh_1af8c1f9a64b6256d97a170aeefae51214"></span>void <code class="descname">Bind</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv2N7SGFXAPI4Mesh4BindEv" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bind the VAO. </p>
+<p>Call this to bind the <a class="reference internal" href="#sgfxapiclass_s_g_f_x_a_p_i_1_1_mesh"><span>Mesh</span></a>; before calling <a class="reference internal" href="#sgfxapiclass_s_g_f_x_a_p_i_1_1_mesh_1a1888cb124edbe6166bac570c4efdbbf0"><span>Draw()</span></a>, the mesh must be bound. </p>
+</dd></dl>
+
+<dl class="function">
+<dt id="_CPPv2N7SGFXAPI4Mesh6UnBindEv">
+<span id="SGFXAPI::Mesh::UnBind"></span><span class="target" id="sgfxapiclass_s_g_f_x_a_p_i_1_1_mesh_1ad8750ef0c27b3460c4fa8041ca518fef"></span>void <code class="descname">UnBind</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv2N7SGFXAPI4Mesh6UnBindEv" title="Permalink to this definition">¶</a></dt>
+<dd><p>Unbind the VAO. </p>
+</dd></dl>
+
+<dl class="function">
+<dt id="_CPPv2N7SGFXAPI4Mesh7IsBoundEv">
+<span id="SGFXAPI::Mesh::IsBound"></span><span class="target" id="sgfxapiclass_s_g_f_x_a_p_i_1_1_mesh_1a53a64d4da8c3abafb4cec4b07aae0661"></span>bool <code class="descname">IsBound</code><span class="sig-paren">(</span><span class="sig-paren">)</span> const<a class="headerlink" href="#_CPPv2N7SGFXAPI4Mesh7IsBoundEv" title="Permalink to this definition">¶</a></dt>
+<dd><p>Check if the <a class="reference internal" href="#sgfxapiclass_s_g_f_x_a_p_i_1_1_mesh"><span>Mesh</span></a> is bound. </p>
+<p><dl class="docutils">
+<dt><strong>Return</strong></dt>
+<dd>true if the <a class="reference internal" href="#sgfxapiclass_s_g_f_x_a_p_i_1_1_mesh"><span>Mesh</span></a> is bound, else returns false.</dd>
+<dt><strong>See</strong></dt>
+<dd><a class="reference internal" href="#sgfxapiclass_s_g_f_x_a_p_i_1_1_mesh_1af8c1f9a64b6256d97a170aeefae51214"><span>Mesh::Bind()</span></a> </dd>
+</dl>
+</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="_CPPv2N7SGFXAPI4Mesh4DrawEii">
+<span id="SGFXAPI::Mesh::Draw__i.i"></span><span class="target" id="sgfxapiclass_s_g_f_x_a_p_i_1_1_mesh_1a1888cb124edbe6166bac570c4efdbbf0"></span>void <code class="descname">Draw</code><span class="sig-paren">(</span>int <em>numIndices</em>, int <em>startIndexOffset</em><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv2N7SGFXAPI4Mesh4DrawEii" title="Permalink to this definition">¶</a></dt>
+<dd><p>Draw the <a class="reference internal" href="#sgfxapiclass_s_g_f_x_a_p_i_1_1_mesh"><span>Mesh</span></a>. </p>
+<p><a class="reference internal" href="#sgfxapiclass_s_g_f_x_a_p_i_1_1_mesh"><span>Mesh</span></a> must be bound before calling this. The <a class="reference internal" href="ShaderProgram.html#sgfxapiclass_s_g_f_x_a_p_i_1_1_shader_program"><span>ShaderProgram</span></a> of this mesh (<a class="reference internal" href="#sgfxapiclass_s_g_f_x_a_p_i_1_1_mesh_1a8504cfdbbfb296ebb1216d6e08174c1e"><span>Mesh::sp</span></a>) should be &#8220;in use&#8221; (call ShaderProgram::Use()) before drawing to render properly.</p>
+<p><dl class="docutils">
+<dt><strong>See</strong></dt>
+<dd><a class="reference internal" href="#sgfxapiclass_s_g_f_x_a_p_i_1_1_mesh_1af8c1f9a64b6256d97a170aeefae51214"><span>Mesh::Bind()</span></a>, <a class="reference internal" href="#sgfxapiclass_s_g_f_x_a_p_i_1_1_mesh_1a8504cfdbbfb296ebb1216d6e08174c1e"><span>Mesh::sp</span></a>, ShaderProgram::Use() </dd>
+<dt><strong>Parameters</strong></dt>
+<dd><ul class="breatheparameterlist first last">
+<li><code class="first docutils literal"><span class="pre">numIndices</span></code> - <p>the number of indices to use for this mesh; default is -1 which means all of the indices in the <a class="reference internal" href="IndexBuffer.html#sgfxapiclass_s_g_f_x_a_p_i_1_1_index_buffer"><span>IndexBuffer</span></a> if using indexed geometry, or all of the implicit indices/triangles in the <a class="reference internal" href="VertexBuffer.html#sgfxapiclass_s_g_f_x_a_p_i_1_1_vertex_buffer"><span>VertexBuffer</span></a> objects if not using indexed geometry. </p>
+</li>
+<li><code class="first docutils literal"><span class="pre">startIndexOffset</span></code> - <p>the start index to use for this mesh; default is 0 which means the first index in the <a class="reference internal" href="IndexBuffer.html#sgfxapiclass_s_g_f_x_a_p_i_1_1_index_buffer"><span>IndexBuffer</span></a> if using indexed geometry, or all of the implicit indices/triangles in the <a class="reference internal" href="VertexBuffer.html#sgfxapiclass_s_g_f_x_a_p_i_1_1_vertex_buffer"><span>VertexBuffer</span></a>.</p>
+</li>
+</ul>
+</dd>
+</dl>
+</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="_CPPv2N7SGFXAPI4Mesh16CheckIndexBoundsEii">
+<span id="SGFXAPI::Mesh::CheckIndexBounds__i.i"></span><span class="target" id="sgfxapiclass_s_g_f_x_a_p_i_1_1_mesh_1a1ea5ef60187e8e345911956d4cc780d8"></span>void <code class="descname">CheckIndexBounds</code><span class="sig-paren">(</span>int <em>numIndices</em>, int <em>startIndexOffset</em><span class="sig-paren">)</span> const<a class="headerlink" href="#_CPPv2N7SGFXAPI4Mesh16CheckIndexBoundsEii" title="Permalink to this definition">¶</a></dt>
+<dd><p>This loops through all the indices and checks that they are valid. </p>
+</dd></dl>
+
+<dl class="function">
+<dt id="_CPPv2N7SGFXAPI4Mesh11DeclarationEv">
+<span id="SGFXAPI::Mesh::Declaration"></span><span class="target" id="sgfxapiclass_s_g_f_x_a_p_i_1_1_mesh_1aab6e1d3b33984a7b7ab030ef3dadcad9"></span><em class="property">const</em> <a class="reference internal" href="VertexDeclaration.html#_CPPv2N7SGFXAPI17VertexDeclarationE" title="SGFXAPI::VertexDeclaration">VertexDeclaration</a> &amp;<code class="descname">Declaration</code><span class="sig-paren">(</span><span class="sig-paren">)</span> const<a class="headerlink" href="#_CPPv2N7SGFXAPI4Mesh11DeclarationEv" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return the effective vertex-declaration across all VBOs in the mesh. </p>
+</dd></dl>
+
+<dl class="function">
+<dt id="_CPPv2N7SGFXAPI4Mesh8PrimTypeEv">
+<span id="SGFXAPI::Mesh::PrimType"></span><span class="target" id="sgfxapiclass_s_g_f_x_a_p_i_1_1_mesh_1ab3624f290aea9810dc5fbe4f480445b4"></span>PrimitiveType <code class="descname">PrimType</code><span class="sig-paren">(</span><span class="sig-paren">)</span> const<a class="headerlink" href="#_CPPv2N7SGFXAPI4Mesh8PrimTypeEv" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns the type of primitives used by this mesh (PrimPoint, PrimLineList, PrimLineStrip, PrimTriangleList or PrimTriangleStrip). </p>
+</dd></dl>
+
+</div>
+<div class="breathe-sectiondef container">
+<p class="breathe-sectiondef-title rubric">Public Members</p>
+<dl class="member">
+<dt id="_CPPv2N7SGFXAPI4Mesh3vbsE">
+<span id="SGFXAPI::Mesh::vbs__std::vector:std::shared_ptr:VertexBuffer::"></span><span class="target" id="sgfxapiclass_s_g_f_x_a_p_i_1_1_mesh_1a2203000c9e90200b8499373da5052b34"></span>std::vector&lt;std::shared_ptr&lt;<a class="reference internal" href="VertexBuffer.html#_CPPv2N7SGFXAPI12VertexBufferE" title="SGFXAPI::VertexBuffer">VertexBuffer</a>&gt;&gt; <code class="descname">vbs</code><a class="headerlink" href="#_CPPv2N7SGFXAPI4Mesh3vbsE" title="Permalink to this definition">¶</a></dt>
+<dd><p>Add <a class="reference internal" href="VertexBuffer.html#sgfxapiclass_s_g_f_x_a_p_i_1_1_vertex_buffer"><span>VertexBuffer</span></a> objects to the <a class="reference internal" href="#sgfxapiclass_s_g_f_x_a_p_i_1_1_mesh"><span>Mesh</span></a> via this public member. </p>
+</dd></dl>
+
+<dl class="member">
+<dt id="_CPPv2N7SGFXAPI4Mesh2ibE">
+<span id="SGFXAPI::Mesh::ib__std::shared_ptr:IndexBuffer:"></span><span class="target" id="sgfxapiclass_s_g_f_x_a_p_i_1_1_mesh_1ab7b12fc5ddf9076943a16110e22cca0d"></span>std::shared_ptr&lt;<a class="reference internal" href="IndexBuffer.html#_CPPv2N7SGFXAPI11IndexBufferE" title="SGFXAPI::IndexBuffer">IndexBuffer</a>&gt; <code class="descname">ib</code><a class="headerlink" href="#_CPPv2N7SGFXAPI4Mesh2ibE" title="Permalink to this definition">¶</a></dt>
+<dd><p>Set the <a class="reference internal" href="IndexBuffer.html#sgfxapiclass_s_g_f_x_a_p_i_1_1_index_buffer"><span>IndexBuffer</span></a> to the mesh - if using indexed geometry - via this public member. </p>
+</dd></dl>
+
+<dl class="member">
+<dt id="_CPPv2N7SGFXAPI4Mesh2spE">
+<span id="SGFXAPI::Mesh::sp__std::shared_ptr:ShaderProgram:"></span><span class="target" id="sgfxapiclass_s_g_f_x_a_p_i_1_1_mesh_1a8504cfdbbfb296ebb1216d6e08174c1e"></span>std::shared_ptr&lt;<a class="reference internal" href="ShaderProgram.html#_CPPv2N7SGFXAPI13ShaderProgramE" title="SGFXAPI::ShaderProgram">ShaderProgram</a>&gt; <code class="descname">sp</code><a class="headerlink" href="#_CPPv2N7SGFXAPI4Mesh2spE" title="Permalink to this definition">¶</a></dt>
+<dd><p>Set the <a class="reference internal" href="ShaderProgram.html#sgfxapiclass_s_g_f_x_a_p_i_1_1_shader_program"><span>ShaderProgram</span></a> to the mesh via this public member. </p>
+</dd></dl>
+
+<dl class="member">
+<dt id="_CPPv2N7SGFXAPI4Mesh8texturesE">
+<span id="SGFXAPI::Mesh::textures__std::vector:std::shared_ptr:MeshTexture::"></span><span class="target" id="sgfxapiclass_s_g_f_x_a_p_i_1_1_mesh_1aa73bc855d6f4882c288e4e93746e7295"></span>std::vector&lt;std::shared_ptr&lt;<a class="reference internal" href="MeshTexture.html#_CPPv2N7SGFXAPI11MeshTextureE" title="SGFXAPI::MeshTexture">MeshTexture</a>&gt;&gt; <code class="descname">textures</code><a class="headerlink" href="#_CPPv2N7SGFXAPI4Mesh8texturesE" title="Permalink to this definition">¶</a></dt>
+<dd><p>Add <a class="reference internal" href="ShaderProgram.html#sgfxapiclass_s_g_f_x_a_p_i_1_1_shader_program"><span>ShaderProgram</span></a> objects to the mesh via this public member. </p>
+</dd></dl>
+
+</div>
+<div class="breathe-sectiondef container">
+<p class="breathe-sectiondef-title rubric">Public Static Functions</p>
+<dl class="function">
+<dt id="_CPPv2N7SGFXAPI4Mesh9UnBindAllEv">
+<span id="SGFXAPI::Mesh::UnBindAll"></span><span class="target" id="sgfxapiclass_s_g_f_x_a_p_i_1_1_mesh_1a070173d9f7e5e303b91ee94e8fd6d964"></span>void <code class="descname">UnBindAll</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv2N7SGFXAPI4Mesh9UnBindAllEv" title="Permalink to this definition">¶</a></dt>
+<dd><p>Static method to unbind all VAOs. </p>
+<p><dl class="docutils">
+<dt><strong>See</strong></dt>
+<dd><a class="reference internal" href="#sgfxapiclass_s_g_f_x_a_p_i_1_1_mesh_1af8c1f9a64b6256d97a170aeefae51214"><span>Mesh::Bind()</span></a>, <a class="reference internal" href="#sgfxapiclass_s_g_f_x_a_p_i_1_1_mesh_1a53a64d4da8c3abafb4cec4b07aae0661"><span>Mesh::IsBound()</span></a> </dd>
+</dl>
+</p>
+</dd></dl>
+
+</div>
+</dd></dl>
+
+
+
+      </div>
+      <div class="bottomnav" role="navigation" aria-label="bottom navigation">
+      
+        <p>
+        <a class="uplink" href="index.html">Contents</a>
+        </p>
+
+      </div>
+
+    <div class="footer" role="contentinfo">
+        &copy; Copyright 2016, Azriel Fasten.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.3.4.
+    </div>
+  </body>
+</html>
