@@ -61,6 +61,7 @@ script:
     - cmake --build . --target docs-html
     #- cmake --build . --target unittests
     #- ./unittests
+    - cd ../
 
 after_success:
     - bash ./scripts/publish-sphinx-docs.sh
