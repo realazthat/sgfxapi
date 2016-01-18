@@ -1025,7 +1025,7 @@ public:
     std::shared_ptr<IndexBuffer> ib;
     /// Set the ShaderProgram to the mesh via this public member.
     std::shared_ptr<ShaderProgram> sp;
-    /// Add ShaderProgram objects to the mesh via this public member.
+    /// Add MeshTexture objects to the mesh via this public member.
     std::vector<std::shared_ptr<MeshTexture> > textures;
     
     
@@ -1120,18 +1120,55 @@ private:
     
 };
 
+/**
+ * Calls to the GPU may not happen immediately. Sometimes it is useful to know
+ * when a certain point in the call-stream is reached; the Fence class gives this ability.
+ * Construct a fence, and poll it later to see if that point in the stream was yet processed.
+ *
+ */
 class Fence
 {
     Fence(const Fence&) = delete;
     Fence& operator=(const Fence&) = delete;
 public:
+
+    /**
+     * Constructor; when constructed with @param initialize set to @c true, this will put
+     * a placeholder in the GPU processing stream.
+     *
+     * @param initialize if set to true, this will put the placeholder in the GPU processing stream;
+     *      otherwise, this will create an empty fence that must later be initlaized.
+     */
     Fence(bool initialize=true);
     ~Fence();
 
+    /**
+     * Uninitializes/destroys the current fence, if any, and optionally places another fence into the
+     * GPU processing stream.
+     *
+     * @param initialize if set to true, this will put the placeholder in the GPU processing stream;
+     *      otherwise, this will create an empty fence that must later be initlaized.
+     */
     void Reset(bool initialize);
 
+    /**
+     * This checks with the GPU to see if the execution has passed this Fence,
+     * and then sets the state of this Fence object. To only check the
+     * state of the fence, use Waiting().
+     *
+     * @see Waiting()
+     */
     bool CheckWaiting();
+    
+    /**
+     * This checks the state of this fence object; note that this call does not poll
+     * the GPU; to do that, use CheckWaiting().
+     *
+     * @see CheckWaiting()
+     */
     bool Waiting() const;
+    
+    /// Check if this fence is initialized.
     bool Initialized() const;
 
 
@@ -1145,7 +1182,9 @@ private:
 
 
 
-
+/**
+ * Convenience structure to bundle together a Mesh and a position/scale/rotation matrix.
+ */
 class RenderNode
 {
 public:
