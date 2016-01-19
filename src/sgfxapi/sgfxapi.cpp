@@ -679,6 +679,11 @@ int VertexElement::SizeElems() const
     return m_count;
 }
 
+VertexDataSemantic VertexElement::Semantic() const
+{
+    return m_semantic;
+}
+
 
 std::string VertexElement::ToString() const
 {
