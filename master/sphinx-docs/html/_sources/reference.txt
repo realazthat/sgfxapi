@@ -13,16 +13,16 @@ SGFXAPI Reference Documentation
 |                                                  |                                                  |                                                  |
 |                                                  |                                                  |                                                  |
 |                                                  |                                                  |                                                  |
-|  Class represents a texture on the CPU and on    |  A shader program, which is used to program the  |  Stores a CPU and/or GPU-side array of vertices. |
+|  Class represents a texture on the CPU and on    |  A shader, which is used to program the          |  Stores a CPU and/or GPU-side array of vertices. |
 |  the GPU.                                        |  graphics pipeline.                              |                                                  |
 |* :cpp:class:`SGFXAPI::TextureSampler`            |                                                  |                                                  |
-|                                                  |                                                  |                                                  |
+|                                                  |* :cpp:class:`SGFXAPI::ShaderProgram`             |                                                  |
 |                                                  |                                                  |                                                  |
 |                                                  |                                                  |* :cpp:class:`SGFXAPI::IndexBuffer`               |
 |  Contains properties telling the GPU how to      |                                                  |                                                  |
-|  sample the texture.                             |                                                  |  Stores a CPU and/or GPU side array of geometry  |
-|                                                  |                                                  |  index data.                                     |
-|                                                  |                                                  |                                                  |
+|  sample the texture.                             |  A shader program, which bundles all of the      |  Stores a CPU and/or GPU side array of geometry  |
+|                                                  |  necessary shaders to program the graphics a     |  index data.                                     |
+|                                                  |  pipeline for a Mesh.                            |                                                  |
 |                                                  |                                                  |                                                  |
 |                                                  |                                                  |                                                  |
 |* :cpp:class:`SGFXAPI::MeshTexture`               |                                                  |                                                  |
@@ -43,9 +43,9 @@ SGFXAPI Reference Documentation
 |                                                  |                                                  |* :cpp:class:`SGFXAPI::Mesh`                      |
 |                                                  |                                                  |                                                  |
 |                                                  |                                                  |                                                  |
-|                                                  |                                                  |  Something something                             |
-|                                                  |                                                  |                                                  |
-|                                                  |                                                  |                                                  |
+|                                                  |                                                  |  Bundles together VertexBuffer(s), an optional   |
+|                                                  |                                                  |  IndexBuffer, a ShaderProgram, and Texture(s) for|
+|                                                  |                                                  |  rendering.                                      |
 |                                                  |                                                  |                                                  |
 |                                                  |                                                  |                                                  |
 |                                                  |                                                  |                                                  |

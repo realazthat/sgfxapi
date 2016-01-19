@@ -76,8 +76,13 @@ write pixel data between the CPU and GPU.</p>
 <td><p class="first"><strong>Shading</strong></p>
 <ul class="last">
 <li><p class="first"><a class="reference internal" href="Shader.html#_CPPv2N7SGFXAPI6ShaderE" title="SGFXAPI::Shader"><code class="xref cpp cpp-class docutils literal"><span class="pre">SGFXAPI::Shader</span></code></a></p>
-<p>A shader program, which is used to program the
+<p>A shader, which is used to program the
 graphics pipeline.</p>
+</li>
+<li><p class="first"><a class="reference internal" href="ShaderProgram.html#_CPPv2N7SGFXAPI13ShaderProgramE" title="SGFXAPI::ShaderProgram"><code class="xref cpp cpp-class docutils literal"><span class="pre">SGFXAPI::ShaderProgram</span></code></a></p>
+<p>A shader program, which bundles all of the
+necessary shaders to program the graphics a
+pipeline for a Mesh.</p>
 </li>
 </ul>
 </td>
@@ -98,7 +103,9 @@ index data.</p>
 element in a vertex data stream.</p>
 </li>
 <li><p class="first"><a class="reference internal" href="Mesh.html#_CPPv2N7SGFXAPI4MeshE" title="SGFXAPI::Mesh"><code class="xref cpp cpp-class docutils literal"><span class="pre">SGFXAPI::Mesh</span></code></a></p>
-<p>Something something</p>
+<p>Bundles together VertexBuffer(s), an optional
+IndexBuffer, a ShaderProgram, and Texture(s) for
+rendering.</p>
 </li>
 </ul>
 </td>
