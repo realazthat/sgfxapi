@@ -876,11 +876,7 @@ private:
                          , const uint8_t* data, size_t dataBytesSize, int level, const std::string& debugName=std::string());
     void _ImmutableUpdateToGpu( int width, int height, int depth, TextureFormat textureFormat
                          , const uint8_t* data, size_t dataBytesSize, int level, const std::string& debugName=std::string());
-    //GLuint m_tex;
-    //TextureType m_texture_type;
-    //TextureInternalFormat m_internal_format;
-    //ResourceUsage m_usage;
-    //int m_width, m_height, m_depth, m_rowalignment, m_mipmaps;
+                         
 };
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -910,9 +906,6 @@ public:
                         const char* profile=0);
 
     std::unique_ptr<ShaderPimpl> pimpl;
-private:
-    //GLuint m_shaderHandle;
-    //ShaderType m_type;
     
 };
 
@@ -1093,6 +1086,9 @@ private:
     
 };
 
+
+struct FencePimpl;
+
 /**
  * Calls to the GPU may not happen immediately. Sometimes it is useful to know
  * when a certain point in the call-stream is reached; the Fence class gives this ability.
@@ -1145,10 +1141,7 @@ public:
     bool Initialized() const;
 
 
-
-private:
-    GLsync m_fence;
-    bool m_signaled;
+    std::unique_ptr<FencePimpl> pimpl;
 };
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////

@@ -89,6 +89,11 @@ struct PixelBufferPimpl{
 
     std::shared_ptr< PixelBuffer::cpu_data_t > m_cpuData;
 };
+
+struct FencePimpl{
+    GLsync m_fence;
+    bool m_signaled;
+};
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 void initializeGlew()
@@ -2597,7 +2602,7 @@ int TextureUnit::MaxTextureUnits()
 }
 
 Fence::Fence(bool initialize)
-    : m_fence(0)
+    : pimpl(new FencePimpl{ /*.m_fence=*/ 0, /*.m_signaled=*/ false })
 {
     if (initialize)
         this->Reset(true);
@@ -2606,24 +2611,24 @@ Fence::Fence(bool initialize)
 
 Fence::~Fence()
 {
-    if (m_fence)
-        glDeleteSync(m_fence);
-    m_fence = 0;
+    if (pimpl->m_fence)
+        glDeleteSync(pimpl->m_fence);
+    pimpl->m_fence = 0;
 }
 
 void Fence::Reset(bool initialize)
 {
     if (Initialized())
     {
-        if (m_fence)
-            glDeleteSync(m_fence);
-        m_fence = 0;
-        m_signaled = false;
+        if (pimpl->m_fence)
+            glDeleteSync(pimpl->m_fence);
+        pimpl->m_fence = 0;
+        pimpl->m_signaled = false;
     }
 
     if (initialize) {
-        m_fence = glFenceSync(GL_SYNC_GPU_COMMANDS_COMPLETE, 0);
-        m_signaled = false;
+        pimpl->m_fence = glFenceSync(GL_SYNC_GPU_COMMANDS_COMPLETE, 0);
+        pimpl->m_signaled = false;
     }
 }
 
@@ -2631,27 +2636,27 @@ bool Fence::CheckWaiting()
 {
     if (!Initialized())
         return false;
-    if (m_signaled)
+    if (pimpl->m_signaled)
         return false;
 
     GLint fence_signal = 0;
-    glGetSynciv(m_fence, GL_SYNC_STATUS, 1, NULL, &fence_signal);
-    m_signaled = fence_signal == GL_SIGNALED;
+    glGetSynciv(pimpl->m_fence, GL_SYNC_STATUS, 1, NULL, &fence_signal);
+    pimpl->m_signaled = fence_signal == GL_SIGNALED;
 
-    return !m_signaled;
+    return !pimpl->m_signaled;
 }
 
 
 
 bool Fence::Waiting() const
 {
-    return (m_fence != 0 && !m_signaled);
+    return (pimpl->m_fence != 0 && !pimpl->m_signaled);
 }
 
 
 bool Fence::Initialized() const
 {
-    return m_fence != 0;
+    return pimpl->m_fence != 0;
 }
 
 
