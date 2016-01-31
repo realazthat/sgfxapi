@@ -2,10 +2,12 @@
 #define SGFXAPI_SGFXAPI_H 1
 
 
+#include "sgfxapi/sgfxapi.fwd.hpp"
 #include "sgfxapi/sgfxapi.glcommon.hpp"
 
 #include <stdint.h>
 #include <iosfwd>
+#include <memory>
 
 //#include <boost/format.hpp>
 //#include <boost/noncopyable.hpp>
@@ -19,13 +21,6 @@
 
 namespace SGFXAPI {
 
-class VertexBuffer;
-class IndexBuffer;
-class ShaderProgram;
-class Mesh;
-class Texture;
-class TextureUnit;
-class TextureSampler;
 
 void initializeGlew();
 
@@ -278,18 +273,7 @@ enum class TextureInternalFormat{
     COMPRESSED_RGB_BPTC_UNSIGNED_FLOAT
 };
 
-GLenum toGL(VertexDataType type);
-GLenum toGL(Access access);
-GLenum toGL(Usage usage);
-GLenum toGL(TextureInternalFormat internalformat);
-GLenum toGL(TexturePixelFormat pixelformat);
-GLenum toGL(TextureElementType elementtype);
-GLenum toGL(TextureType texturetype);
-GLenum toGL(PrimitiveIndexType indextype);
-GLenum toGL(TextureFilterMode filtermode);
-GLint toGL(TextureAddressMode addressmode);
 
-GLenum toGLBinding(TextureType texturetype);
 
 const char* toGLSTR(PrimitiveIndexType indextype);
 
@@ -525,7 +509,9 @@ private:
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-
+/**
+ * @see getHandle(const IndexBuffer&)
+ */
 class IndexBuffer
 {
 public:
@@ -577,9 +563,8 @@ private:
     Usage m_usage;
 
     std::shared_ptr< cpu_data_t > m_indexData;
-public:
+    
     GLuint m_indexBuffer;
-private:
     int m_gpuSize;
     
     friend class Graphics;
@@ -731,6 +716,12 @@ private:
     int m_index;
 };
 
+
+
+
+struct TextureSamplerPimpl;
+
+
 /**
  * @brief Describes how the GPU should sample the texture.
  *
@@ -750,6 +741,7 @@ private:
  * auto mesh_texture = std::make_shared<MeshTexture>(texture, texture_unit, sampler, sampler_name);
  * \endcode
  *
+ * @see getHandle(const TextureSampler&)
  */
 struct TextureSampler
 {
@@ -781,16 +773,11 @@ struct TextureSampler
      */
     void GenerateParams();
 
-    /// Retrieve the opengl handle for the sampler.
-    GLuint Handle() const;
-
-private:
-    GLuint m_smplr;
+    std::unique_ptr<TextureSamplerPimpl> pimpl;
 };
 
 
 /**
- *
  *
  *
  *
@@ -805,6 +792,13 @@ struct TextureFormat
     TexturePixelFormat pixelformat;
 };
 
+
+struct TexturePimpl;
+
+/**
+ *
+ * @see getHandle(const Texture&)
+ */
 class Texture
 {
     Texture(const Texture&) = delete;
@@ -887,7 +881,7 @@ public:
     void DisableMipmaps();
     static int LogicalSizeBytes(int width, int height, int depth, TextureFormat format, int rowalignment);
 
-    GLuint Handle() const;
+    std::unique_ptr<TexturePimpl> pimpl;
 private:
     void _InitializeImmutableStorage();
 
@@ -898,16 +892,21 @@ private:
                          , const uint8_t* data, size_t dataBytesSize, int level, const std::string& debugName=std::string());
     void _ImmutableUpdateToGpu( int width, int height, int depth, TextureFormat textureFormat
                          , const uint8_t* data, size_t dataBytesSize, int level, const std::string& debugName=std::string());
-    GLuint m_tex;
-    TextureType m_texture_type;
-    TextureInternalFormat m_internal_format;
-    ResourceUsage m_usage;
-    int m_width, m_height, m_depth, m_rowalignment, m_mipmaps;
+    //GLuint m_tex;
+    //TextureType m_texture_type;
+    //TextureInternalFormat m_internal_format;
+    //ResourceUsage m_usage;
+    //int m_width, m_height, m_depth, m_rowalignment, m_mipmaps;
 };
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 
+struct ShaderPimpl;
+
+/**
+ * @see getHandle(const Shader& shader)
+ */
 class Shader
 {
     Shader(const Shader&) = delete;
@@ -926,20 +925,21 @@ public:
                         const char* entryPoint=0,
                         const char* profile=0);
 
-    GLuint m_shaderHandle;
-    
+    std::unique_ptr<ShaderPimpl> pimpl;
 private:
-    ShaderType m_type;
+    //GLuint m_shaderHandle;
+    //ShaderType m_type;
     
 };
 
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+struct ShaderProgramPimpl;
 
 /**
  * Bundles up shaders and links them into a single "program" for the GPU pipeline to use.
  *
- *
+ * @see getHandle(const ShaderProgram& sp)
  */
 class ShaderProgram
 {
@@ -964,8 +964,6 @@ public:
     void Deselect();
     static void DeselectAll();
 
-    GLuint Handle() const;
-
     void BindTexture(int index, TextureUnit& texture_unit, Texture& texture, const std::string& samplerName);
 
     void SetUniform(const float4x4& matrix, const std::string& name);
@@ -978,8 +976,7 @@ public:
     static void SetInt(int parameterIndex, const int value);
     static void SetFloat3(int parameterIndex, const float v1, const float v2, const float v3);
 
-private:
-    GLuint m_programHandle;
+    std::unique_ptr<ShaderProgramPimpl> pimpl;
 };
 
 
@@ -1005,6 +1002,9 @@ struct MeshTexture{
     std::string sampler_name;
 };
 
+
+
+struct MeshPimpl;
 
 /**
  * Bundles together one or more VertexBuffer objects, an optional IndexBuffer, a ShaderProgram,
@@ -1098,19 +1098,8 @@ public:
     */
     PrimitiveType PrimType() const;
 
+    std::unique_ptr<MeshPimpl> pimpl;
 private:
-    
-    GLuint m_vao;
-    int m_numVertices;
-    ///If GenerateVAO() is called with a startVertexOffset > 0, the number
-    /// of renderable vertices will be less.
-    int m_numRenderableVertices;
-    VertexDeclaration m_declaration;
-
-    /**
-    * The primitive type that is used for rendering.
-    */
-    PrimitiveType m_primType;
     
     
     template<typename index_t>
@@ -1203,7 +1192,7 @@ std::shared_ptr<ShaderProgram> DefaultSSPCWhiteShader();
 std::shared_ptr<ShaderProgram> DefaultTextureShader();
 
 
-}
+} // namespace SGFXAPI
 
 
 
