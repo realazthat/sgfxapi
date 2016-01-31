@@ -3,7 +3,6 @@
 
 
 #include "sgfxapi/sgfxapi.fwd.hpp"
-#include "sgfxapi/sgfxapi.glcommon.hpp"
 
 #include <stdint.h>
 #include <iosfwd>
