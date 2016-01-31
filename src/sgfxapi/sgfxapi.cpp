@@ -1,4 +1,5 @@
 #include "sgfxapi/sgfxapi.hpp"
+#include "sgfxapi/sgfxapi-gl.hpp"
 
 #include <GLFW/glfw3.h>
 
@@ -20,6 +21,43 @@
 namespace SGFXAPI {
 
 
+////////////////////////////////////////////////////////////////////////////////
+// Pimpl declarations
+////////////////////////////////////////////////////////////////////////////////
+struct ShaderProgramPimpl{
+    GLuint m_programHandle;
+};
+
+struct TexturePimpl{
+    GLuint m_tex;
+    TextureType m_texture_type;
+    TextureInternalFormat m_internal_format;
+    ResourceUsage m_usage;
+    int m_width, m_height, m_depth, m_rowalignment, m_mipmaps;
+};
+
+struct TextureSamplerPimpl{
+    GLuint m_smplr;
+};
+struct ShaderPimpl{
+    GLuint m_shaderHandle;
+    ShaderType m_type;
+};
+
+struct MeshPimpl{
+
+    GLuint m_vao;
+    int m_numVertices;
+    ///If GenerateVAO() is called with a startVertexOffset > 0, the number
+    /// of renderable vertices will be less.
+    int m_numRenderableVertices;
+    VertexDeclaration m_declaration;
+
+    /**
+    * The primitive type that is used for rendering.
+    */
+    PrimitiveType m_primType;
+};
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 void initializeGlew()
@@ -716,6 +754,8 @@ std::string VertexElement::ToString() const
     }
     
     out << ", count: " << element.SizeElems();
+    
+    return out;
 }
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
