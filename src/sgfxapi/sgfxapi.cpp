@@ -58,6 +58,37 @@ struct MeshPimpl{
     */
     PrimitiveType m_primType;
 };
+
+struct VertexBufferPimpl{
+    std::weak_ptr<Mesh> m_mesh;
+    
+    int m_numVertices;
+    VertexDeclaration m_declaration;
+    Usage m_usage;
+    GLuint m_vbo;
+    int m_gpuSize;
+    std::shared_ptr< VertexBuffer::cpu_data_t > m_cpuData;
+};
+struct IndexBufferPimpl{
+    std::weak_ptr<Mesh> m_mesh;
+    int m_numIndices;
+    PrimitiveIndexType m_indexType;
+    Usage m_usage;
+
+    std::shared_ptr< IndexBuffer::cpu_data_t > m_indexData;
+    
+    GLuint m_indexBuffer;
+    int m_gpuSize;
+};
+struct PixelBufferPimpl{
+    GLuint m_pbo;
+    Usage m_usage;
+    std::size_t m_logicalBytes;
+    int m_gpuSize;
+
+
+    std::shared_ptr< PixelBuffer::cpu_data_t > m_cpuData;
+};
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 void initializeGlew()
@@ -824,14 +855,17 @@ const std::vector<VertexElement>& VertexDeclaration::Elements() const
 
 
 VertexBuffer::VertexBuffer(std::weak_ptr<Mesh> mesh, int numVertices, const VertexDeclaration& dec, Usage usage, bool allocateCpu)
-    : m_mesh(mesh)
-    , m_numVertices(numVertices)
-    , m_declaration(dec)
-    , m_usage(usage)
-    , m_vbo(0)
-    , m_gpuSize(0)
+    : pimpl(new VertexBufferPimpl())
+      
 {
-    glGenBuffers(1, &m_vbo); 
+    pimpl->m_mesh = (mesh);
+    pimpl->m_numVertices = (numVertices);
+    pimpl->m_declaration = (dec);
+    pimpl->m_usage = (usage);
+    pimpl->m_vbo = (0);
+    pimpl->m_gpuSize = (0);
+    
+    glGenBuffers(1, &pimpl->m_vbo); 
     checkOpenGLError();
 
     if (allocateCpu)
@@ -841,62 +875,62 @@ VertexBuffer::VertexBuffer(std::weak_ptr<Mesh> mesh, int numVertices, const Vert
 
 VertexBuffer::~VertexBuffer()
 {
-    if(m_vbo)
+    if(pimpl->m_vbo)
     {
-        glDeleteBuffers(1, &m_vbo);
-        m_vbo = 0;
+        glDeleteBuffers(1, &pimpl->m_vbo);
+        pimpl->m_vbo = 0;
     }
 }
 
 
 int VertexBuffer::NumVertices() const
 {
-    return m_numVertices;
+    return pimpl->m_numVertices;
 }
    
 
 int VertexBuffer::LogicalBufferSizeBytes() const
 {
-    return m_numVertices * m_declaration.Stride();
+    return pimpl->m_numVertices * pimpl->m_declaration.Stride();
 }
 
 
 const unsigned char* VertexBuffer::CpuPtr() const
 {
-    if (!m_cpuData)
+    if (!pimpl->m_cpuData)
     {
         throw std::runtime_error( "no cpu data" );
     }
-    return m_cpuData->data();
+    return pimpl->m_cpuData->data();
 }
 
 
 unsigned char* VertexBuffer::CpuPtr()
 {
-    if (!m_cpuData)
+    if (!pimpl->m_cpuData)
     {
         throw std::runtime_error( "no cpu data" );
     }
 
-    return m_cpuData->data();
+    return pimpl->m_cpuData->data();
 }
 
 
 int VertexBuffer::GpuSizeInBytes() const
 {
-    return m_gpuSize;
+    return pimpl->m_gpuSize;
 }
 
 
 const VertexDeclaration& VertexBuffer::Declaration() const
 {
-    return m_declaration;
+    return pimpl->m_declaration;
 }
 
 
 VertexDeclaration& VertexBuffer::Declaration()
 {
-    return m_declaration;
+    return pimpl->m_declaration;
 }
 
 
@@ -904,23 +938,23 @@ void VertexBuffer::SetNumVertices(std::size_t size, bool perseve_old_cpu_data)
 {
 
     ///set the new number of vertices
-    m_numVertices = size;
+    pimpl->m_numVertices = size;
 
     std::size_t new_bytes = LogicalBufferSizeBytes();
 
     if (HasCpuMemory())
     {
-        if (perseve_old_cpu_data && !!m_cpuData && new_bytes > m_cpuData->size())
+        if (perseve_old_cpu_data && !!pimpl->m_cpuData && new_bytes > pimpl->m_cpuData->size())
         {
             ///keep the old data around a bit
-            std::shared_ptr<cpu_data_t> oldCpuData = m_cpuData;
+            std::shared_ptr<cpu_data_t> oldCpuData = pimpl->m_cpuData;
              
                 
             ///allocate the buffer
             AllocateCpuMemory();
 
             ///copy the old buffer to the new one
-            memcpy(m_cpuData->data(), oldCpuData->data(), oldCpuData->size());
+            memcpy(pimpl->m_cpuData->data(), oldCpuData->data(), oldCpuData->size());
         } 
         else 
         {
@@ -934,14 +968,14 @@ void VertexBuffer::AllocateCpuMemory()
 {
     std::size_t bytes = LogicalBufferSizeBytes();
    
-    if (!m_cpuData)
+    if (!pimpl->m_cpuData)
     {
-        m_cpuData = std::make_shared< cpu_data_t >(bytes);
+        pimpl->m_cpuData = std::make_shared< cpu_data_t >(bytes);
     }
     else
     {
-        if (m_cpuData->size() != bytes)
-            m_cpuData->resize(bytes);
+        if (pimpl->m_cpuData->size() != bytes)
+            pimpl->m_cpuData->resize(bytes);
     }
 }
 
@@ -954,16 +988,16 @@ void VertexBuffer::AllocateGpuMemory()
 
     int bytes = LogicalBufferSizeBytes();
 
-    glBufferData(GL_ARRAY_BUFFER, bytes, NULL, toGL(m_usage));
+    glBufferData(GL_ARRAY_BUFFER, bytes, NULL, toGL(pimpl->m_usage));
     checkOpenGLError();
          
-    m_gpuSize = bytes;
+    pimpl->m_gpuSize = bytes;
 
 }
 
 bool VertexBuffer::HasCpuMemory() const
 {
-    return !!m_cpuData; 
+    return !!(pimpl->m_cpuData); 
 }
 
 void VertexBuffer::Bind(){
@@ -972,7 +1006,7 @@ void VertexBuffer::Bind(){
     /// so a VAO must be bound before binding a buffer here".
     assert(VAOIsBound());
     checkOpenGLError();
-    glBindBuffer(GL_ARRAY_BUFFER, m_vbo); 
+    glBindBuffer(GL_ARRAY_BUFFER, pimpl->m_vbo); 
     checkOpenGLError();
     assert(IsBound());
 }
@@ -994,12 +1028,12 @@ bool VertexBuffer::IsBound() const
     GLint boundvbo = 0;
     glGetIntegerv(GL_ARRAY_BUFFER_BINDING, &boundvbo);
     checkOpenGLError();
-    return boundvbo != 0 && boundvbo == m_vbo;
+    return boundvbo != 0 && boundvbo == pimpl->m_vbo;
 }
 
 bool VertexBuffer::VAOIsBound() const
 {
-    if (auto mesh = m_mesh.lock())
+    if (auto mesh = pimpl->m_mesh.lock())
     {
         return mesh->IsBound();
     }
@@ -1011,7 +1045,7 @@ void VertexBuffer::UpdateToGpu(const uint8_t* data, int bytes)
 {
     assert(IsBound());
     checkOpenGLError();
-    if (!data && !m_cpuData)
+    if (!data && !pimpl->m_cpuData)
     {
         throw std::runtime_error( "no cpu data to send to gpu" );
     }
@@ -1019,16 +1053,16 @@ void VertexBuffer::UpdateToGpu(const uint8_t* data, int bytes)
 
     if (!data)
     {
-        data = m_cpuData->data();
-        bytes = m_cpuData->size();
+        data = pimpl->m_cpuData->data();
+        bytes = pimpl->m_cpuData->size();
     }
 
 
     assert(bytes == LogicalBufferSizeBytes());
-    glBufferData(GL_ARRAY_BUFFER, bytes, data, toGL(m_usage));
+    glBufferData(GL_ARRAY_BUFFER, bytes, data, toGL(pimpl->m_usage));
     checkOpenGLError();
       
-    m_gpuSize = bytes;
+    pimpl->m_gpuSize = bytes;
 }
 
 
@@ -1036,14 +1070,18 @@ void VertexBuffer::UpdateToGpu(const uint8_t* data, int bytes)
 
 
 IndexBuffer::IndexBuffer(std::weak_ptr<Mesh> mesh, int numIndices, PrimitiveIndexType type, Usage usage, bool allocateCpu)
-    : m_mesh(mesh)
-    , m_numIndices(numIndices)
-    , m_indexType(type)
-    , m_usage(usage)
-    , m_indexBuffer(0)
-    , m_gpuSize(0)
+    : pimpl(new IndexBufferPimpl())
+     
 {
-    glGenBuffers(1, &m_indexBuffer);
+    pimpl->m_mesh = (mesh);
+    pimpl->m_numIndices = numIndices;
+    pimpl->m_indexBuffer = 0;
+    pimpl->m_indexType = (type);
+    pimpl->m_usage = (usage);
+    pimpl->m_gpuSize = 0;
+    
+    
+    glGenBuffers(1, &pimpl->m_indexBuffer);
     checkOpenGLError();
 
     if (allocateCpu)
@@ -1053,23 +1091,23 @@ IndexBuffer::IndexBuffer(std::weak_ptr<Mesh> mesh, int numIndices, PrimitiveInde
 
 IndexBuffer::~IndexBuffer(void)
 {
-    if(m_indexBuffer)
+    if(pimpl->m_indexBuffer)
     {
-        glDeleteBuffers(1, &m_indexBuffer);
-        m_indexBuffer = 0;
+        glDeleteBuffers(1, &pimpl->m_indexBuffer);
+        pimpl->m_indexBuffer = 0;
     }
 }
 
 
 int IndexBuffer::NumIndices() const
 {
-    return m_numIndices;
+    return pimpl->m_numIndices;
 }
 
 
 PrimitiveIndexType IndexBuffer::IndexType() const
 {
-    return m_indexType;
+    return pimpl->m_indexType;
 }
 
 
@@ -1077,7 +1115,7 @@ int IndexBuffer::IndexSizeBytes() const
 {
     int32_t size = 0;
 
-    switch(m_indexType)
+    switch(pimpl->m_indexType)
     {
     case PrimitiveIndexType::IndicesNone:
         size = 0;
@@ -1100,7 +1138,7 @@ int IndexBuffer::IndexSizeBytes() const
 
 bool IndexBuffer::HasCpuMemory() const
 {
-    return !!m_indexData;
+    return !!pimpl->m_indexData;
 }
 int IndexBuffer::LogicalBufferSizeBytes() const
 {
@@ -1111,13 +1149,13 @@ void IndexBuffer::AllocateCpuMemory()
 {
     int bytes = LogicalBufferSizeBytes();
    
-    if (!m_indexData)
+    if (!pimpl->m_indexData)
     {
-        m_indexData = std::make_shared< cpu_data_t >(bytes);
+        pimpl->m_indexData = std::make_shared< cpu_data_t >(bytes);
     }
     else 
     {
-        m_indexData->resize(bytes);
+        pimpl->m_indexData->resize(bytes);
     }
 }
 
@@ -1126,22 +1164,22 @@ void IndexBuffer::SetNumIndices(std::size_t size, bool perseve_old_cpu_data)
 {
 
     ///set the new number of vertices
-    m_numIndices = size;
+    pimpl->m_numIndices = size;
 
     std::size_t newBytes = LogicalBufferSizeBytes();
 
     if (HasCpuMemory())
     {
-        if (perseve_old_cpu_data && !!m_indexData && newBytes > m_indexData->size())
+        if (perseve_old_cpu_data && !!pimpl->m_indexData && newBytes > pimpl->m_indexData->size())
         {
             ///keep the old data around a bit
-            std::shared_ptr<cpu_data_t> oldCpuData = m_indexData;
+            std::shared_ptr<cpu_data_t> oldCpuData = pimpl->m_indexData;
 
             ///allocate the buffer
             AllocateCpuMemory();
 
             ///copy the old buffer to the new one
-            memcpy(m_indexData->data(), oldCpuData->data(), oldCpuData->size());
+            memcpy(pimpl->m_indexData->data(), oldCpuData->data(), oldCpuData->size());
         } 
         else 
         {
@@ -1153,27 +1191,27 @@ void IndexBuffer::SetNumIndices(std::size_t size, bool perseve_old_cpu_data)
 
 unsigned char * IndexBuffer::CpuPtr()
 {
-    if ( !m_indexData )
+    if ( !pimpl->m_indexData )
     {
         throw std::runtime_error( "no cpu data" );
     }
-    return m_indexData->data();
+    return pimpl->m_indexData->data();
 }
 
 
 const unsigned char * IndexBuffer::CpuPtr() const
 {
-    if ( !m_indexData )
+    if ( !pimpl->m_indexData )
     {
         throw std::runtime_error( "no cpu data" );
     }
-    return m_indexData->data();
+    return pimpl->m_indexData->data();
 }
 
 
 bool IndexBuffer::VAOIsBound() const
 {
-    if (auto mesh = m_mesh.lock())
+    if (auto mesh = pimpl->m_mesh.lock())
     {
         return mesh->IsBound();
     }
@@ -1189,7 +1227,7 @@ void IndexBuffer::Bind()
     assert(VAOIsBound());
     checkOpenGLError();
 
-    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, m_indexBuffer);
+    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, pimpl->m_indexBuffer);
     checkOpenGLError();
 }
 
@@ -1213,7 +1251,7 @@ bool IndexBuffer::IsBound() const
     GLint boundibo = 0;
     glGetIntegerv(GL_ELEMENT_ARRAY_BUFFER_BINDING, &boundibo);
     checkOpenGLError();
-    return boundibo != 0 && boundibo == m_indexBuffer;
+    return boundibo != 0 && boundibo == pimpl->m_indexBuffer;
 }
 
 void IndexBuffer::AllocateGpuMemory()
@@ -1223,10 +1261,10 @@ void IndexBuffer::AllocateGpuMemory()
 
     int bytes = LogicalBufferSizeBytes();
 
-    glBufferData(GL_ELEMENT_ARRAY_BUFFER, bytes, NULL, toGL(m_usage)); 
+    glBufferData(GL_ELEMENT_ARRAY_BUFFER, bytes, NULL, toGL(pimpl->m_usage)); 
     checkOpenGLError();
          
-    m_gpuSize = bytes;
+    pimpl->m_gpuSize = bytes;
 }
 
 
@@ -1234,23 +1272,23 @@ void IndexBuffer::UpdateToGpu(const uint8_t* data, int bytes)
 {
     assert(IsBound());
     checkOpenGLError();
-    if (!data && !m_indexData)
+    if (!data && !pimpl->m_indexData)
     {
         throw std::runtime_error( "no cpu data to send to gpu" );
     }
 
     if (!data)
     {
-        data = m_indexData->data();
-        bytes = m_indexData->size();
+        data = pimpl->m_indexData->data();
+        bytes = pimpl->m_indexData->size();
     }
     
 
     assert(bytes == LogicalBufferSizeBytes());
-    glBufferData(GL_ELEMENT_ARRAY_BUFFER, bytes, data, toGL(m_usage));
+    glBufferData(GL_ELEMENT_ARRAY_BUFFER, bytes, data, toGL(pimpl->m_usage));
     checkOpenGLError();
       
-    m_gpuSize = bytes;
+    pimpl->m_gpuSize = bytes;
 }
 
 
@@ -1258,8 +1296,9 @@ void IndexBuffer::UpdateToGpu(const uint8_t* data, int bytes)
 
 
 Shader::Shader(ShaderType type)
-    : pimpl(new ShaderPimpl{ .m_shaderHandle = 0, .m_type = type })
+    : pimpl(new ShaderPimpl{ /*.m_shaderHandle=*/ 0, /*.m_type=*/ type })
 {
+
     if (type == ShaderType::VertexShader)
     {
         pimpl->m_shaderHandle = glCreateShader (GL_VERTEX_SHADER);
@@ -1494,7 +1533,7 @@ void ShaderProgram::Attach(Shader& shader)
 
 
 Mesh::Mesh(PrimitiveType primType)
-    : pimpl(new MeshPimpl{ .m_vao = (0), .m_numVertices = (0), .m_numRenderableVertices = (0)})
+    : pimpl(new MeshPimpl{ /*.m_vao=*/ 0, /*.m_numVertices=*/ 0, /*.m_numRenderableVertices=*/ 0})
 {
     pimpl->m_primType = primType;
     glGenVertexArrays (1, &pimpl->m_vao); 
@@ -1935,12 +1974,12 @@ void Input::poll()
 
 
 PixelBuffer::PixelBuffer(Usage usage, std::size_t bytes, bool allocateCpu)
-    : m_pbo(0), m_usage(usage), m_logicalBytes(bytes)
+    : pimpl(new PixelBufferPimpl{ /*.m_pbo=*/ 0, /*.m_usage=*/ usage, /*.m_logicalBytes=*/ bytes, /*.m_gpuSize=*/ 0})
 {
     /// READ THIS:
     ///https://developer.apple.com/library/mac/documentation/GraphicsImaging/Conceptual/OpenGL-MacProgGuide/opengl_texturedata/opengl_texturedata.html
 
-    glGenBuffers(1, &m_pbo); 
+    glGenBuffers(1, &pimpl->m_pbo); 
     checkOpenGLError();
 
     if (allocateCpu)
@@ -1950,41 +1989,41 @@ PixelBuffer::PixelBuffer(Usage usage, std::size_t bytes, bool allocateCpu)
 
 PixelBuffer::~PixelBuffer()
 {
-    if (m_pbo)
-        glDeleteBuffers(1, &m_pbo);
-    m_pbo = 0;
+    if (pimpl->m_pbo)
+        glDeleteBuffers(1, &pimpl->m_pbo);
+    pimpl->m_pbo = 0;
 }
 
 int PixelBuffer::LogicalBufferSizeBytes() const
 {
-    return m_logicalBytes;
+    return pimpl->m_logicalBytes;
 }
 
 int PixelBuffer::CpuSizeInBytes() const
 {
-    if (!m_cpuData)
+    if (!pimpl->m_cpuData)
         return 0;
-    return m_cpuData->size();
+    return pimpl->m_cpuData->size();
 }
 
 int PixelBuffer::GpuSizeInBytes() const
 {
-    return m_gpuSize;
+    return pimpl->m_gpuSize;
 }
 
 bool PixelBuffer::HasGpuMemory() const
 {
-    return m_gpuSize;
+    return pimpl->m_gpuSize;
 }
 bool PixelBuffer::HasCpuMemory() const
 {
-    return !!m_cpuData;
+    return !!pimpl->m_cpuData;
 }
 
 void PixelBuffer::Bind()
 {
     checkOpenGLError();
-    glBindBuffer(GL_PIXEL_UNPACK_BUFFER, m_pbo);
+    glBindBuffer(GL_PIXEL_UNPACK_BUFFER, pimpl->m_pbo);
     checkOpenGLError();
     assert(IsBound());
 }
@@ -2007,26 +2046,26 @@ bool PixelBuffer::IsBound() const
     GLint boundpbo = 0;
     glGetIntegerv(GL_PIXEL_UNPACK_BUFFER_BINDING, &boundpbo);
     checkOpenGLError();
-    return boundpbo != 0 && boundpbo == m_pbo;
+    return boundpbo != 0 && boundpbo == pimpl->m_pbo;
 }
 
 void PixelBuffer::AllocateCpuMemory()
 {
     int bytes = LogicalBufferSizeBytes();
    
-    if (!m_cpuData)
+    if (!pimpl->m_cpuData)
     {
-        m_cpuData = std::make_shared< cpu_data_t >(bytes);
+        pimpl->m_cpuData = std::make_shared< cpu_data_t >(bytes);
     }
     else 
     {
-        m_cpuData->resize(bytes);
+        pimpl->m_cpuData->resize(bytes);
     }
 }
 
 void PixelBuffer::AllocateGpuMemory()
 {
-    assert(m_pbo);
+    assert(pimpl->m_pbo);
     assert(IsBound());
     checkOpenGLError();
 
@@ -2034,32 +2073,32 @@ void PixelBuffer::AllocateGpuMemory()
     int bytes = LogicalBufferSizeBytes();
 
     ///Create and initialize the data store of the buffer object by calling the function glBufferData
-    glBufferData(GL_PIXEL_UNPACK_BUFFER, bytes, 0, toGL(m_usage));
+    glBufferData(GL_PIXEL_UNPACK_BUFFER, bytes, 0, toGL(pimpl->m_usage));
     checkOpenGLError();
-    m_gpuSize = bytes;
+    pimpl->m_gpuSize = bytes;
 }
 
 void PixelBuffer::Resize(std::size_t bytes)
 {
-    m_logicalBytes = bytes;
+    pimpl->m_logicalBytes = bytes;
 }
 
 void PixelBuffer::UpdateToGpu() {
 
-    if (!m_cpuData)
+    if (!pimpl->m_cpuData)
     {
         throw std::runtime_error( "no cpu data to send to gpu" );
     }
 
 
-    const uint8_t* data = m_cpuData->data();
-    std::size_t bytes = m_cpuData->size();
+    const uint8_t* data = pimpl->m_cpuData->data();
+    std::size_t bytes = pimpl->m_cpuData->size();
     
     this->UpdateToGpu(data,bytes,0);
 
 }
 void PixelBuffer::UpdateToGpu(const uint8_t* data, int bytes, int gpuoffset) {
-    assert(m_pbo);
+    assert(pimpl->m_pbo);
     assert(data);
     assert(bytes > 0);
     assert(IsBound());
@@ -2440,7 +2479,7 @@ TextureSampler::TextureSampler()
     , minFilter(TextureFilterMode::Linear)
     , mipFilter(TextureFilterMode::Linear)
     , magFilter(TextureFilterMode::Linear)
-    , pimpl(new TextureSamplerPimpl{.m_smplr=0})
+    , pimpl(new TextureSamplerPimpl{/*.m_smplr=*/0})
 {
     checkOpenGLError();
     glGenSamplers(1, &pimpl->m_smplr);

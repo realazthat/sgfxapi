@@ -444,7 +444,7 @@ private:
 
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
+struct VertexBufferPimpl;
 
 class VertexBuffer 
 {
@@ -492,15 +492,8 @@ public:
     bool VAOIsBound() const;
     static void UnBindAll();
 
+    std::unique_ptr<VertexBufferPimpl> pimpl;
 private:
-    std::weak_ptr<Mesh> m_mesh;
-    
-    int m_numVertices;
-    VertexDeclaration m_declaration;
-    Usage m_usage;
-    GLuint m_vbo;
-    int m_gpuSize;
-    std::shared_ptr< cpu_data_t > m_cpuData;
     
     friend class Graphics;
     friend class Mesh;
@@ -508,6 +501,8 @@ private:
 
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+struct IndexBufferPimpl;
 
 /**
  * @see getHandle(const IndexBuffer&)
@@ -556,16 +551,9 @@ public:
     bool IsBound() const;
     bool VAOIsBound() const;
     static void UnBindAll();
-private:
-    std::weak_ptr<Mesh> m_mesh;
-    int m_numIndices;
-    PrimitiveIndexType m_indexType;
-    Usage m_usage;
-
-    std::shared_ptr< cpu_data_t > m_indexData;
     
-    GLuint m_indexBuffer;
-    int m_gpuSize;
+    std::unique_ptr<IndexBufferPimpl> pimpl;
+private:
     
     friend class Graphics;
     friend class Mesh;
@@ -630,11 +618,15 @@ map_guard_t<T> make_map_guard(T& b, Access access)
 }
 */
 
+struct PixelBufferPimpl;
+
 class PixelBuffer
 {
     PixelBuffer(const PixelBuffer&) = delete;
     PixelBuffer& operator=(const PixelBuffer&) = delete;
 public:
+    typedef std::vector<unsigned char> cpu_data_t;
+    
     PixelBuffer(Usage usage, std::size_t bytes, bool allocateCpu=true);
     ~PixelBuffer();
 
@@ -680,16 +672,8 @@ public:
      */
     //void* Map(Access access);
     //void UnMap();
-
-private:
-    GLuint m_pbo;
-    Usage m_usage;
-    std::size_t m_logicalBytes;
-    int m_gpuSize;
-
-    typedef std::vector<unsigned char> cpu_data_t;
-
-    std::shared_ptr< cpu_data_t > m_cpuData;
+    
+    std::unique_ptr<PixelBufferPimpl> pimpl;
 };
 
 
