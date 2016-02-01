@@ -1989,8 +1989,15 @@ void Input::poll()
 
 
 PixelBuffer::PixelBuffer(Usage usage, std::size_t bytes, bool allocateCpu)
-    : pimpl(new PixelBufferPimpl{ /*.m_pbo=*/ 0, /*.m_usage=*/ usage, /*.m_logicalBytes=*/ bytes, /*.m_gpuSize=*/ 0})
+    : pimpl(new PixelBufferPimpl())
 {
+    
+    pimpl->m_pbo = 0;
+    pimpl->m_usage = usage;
+    pimpl->m_logicalBytes = bytes;
+    pimpl->m_gpuSize = 0;
+    pimpl->m_cpuData = std::shared_ptr<PixelBuffer::cpu_data_t>();
+    
     /// READ THIS:
     ///https://developer.apple.com/library/mac/documentation/GraphicsImaging/Conceptual/OpenGL-MacProgGuide/opengl_texturedata/opengl_texturedata.html
 
