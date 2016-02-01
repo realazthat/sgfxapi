@@ -2300,7 +2300,8 @@ void Texture::Bind()
 void Texture::UnBind()
 {
     checkOpenGLError();
-    glBindTexture(toGL(pimpl->m_texture_type), 0);
+    if (IsBound())
+        glBindTexture(toGL(pimpl->m_texture_type), 0);
     checkOpenGLError();
 }
 
