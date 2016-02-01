@@ -813,7 +813,8 @@ public:
            , int width, int height, int depth, int mipmaps=1000, int rowalignment = 4);
     ~Texture();
 
-
+    ///Given the dimensions and type of texture, this function returns the maximum number of mipmap
+    /// levels.
     int MaxMimpapLevels() const;
     
     /**
@@ -850,9 +851,20 @@ public:
      */
     void GenMipmaps();
 
+    ///Activate this texture, to be used in the following calls; some methods of this class
+    /// may require that this texture is in the "bound" state before using them
+    ///@see UnBind(), UnBindAll(), IsBound()
     void Bind();
+    ///Deactivate this texture; this function checks with the driver that this texture is bound;
+    /// and if it is not already bound, it is a noop; use UnBindAll() to clear the bound state of
+    /// all/any texture.
+    ///@see Bind(), UnBindAll(), IsBound()
     void UnBind();
+    ///Check if this texture is "bound"
+    ///@see Bind(), UnBind(), UnBindAll()
     bool IsBound() const;
+    ///Deactivate *any* texture that is bound
+    ///@see Bind(), UnBind(), IsBound()
     static void UnBindAll();
 
 
@@ -888,6 +900,8 @@ private:
 struct ShaderPimpl;
 
 /**
+ * This is a single shader, of a particular type; either pixel shader, .
+ *
  * @see getHandle(const Shader& shader)
  */
 class Shader
@@ -898,11 +912,25 @@ public:
     explicit Shader(ShaderType type);
     ~Shader();
     
+    /**
+     * Load the shader from source.
+     *
+     * @param shaderData should be a null-terminated c-string, containing the source code.
+     * @param entryPoint must be 0
+     * @param profile must be 0
+     * @see LoadFromFile()
+     */
     void LoadFromString(ShaderType type,
                         const char* shaderData,
                         const char* entryPoint=0,
                         const char* profile=0);
 
+    /**
+     * Load the shader from a source file.
+     *
+     * @copydoc LoadFromString()
+     * @see LoadFromString()
+     */
     void LoadFromFile(ShaderType type,
                         const char* fileName,
                         const char* entryPoint=0,
@@ -937,11 +965,20 @@ public:
      */
     void Attach(Shader& shader);
     
+    ///Get the index of a uniform variable in the shader. Each uniform variable has an index.
     int GetUniformLocation(const char* name);
     
+    ///Call this before drawing to activate the shader program.
     void Use();
+    ///Check if this shader program is in use.
+    ///@see Use()
     bool InUse() const;
+    ///If this shader is in use, deactivate it. Note that this method will check with the driver if this
+    /// shader is in use before deactivating it; use DeselectAll() if you want to
+    /// deactivate *all* shaders from being in use.
     void Deselect();
+    
+    ///Deselects all shaders
     static void DeselectAll();
 
     void BindTexture(int index, TextureUnit& texture_unit, Texture& texture, const std::string& samplerName);
@@ -976,9 +1013,13 @@ struct MeshTexture{
         , sampler_name(sampler_name)
     {}
 
+    ///store the texture here
     std::shared_ptr<Texture> texture;
+    ///store the texture unit here
     std::shared_ptr<TextureUnit> texture_unit;
+    ///store the sampler here
     std::shared_ptr<TextureSampler> sampler;
+    ///give the sampler a name, this is the name that will be passed into the shader
     std::string sampler_name;
 };
 
