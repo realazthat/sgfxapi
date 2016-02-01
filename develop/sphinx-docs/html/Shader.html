@@ -44,7 +44,60 @@
   <dl class="class">
 <dt id="_CPPv2N7SGFXAPI6ShaderE">
 <span id="SGFXAPI::Shader"></span><span class="target" id="sgfxapiclass_s_g_f_x_a_p_i_1_1_shader"></span><em class="property">class </em><code class="descclassname">SGFXAPI::</code><code class="descname">Shader</code><a class="headerlink" href="#_CPPv2N7SGFXAPI6ShaderE" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<dd><p>This is a single shader, of a particular type; either pixel shader, . </p>
+<p><dl class="docutils">
+<dt><strong>See</strong></dt>
+<dd>getHandle(const Shader&amp; shader) </dd>
+</dl>
+</p>
+<div class="breathe-sectiondef container">
+<p class="breathe-sectiondef-title rubric">Public Functions</p>
+<dl class="function">
+<dt id="_CPPv2N7SGFXAPI6Shader14LoadFromStringE10ShaderTypePKcPKcPKc">
+<span id="SGFXAPI::Shader::LoadFromString__ShaderType.cCP.cCP.cCP"></span><span class="target" id="sgfxapiclass_s_g_f_x_a_p_i_1_1_shader_1a12e7447e7e681fe0a235aa0429e67b25"></span>void <code class="descname">LoadFromString</code><span class="sig-paren">(</span>ShaderType <em>type</em>, <em class="property">const</em> char *<em>shaderData</em>, <em class="property">const</em> char *<em>entryPoint</em>, <em class="property">const</em> char *<em>profile</em><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv2N7SGFXAPI6Shader14LoadFromStringE10ShaderTypePKcPKcPKc" title="Permalink to this definition">¶</a></dt>
+<dd><p>Load the shader from source. </p>
+<p><dl class="docutils">
+<dt><strong>See</strong></dt>
+<dd><a class="reference internal" href="#sgfxapiclass_s_g_f_x_a_p_i_1_1_shader_1aa666d25e0cebbedb688b090ebc8384b7"><span>LoadFromFile()</span></a> </dd>
+<dt><strong>Parameters</strong></dt>
+<dd><ul class="breatheparameterlist first last">
+<li><code class="first docutils literal"><span class="pre">shaderData</span></code> - <p>should be a null-terminated c-string, containing the source code. </p>
+</li>
+<li><code class="first docutils literal"><span class="pre">entryPoint</span></code> - <p>must be 0 </p>
+</li>
+<li><code class="first docutils literal"><span class="pre">profile</span></code> - <p>must be 0 </p>
+</li>
+</ul>
+</dd>
+</dl>
+</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="_CPPv2N7SGFXAPI6Shader12LoadFromFileE10ShaderTypePKcPKcPKc">
+<span id="SGFXAPI::Shader::LoadFromFile__ShaderType.cCP.cCP.cCP"></span><span class="target" id="sgfxapiclass_s_g_f_x_a_p_i_1_1_shader_1aa666d25e0cebbedb688b090ebc8384b7"></span>void <code class="descname">LoadFromFile</code><span class="sig-paren">(</span>ShaderType <em>type</em>, <em class="property">const</em> char *<em>fileName</em>, <em class="property">const</em> char *<em>entryPoint</em>, <em class="property">const</em> char *<em>profile</em><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv2N7SGFXAPI6Shader12LoadFromFileE10ShaderTypePKcPKcPKc" title="Permalink to this definition">¶</a></dt>
+<dd><p>Load the shader from a source file. </p>
+<p>Load the shader from source. <dl class="docutils">
+<dt><strong>See</strong></dt>
+<dd><p class="first"><a class="reference internal" href="#sgfxapiclass_s_g_f_x_a_p_i_1_1_shader_1aa666d25e0cebbedb688b090ebc8384b7"><span>LoadFromFile()</span></a> </p>
+<p class="last"><a class="reference internal" href="#sgfxapiclass_s_g_f_x_a_p_i_1_1_shader_1a12e7447e7e681fe0a235aa0429e67b25"><span>LoadFromString()</span></a> </p>
+</dd>
+<dt><strong>Parameters</strong></dt>
+<dd><ul class="breatheparameterlist first last">
+<li><code class="first docutils literal"><span class="pre">shaderData</span></code> - <p>should be a null-terminated c-string, containing the source code. </p>
+</li>
+<li><code class="first docutils literal"><span class="pre">entryPoint</span></code> - <p>must be 0 </p>
+</li>
+<li><code class="first docutils literal"><span class="pre">profile</span></code> - <p>must be 0 </p>
+</li>
+</ul>
+</dd>
+</dl>
+</p>
+</dd></dl>
+
+</div>
+</dd></dl>
 
 
 
@@ -59,7 +112,7 @@
 
     <div class="footer" role="contentinfo">
         &copy; Copyright 2016, Azriel Fasten.
-      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.3.4.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.3.5.
     </div>
   </body>
 </html>

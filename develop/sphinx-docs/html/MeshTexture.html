@@ -45,6 +45,33 @@
 <dt id="_CPPv2N7SGFXAPI11MeshTextureE">
 <span id="SGFXAPI::MeshTexture"></span><span class="target" id="sgfxapistruct_s_g_f_x_a_p_i_1_1_mesh_texture"></span><em class="property">struct </em><code class="descclassname">SGFXAPI::</code><code class="descname">MeshTexture</code><a class="headerlink" href="#_CPPv2N7SGFXAPI11MeshTextureE" title="Permalink to this definition">¶</a></dt>
 <dd><p>Just a container that bundles together the texture, texture unit, sampler, and texture name (for retrieval in the shader). </p>
+<div class="breathe-sectiondef container">
+<p class="breathe-sectiondef-title rubric">Public Members</p>
+<dl class="member">
+<dt id="_CPPv2N7SGFXAPI11MeshTexture7textureE">
+<span id="SGFXAPI::MeshTexture::texture__std::shared_ptr:Texture:"></span><span class="target" id="sgfxapistruct_s_g_f_x_a_p_i_1_1_mesh_texture_1a28463dfd435cf3aac79def9921a72751"></span>std::shared_ptr&lt;<a class="reference internal" href="Texture.html#_CPPv2N7SGFXAPI7TextureE" title="SGFXAPI::Texture">Texture</a>&gt; <code class="descname">texture</code><a class="headerlink" href="#_CPPv2N7SGFXAPI11MeshTexture7textureE" title="Permalink to this definition">¶</a></dt>
+<dd><p>store the texture here </p>
+</dd></dl>
+
+<dl class="member">
+<dt id="_CPPv2N7SGFXAPI11MeshTexture12texture_unitE">
+<span id="SGFXAPI::MeshTexture::texture_unit__std::shared_ptr:TextureUnit:"></span><span class="target" id="sgfxapistruct_s_g_f_x_a_p_i_1_1_mesh_texture_1ae9978b98f89bd81dde5b64d3f1b27fb4"></span>std::shared_ptr&lt;TextureUnit&gt; <code class="descname">texture_unit</code><a class="headerlink" href="#_CPPv2N7SGFXAPI11MeshTexture12texture_unitE" title="Permalink to this definition">¶</a></dt>
+<dd><p>store the texture unit here </p>
+</dd></dl>
+
+<dl class="member">
+<dt id="_CPPv2N7SGFXAPI11MeshTexture7samplerE">
+<span id="SGFXAPI::MeshTexture::sampler__std::shared_ptr:TextureSampler:"></span><span class="target" id="sgfxapistruct_s_g_f_x_a_p_i_1_1_mesh_texture_1a18af765df732f3c1285d1d8bd093e1d8"></span>std::shared_ptr&lt;<a class="reference internal" href="TextureSampler.html#_CPPv2N7SGFXAPI14TextureSamplerE" title="SGFXAPI::TextureSampler">TextureSampler</a>&gt; <code class="descname">sampler</code><a class="headerlink" href="#_CPPv2N7SGFXAPI11MeshTexture7samplerE" title="Permalink to this definition">¶</a></dt>
+<dd><p>store the sampler here </p>
+</dd></dl>
+
+<dl class="member">
+<dt id="_CPPv2N7SGFXAPI11MeshTexture12sampler_nameE">
+<span id="SGFXAPI::MeshTexture::sampler_name__ss"></span><span class="target" id="sgfxapistruct_s_g_f_x_a_p_i_1_1_mesh_texture_1a7247749c41aeb4f59ea64abba873885e"></span>std::string <code class="descname">sampler_name</code><a class="headerlink" href="#_CPPv2N7SGFXAPI11MeshTexture12sampler_nameE" title="Permalink to this definition">¶</a></dt>
+<dd><p>give the sampler a name, this is the name that will be passed into the shader </p>
+</dd></dl>
+
+</div>
 </dd></dl>
 
 
@@ -60,7 +87,7 @@
 
     <div class="footer" role="contentinfo">
         &copy; Copyright 2016, Azriel Fasten.
-      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.3.4.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.3.5.
     </div>
   </body>
 </html>

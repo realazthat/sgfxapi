@@ -44,7 +44,12 @@
   <dl class="class">
 <dt id="_CPPv2N7SGFXAPI7TextureE">
 <span id="SGFXAPI::Texture"></span><span class="target" id="sgfxapiclass_s_g_f_x_a_p_i_1_1_texture"></span><em class="property">class </em><code class="descclassname">SGFXAPI::</code><code class="descname">Texture</code><a class="headerlink" href="#_CPPv2N7SGFXAPI7TextureE" title="Permalink to this definition">¶</a></dt>
-<dd><div class="breathe-sectiondef container">
+<dd><p><dl class="docutils">
+<dt><strong>See</strong></dt>
+<dd>getHandle(const Texture&amp;) </dd>
+</dl>
+</p>
+<div class="breathe-sectiondef container">
 <p class="breathe-sectiondef-title rubric">Public Functions</p>
 <dl class="function">
 <dt id="_CPPv2N7SGFXAPI7Texture7TextureE11TextureType21TextureInternalFormat13ResourceUsageiiiii">
@@ -75,6 +80,12 @@
 </dd></dl>
 
 <dl class="function">
+<dt id="_CPPv2N7SGFXAPI7Texture15MaxMimpapLevelsEv">
+<span id="SGFXAPI::Texture::MaxMimpapLevels"></span><span class="target" id="sgfxapiclass_s_g_f_x_a_p_i_1_1_texture_1a7febf321c884601e1137c4f01e85b1dd"></span>int <code class="descname">MaxMimpapLevels</code><span class="sig-paren">(</span><span class="sig-paren">)</span> const<a class="headerlink" href="#_CPPv2N7SGFXAPI7Texture15MaxMimpapLevelsEv" title="Permalink to this definition">¶</a></dt>
+<dd><p>Given the dimensions and type of texture, this function returns the maximum number of mipmap levels. </p>
+</dd></dl>
+
+<dl class="function">
 <dt id="_CPPv2N7SGFXAPI7Texture11UpdateToGpuEiii13TextureFormatPK7uint8_t6size_tiRKNSt6stringE">
 <span id="SGFXAPI::Texture::UpdateToGpu__i.i.i.TextureFormat.uint8_tCP.s.i.ssCR"></span><span class="target" id="sgfxapiclass_s_g_f_x_a_p_i_1_1_texture_1aed915f85474de0dbf9c6f29b906ce6b4"></span>void <code class="descname">UpdateToGpu</code><span class="sig-paren">(</span>int <em>width</em>, int <em>height</em>, int <em>depth</em>, TextureFormat <em>textureFormat</em>, <em class="property">const</em> uint8_t *<em>data</em>, size_t <em>dataBytesSize</em>, int <em>level</em>, <em class="property">const</em> std::string &amp;<em>debugName</em><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv2N7SGFXAPI7Texture11UpdateToGpuEiii13TextureFormatPK7uint8_t6size_tiRKNSt6stringE" title="Permalink to this definition">¶</a></dt>
 <dd><p>Set a mipmap level of the texture. </p>
@@ -101,6 +112,53 @@
 <dd><p>Automatically generate mipmaps. </p>
 </dd></dl>
 
+<dl class="function">
+<dt id="_CPPv2N7SGFXAPI7Texture4BindEv">
+<span id="SGFXAPI::Texture::Bind"></span><span class="target" id="sgfxapiclass_s_g_f_x_a_p_i_1_1_texture_1a313d947bdc9618c707f4025883f63656"></span>void <code class="descname">Bind</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv2N7SGFXAPI7Texture4BindEv" title="Permalink to this definition">¶</a></dt>
+<dd><p>Activate this texture, to be used in the following calls; some methods of this class may require that this texture is in the &#8220;bound&#8221; state before using them. </p>
+<p><dl class="docutils">
+<dt><strong>See</strong></dt>
+<dd><a class="reference internal" href="#sgfxapiclass_s_g_f_x_a_p_i_1_1_texture_1ab4346e960f357e298c9d11233f122d7b"><span>UnBind()</span></a>, <a class="reference internal" href="#sgfxapiclass_s_g_f_x_a_p_i_1_1_texture_1a5ac87b8570ee32706899dc66e92e5dd0"><span>UnBindAll()</span></a>, <a class="reference internal" href="#sgfxapiclass_s_g_f_x_a_p_i_1_1_texture_1aedaafd3333eed72b8187ed3d1043281b"><span>IsBound()</span></a> </dd>
+</dl>
+</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="_CPPv2N7SGFXAPI7Texture6UnBindEv">
+<span id="SGFXAPI::Texture::UnBind"></span><span class="target" id="sgfxapiclass_s_g_f_x_a_p_i_1_1_texture_1ab4346e960f357e298c9d11233f122d7b"></span>void <code class="descname">UnBind</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv2N7SGFXAPI7Texture6UnBindEv" title="Permalink to this definition">¶</a></dt>
+<dd><p>Deactivate this texture; this function checks with the driver that this texture is bound; and if it is not already bound, it is a noop; use <a class="reference internal" href="#sgfxapiclass_s_g_f_x_a_p_i_1_1_texture_1a5ac87b8570ee32706899dc66e92e5dd0"><span>UnBindAll()</span></a> to clear the bound state of all/any texture. </p>
+<p><dl class="docutils">
+<dt><strong>See</strong></dt>
+<dd><a class="reference internal" href="#sgfxapiclass_s_g_f_x_a_p_i_1_1_texture_1a313d947bdc9618c707f4025883f63656"><span>Bind()</span></a>, <a class="reference internal" href="#sgfxapiclass_s_g_f_x_a_p_i_1_1_texture_1a5ac87b8570ee32706899dc66e92e5dd0"><span>UnBindAll()</span></a>, <a class="reference internal" href="#sgfxapiclass_s_g_f_x_a_p_i_1_1_texture_1aedaafd3333eed72b8187ed3d1043281b"><span>IsBound()</span></a> </dd>
+</dl>
+</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="_CPPv2N7SGFXAPI7Texture7IsBoundEv">
+<span id="SGFXAPI::Texture::IsBound"></span><span class="target" id="sgfxapiclass_s_g_f_x_a_p_i_1_1_texture_1aedaafd3333eed72b8187ed3d1043281b"></span>bool <code class="descname">IsBound</code><span class="sig-paren">(</span><span class="sig-paren">)</span> const<a class="headerlink" href="#_CPPv2N7SGFXAPI7Texture7IsBoundEv" title="Permalink to this definition">¶</a></dt>
+<dd><p>Check if this texture is &#8220;bound&#8221;. </p>
+<p><dl class="docutils">
+<dt><strong>See</strong></dt>
+<dd><a class="reference internal" href="#sgfxapiclass_s_g_f_x_a_p_i_1_1_texture_1a313d947bdc9618c707f4025883f63656"><span>Bind()</span></a>, <a class="reference internal" href="#sgfxapiclass_s_g_f_x_a_p_i_1_1_texture_1ab4346e960f357e298c9d11233f122d7b"><span>UnBind()</span></a>, <a class="reference internal" href="#sgfxapiclass_s_g_f_x_a_p_i_1_1_texture_1a5ac87b8570ee32706899dc66e92e5dd0"><span>UnBindAll()</span></a> </dd>
+</dl>
+</p>
+</dd></dl>
+
+</div>
+<div class="breathe-sectiondef container">
+<p class="breathe-sectiondef-title rubric">Public Static Functions</p>
+<dl class="function">
+<dt id="_CPPv2N7SGFXAPI7Texture9UnBindAllEv">
+<span id="SGFXAPI::Texture::UnBindAll"></span><span class="target" id="sgfxapiclass_s_g_f_x_a_p_i_1_1_texture_1a5ac87b8570ee32706899dc66e92e5dd0"></span><em class="property">static</em> void <code class="descname">UnBindAll</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv2N7SGFXAPI7Texture9UnBindAllEv" title="Permalink to this definition">¶</a></dt>
+<dd><p>Deactivate <em>any</em> texture that is bound. </p>
+<p><dl class="docutils">
+<dt><strong>See</strong></dt>
+<dd><a class="reference internal" href="#sgfxapiclass_s_g_f_x_a_p_i_1_1_texture_1a313d947bdc9618c707f4025883f63656"><span>Bind()</span></a>, <a class="reference internal" href="#sgfxapiclass_s_g_f_x_a_p_i_1_1_texture_1ab4346e960f357e298c9d11233f122d7b"><span>UnBind()</span></a>, <a class="reference internal" href="#sgfxapiclass_s_g_f_x_a_p_i_1_1_texture_1aedaafd3333eed72b8187ed3d1043281b"><span>IsBound()</span></a> </dd>
+</dl>
+</p>
+</dd></dl>
+
 </div>
 </dd></dl>
 
@@ -117,7 +175,7 @@
 
     <div class="footer" role="contentinfo">
         &copy; Copyright 2016, Azriel Fasten.
-      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.3.4.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.3.5.
     </div>
   </body>
 </html>
