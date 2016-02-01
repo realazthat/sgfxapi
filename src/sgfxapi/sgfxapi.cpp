@@ -1443,7 +1443,8 @@ bool ShaderProgram::InUse() const
 void ShaderProgram::Deselect()
 {
     checkOpenGLError();
-    glUseProgram(0);
+    if (InUse())
+        glUseProgram(0);
     checkOpenGLError();
 }
 
