@@ -23,6 +23,7 @@ GLenum toGL(TextureElementType elementtype);
 GLenum toGL(TextureType texturetype);
 GLenum toGL(PrimitiveIndexType indextype);
 GLenum toGL(TextureFilterMode filtermode);
+GLenum toGL(ShaderType type);
 GLint toGL(TextureAddressMode addressmode);
 
 GLenum toGLBinding(TextureType texturetype);

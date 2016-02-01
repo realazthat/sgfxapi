@@ -79,8 +79,12 @@ enum class GPUVertexDataType
 enum class ShaderType
 {
     NullShader,
+    GeometryShader,
     VertexShader,
-    PixelShader
+    PixelShader,
+    ComputeShader,
+    TessControlShader,
+    TessEvalShader
 };
 
 

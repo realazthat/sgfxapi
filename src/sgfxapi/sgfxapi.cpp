@@ -472,6 +472,22 @@ GLenum toGL(PrimitiveIndexType primitiveindextype)
     return GL_NONE;
 }
 
+GLenum toGL(ShaderType type)
+{
+    switch (type)
+    {
+        case (ShaderType::GeometryShader): return GL_GEOMETRY_SHADER;
+        case (ShaderType::VertexShader): return GL_VERTEX_SHADER;
+        case (ShaderType::PixelShader): return GL_FRAGMENT_SHADER;
+        case (ShaderType::ComputeShader): return GL_COMPUTE_SHADER;
+        case (ShaderType::TessControlShader): return GL_TESS_CONTROL_SHADER;
+        case (ShaderType::TessEvalShader): return GL_TESS_EVALUATION_SHADER;
+        case (ShaderType::NullShader): return GL_NONE;
+    }
+    assert(false);
+    return GL_NONE;
+}
+
 
 
 GLuint getHandle(const ShaderProgram& sp)
@@ -1304,18 +1320,11 @@ Shader::Shader(ShaderType type)
     : pimpl(new ShaderPimpl{ /*.m_shaderHandle=*/ 0, /*.m_type=*/ type })
 {
 
-    if (type == ShaderType::VertexShader)
+    if (type != ShaderType::NullShader)
     {
-        pimpl->m_shaderHandle = glCreateShader (GL_VERTEX_SHADER);
-        //assert(m_shaderHandle != -1);
+        pimpl->m_shaderHandle = glCreateShader (toGL(type));
         checkOpenGLError();
     } 
-    else if (type == ShaderType::PixelShader) 
-    {
-        pimpl->m_shaderHandle = glCreateShader (GL_FRAGMENT_SHADER);
-        //assert(m_shaderHandle != -1);
-        checkOpenGLError();
-    }
     else
     {
         throw std::runtime_error("Cannot create Shader: Invalid shader type");
