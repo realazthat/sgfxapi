@@ -29,6 +29,7 @@ GLint toGL(TextureAddressMode addressmode);
 GLenum toGLBinding(TextureType texturetype);
 
 
+const char* toGLSTR(PrimitiveIndexType indextype);
 
 GLuint getHandle(const ShaderProgram& sp);
 

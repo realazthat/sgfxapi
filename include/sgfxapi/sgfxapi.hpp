@@ -278,7 +278,6 @@ enum class TextureInternalFormat{
 
 
 
-const char* toGLSTR(PrimitiveIndexType indextype);
 
 const char* toSTR(VertexDataSemantic semantic);
 const char* toSTR(VertexDataType type);
