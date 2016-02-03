@@ -494,7 +494,6 @@ public:
     explicit VertexBuffer(std::weak_ptr<Mesh> mesh, int numVertices, const VertexDeclaration& dec, Usage usage, bool allocateCpu=true);
     ~VertexBuffer();
 
-    typedef std::vector<unsigned char> cpu_data_t;
     
     std::string name;
     
@@ -531,6 +530,7 @@ public:
     bool VAOIsBound() const;
     static void UnBindAll();
 
+    typedef std::vector<unsigned char> cpu_data_t;
     std::unique_ptr<VertexBufferPimpl> pimpl;
 private:
     
