@@ -651,7 +651,7 @@ void Graphics::Clear(bool clearDepth, bool clearStencil, bool clearColor,
 
 VertexElement::VertexElement( VertexDataSemantic semantic
                             , VertexDataType src_type
-                            , int count
+                            , int dimension
                             , const std::string& name
                             , bool normalized
                             , GPUVertexDataType dst_type)
@@ -659,11 +659,11 @@ VertexElement::VertexElement( VertexDataSemantic semantic
     , m_src_type(src_type)
     , m_dst_type(dst_type)
     , m_normalized(normalized)
-    , m_count(count)
+    , m_dimension(dimension)
     , m_name(name)
 {
-    assert(count >= 1);
-    assert(count <= 4);
+    assert(dimension >= 1);
+    assert(dimension <= 4);
     
     if (m_dst_type == GPUVertexDataType::DEFAULT_TO_SRC)
         m_dst_type = toDefaultGPUDataType(m_src_type);
@@ -786,13 +786,13 @@ int VertexElement::SizeBytes() const
         break;
     }
 
-    return size * m_count;
+    return size * m_dimension;
 }
 
 
-int VertexElement::SizeElems() const
+int VertexElement::SizeDimension() const
 {
-    return m_count;
+    return m_dimension;
 }
 
 VertexDataSemantic VertexElement::Semantic() const
@@ -831,7 +831,7 @@ std::string VertexElement::ToString() const
         
     }
     
-    out << ", count: " << element.SizeElems();
+    out << ", count: " << element.SizeDimension();
     
     return out;
 }
@@ -1643,7 +1643,7 @@ void Mesh::GenerateVAO(int startVertexOffset)
 
                 assert( valid_src_types.count(toGL(element.SrcType())) );
                 glVertexAttribIPointer (attr_index,
-                                       element.SizeElems(),
+                                       element.SizeDimension(),
                                        toGL(element.SrcType()),
                                        stride,
                                        (void*)(startVertexOffset + offset)); 
@@ -1653,13 +1653,13 @@ void Mesh::GenerateVAO(int startVertexOffset)
 
                 assert( valid_src_types.count(toGL(element.SrcType())) );
                 glVertexAttribLPointer  (attr_index,
-                                       element.SizeElems(),
+                                       element.SizeDimension(),
                                        toGL(element.SrcType()),
                                        stride,
                                        (void*)(startVertexOffset + offset)); 
             } else if (element.DstType() == GPUVertexDataType::FLOAT) {
                 glVertexAttribPointer (attr_index,
-                                       element.SizeElems(),
+                                       element.SizeDimension(),
                                        toGL(element.SrcType()),
                                        element.Normalized() ? GL_TRUE : GL_FALSE,
                                        stride,

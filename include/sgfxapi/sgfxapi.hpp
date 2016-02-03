@@ -316,11 +316,11 @@ public:
                 I'm not exactly sure what opengl does with this information,
      *          and I sometimes abuse them to mean the wrong thing to pass in data that I want.
      * @param src_type the base type of the source array; that is the array that will be copied from the CPU, if any.
-     * @param count each element is a vector of size [1,4]; so a "color" might be of @p src_type/@p dst_type `UNSIGNED_SHORT` and of @p count 3.
-     *          A @p count of 1 would mean a scalar. @p count must be at least 1 and at most 4.
+     * @param dimension each element is a vector of size [1,4]; so a "color" might be of @p src_type or @p dst_type `UNSIGNED_SHORT` and of @p dimension 3.
+     *          A @p dimension of 1 would mean a scalar. @p dimension must be at least 1 and at most 4.
      * @param name the name of the vertex element; it should be descriptive, like "color", "normal", or "extra-data1" etc.
-     *          and no two names should conflict for the all the vertex-data (possibly multiple VertexBuffers and
-     *          VertexDeclarations) when rendering.
+     *          and no two names should conflict for the all the vertex-data (possibly throughout multiple VertexBuffers and
+     *          VertexDeclarations in the same mesh) when rendering.
      * @param normalized if the destination data is a floating point, and the source data is of integer type, setting this to true
      *          will automatically convert the data to be in the range of [0,1] for unsigned types, or [-1,1] for signed
      *          types. Specifically, the number will be mapped from the full range of the source type to the normalized floating
@@ -332,22 +332,22 @@ public:
      *          See http://www.informit.com/articles/article.aspx?p=2033340&seqNum=3
      */
     VertexElement( VertexDataSemantic semantic
-                 , VertexDataType src_type, int count
+                 , VertexDataType src_type, int dimension
                  , const std::string& name
                  , bool normalized=false
                  , GPUVertexDataType dst_type = GPUVertexDataType::DEFAULT_TO_SRC);
     ~VertexElement(void);
 
     /**
-     * @brief Calculates the size, in bytes, of this element, taking the @c type and @c count into account.
+     * @brief Calculates the size, in bytes, of this element, taking the @c type and @c dimension into account.
      * @return The size in bytes.
      */
     int SizeBytes() const;
     /**
-     * @brief The count.
-     * @return The count.
+     * @brief The dimension.
+     * @return The dimension.
      */
-    int SizeElems() const;
+    int SizeDimension() const;
     /**
      * @brief The semantic of this VertexElement.
      * @return The VertexDataSemantic.
@@ -398,14 +398,14 @@ private:
     VertexDataType m_src_type;
     GPUVertexDataType m_dst_type;
     bool m_normalized;
-    int m_count;
+    int m_dimension;
     std::string m_name;
     
 };
 
 
 /**
-* Prints a string of format "(semantic: (semantic), name: (name), type: (type), count: (num))".
+* Prints a string of format "(semantic: (semantic), name: (name), type: (type), dimension: (num))".
 */
 ::std::ostream& operator<<(::std::ostream&out, const VertexElement& element);
 
