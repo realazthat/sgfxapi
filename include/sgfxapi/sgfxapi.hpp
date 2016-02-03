@@ -313,19 +313,24 @@ class VertexElement
 public:
 
     /** Constructs a VertexElement.
-     * @param semantic the "point" of the element. I'm not exactly sure what opengl does with this information,
-     *          and i sometimes abuse them to mean the wrong thing to pass in data that i want.
+     * @param semantic the "point" of the element. I believe this is mostly legacy, before using named elements;
+                I'm not exactly sure what opengl does with this information,
+     *          and I sometimes abuse them to mean the wrong thing to pass in data that I want.
      * @param src_type the base type of the source array; that is the array that will be copied from the CPU, if any.
-     * @param count the number of elements; so a "color" might be of "type" `UNSIGNED_SHORT` and of `count` 3.
+     * @param count each element is a vector of size [1,4]; so a "color" might be of @p src_type/@p dst_type `UNSIGNED_SHORT` and of @p count 3.
+     *          A @p count of 1 would mean a scalar. @p count must be at least 1 and at most 4.
      * @param name the name of the vertex element; it should be descriptive, like "color", "normal", or "extra-data1" etc.
      *          and no two names should conflict for the all the vertex-data (possibly multiple VertexBuffers and
      *          VertexDeclarations) when rendering.
      * @param normalized if the destination data is a floating point, and the source data is of integer type, setting this to true
      *          will automatically convert the data to be in the range of [0,1] for unsigned types, or [-1,1] for signed
-     *          types.
+     *          types. Specifically, the number will be mapped from the full range of the source type to the normalized floating
+     *          point range.
      * @param dst_type the type to convert to/store on the GPU; defaults to the same type on the CPU; opengl itself will sometimes
      *          unexpectedly convert it to something else first, even if your shader is expecting the same type as the CPU,
-     *          and lose information as a result. See http://www.informit.com/articles/article.aspx?p=2033340&seqNum=3
+     *          and lose information as a result - unless you are careful. This library defaults to keeping them the same (no conversion)
+     *          unless specified by changing this argument.
+     *          See http://www.informit.com/articles/article.aspx?p=2033340&seqNum=3
      */
     VertexElement( VertexDataSemantic semantic
                  , VertexDataType src_type, int count
@@ -449,12 +454,44 @@ private:
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 struct VertexBufferPimpl;
 
+/**
+ * The VertexBuffer (VBO) actually holds the vertex data array sent to the GPU.
+ * The format of the data is as follows (n is the number of vertices in the mesh/chunk/draw call):
+ *
+ * ```
+ * A VBO with n vertices:
+ * | vertex 0 data || vertex 1 data || vertex 2 data || vertex 3 data |  ...  | vertex n data |
+ * 
+ * A single vertex's data, with k elements:
+ * | vertex element 0 | vertex element 1 | vertex element 2 | ... | vertex element k |
+ *
+ * Example VBO:
+ *
+ * | pos.x | pos.y | pos.z | uv.u | uv.v | | pos.x | pos.y | pos.z | uv.u | uv.v | ...
+ * In the above example the VertexDeclaration looks like:
+ *
+ * | "pos", float X 3 | "uv", float X 2 |
+ * ```
+ * 
+ *
+ */
 class VertexBuffer 
 {
 public:
     VertexBuffer(const VertexBuffer&) = delete;
     VertexBuffer& operator=(const VertexBuffer&) = delete;
 public:
+    /**
+     * 
+     * @param mesh the mesh this VBO will be rendered with; this is for safety, to check that the mesh's
+     *          VAO (vertex attributes object) is bound when doing VBO operations.
+     * @param numVertices the length of the buffer, in number of vertices.
+     * @param dec the layout of each vertex within the buffer's vertex-data-array.
+     * @param usage indicates if this VBO will be subsequently read from, or written to during rendering.
+     * @param allocateCpu allocates a CPU-side buffer for filling. The CPU side buffer is not strictly necessary
+     *          if you upload the data already properly formatted. @see UpdateToGpu(), UpdateToCpu().
+     *
+     */
     explicit VertexBuffer(std::weak_ptr<Mesh> mesh, int numVertices, const VertexDeclaration& dec, Usage usage, bool allocateCpu=true);
     ~VertexBuffer();
 

@@ -662,6 +662,9 @@ VertexElement::VertexElement( VertexDataSemantic semantic
     , m_count(count)
     , m_name(name)
 {
+    assert(count >= 1);
+    assert(count <= 4);
+    
     if (m_dst_type == GPUVertexDataType::DEFAULT_TO_SRC)
         m_dst_type = toDefaultGPUDataType(m_src_type);
 
