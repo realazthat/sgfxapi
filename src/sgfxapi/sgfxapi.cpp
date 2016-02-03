@@ -262,7 +262,7 @@ GLenum toGL(TexturePixelFormat pixelformat)
     return GL_NONE;
 }
 
-int toGLCount(TexturePixelFormat pixelformat)
+int toGLDim(TexturePixelFormat pixelformat)
 {
     switch (pixelformat)
     {
@@ -2487,7 +2487,7 @@ int Texture::LogicalSizeBytes(int width, int height, int depth, TextureFormat fo
     ///The GL_PACK/UNPACK_ALIGNMENTs can only be 1, 2, 4, or 8. So an alignment of 3 is not allowed.
     assert((rowalignment == 1 || rowalignment == 2 || rowalignment == 4 || rowalignment == 8) && "The GL_PACK/UNPACK_ALIGNMENTs can only be 1, 2, 4, or 8.");
 
-    int baserowsize = width*toGLCount(format.pixelformat)*toGLBytes(format.elementtype);
+    int baserowsize = width*toGLDim(format.pixelformat)*toGLBytes(format.elementtype);
     int unalignedbytes = baserowsize % rowalignment;
     int alignmentadjustment = (rowalignment - unalignedbytes) % rowalignment;
 
