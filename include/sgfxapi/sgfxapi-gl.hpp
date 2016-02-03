@@ -24,13 +24,16 @@ GLenum toGL(TextureType texturetype);
 GLenum toGL(PrimitiveIndexType indextype);
 GLenum toGL(TextureFilterMode filtermode);
 GLenum toGL(ShaderType type);
+GLenum toGLBinding(TextureType texturetype);
 GLint toGL(TextureAddressMode addressmode);
 
-GLenum toGLBinding(TextureType texturetype);
 
 
 int toGLDim(TexturePixelFormat pixelformat);
 const char* toGLSTR(PrimitiveIndexType indextype);
+
+
+
 
 GLuint getHandle(const ShaderProgram& sp);
 
