@@ -44,7 +44,41 @@
   <dl class="class">
 <dt id="_CPPv2N7SGFXAPI12VertexBufferE">
 <span id="SGFXAPI::VertexBuffer"></span><span class="target" id="sgfxapiclass_s_g_f_x_a_p_i_1_1_vertex_buffer"></span><em class="property">class </em><code class="descclassname">SGFXAPI::</code><code class="descname">VertexBuffer</code><a class="headerlink" href="#_CPPv2N7SGFXAPI12VertexBufferE" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<dd><p>The <a class="reference internal" href="#sgfxapiclass_s_g_f_x_a_p_i_1_1_vertex_buffer"><span>VertexBuffer</span></a> (VBO) actually holds the vertex data array sent to the GPU. </p>
+<p>The format of the data is as follows (n is the number of vertices in the mesh/chunk/draw call):</p>
+<p>``` A VBO with n vertices: | vertex 0 data || vertex 1 data || vertex 2 data || vertex 3 data | ... | vertex n data |</p>
+<p>A single vertex&#8217;s data, with k elements: | vertex element 0 | vertex element 1 | vertex element 2 | ... | vertex element k |</p>
+<p>Example VBO:</p>
+<p>| pos.x | pos.y | pos.z | uv.u | uv.v | | pos.x | pos.y | pos.z | uv.u | uv.v | ... In the above example the <a class="reference internal" href="VertexDeclaration.html#sgfxapiclass_s_g_f_x_a_p_i_1_1_vertex_declaration"><span>VertexDeclaration</span></a> looks like:</p>
+<p>| &#8220;pos&#8221;, float X 3 | &#8220;uv&#8221;, float X 2 | ``` </p>
+<div class="breathe-sectiondef container">
+<p class="breathe-sectiondef-title rubric">Public Functions</p>
+<dl class="function">
+<dt id="_CPPv2N7SGFXAPI12VertexBuffer12VertexBufferENSt8weak_ptrI4MeshEEiRK17VertexDeclaration5Usageb">
+<span id="SGFXAPI::VertexBuffer::VertexBuffer__std::weak_ptr:Mesh:.i.VertexDeclarationCR.Usage.b"></span><span class="target" id="sgfxapiclass_s_g_f_x_a_p_i_1_1_vertex_buffer_1ad947bfbb4b69a016b7d2426336688018"></span><code class="descname">VertexBuffer</code><span class="sig-paren">(</span>std::weak_ptr&lt;<a class="reference internal" href="Mesh.html#_CPPv2N7SGFXAPI4MeshE" title="SGFXAPI::Mesh">Mesh</a>&gt; <em>mesh</em>, int <em>numVertices</em>, <em class="property">const</em> <a class="reference internal" href="VertexDeclaration.html#_CPPv2N7SGFXAPI17VertexDeclarationE" title="SGFXAPI::VertexDeclaration">VertexDeclaration</a> &amp;<em>dec</em>, Usage <em>usage</em>, bool <em>allocateCpu</em><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv2N7SGFXAPI12VertexBuffer12VertexBufferENSt8weak_ptrI4MeshEEiRK17VertexDeclaration5Usageb" title="Permalink to this definition">¶</a></dt>
+<dd><p><dl class="docutils">
+<dt><strong>See</strong></dt>
+<dd>UpdateToGpu(), UpdateToCpu(). </dd>
+<dt><strong>Parameters</strong></dt>
+<dd><ul class="breatheparameterlist first last">
+<li><code class="first docutils literal"><span class="pre">mesh</span></code> - <p>the mesh this VBO will be rendered with; this is for safety, to check that the mesh&#8217;s VAO (vertex attributes object) is bound when doing VBO operations. </p>
+</li>
+<li><code class="first docutils literal"><span class="pre">numVertices</span></code> - <p>the length of the buffer, in number of vertices. </p>
+</li>
+<li><code class="first docutils literal"><span class="pre">dec</span></code> - <p>the layout of each vertex within the buffer&#8217;s vertex-data-array. </p>
+</li>
+<li><code class="first docutils literal"><span class="pre">usage</span></code> - <p>indicates if this VBO will be subsequently read from, or written to during rendering. </p>
+</li>
+<li><code class="first docutils literal"><span class="pre">allocateCpu</span></code> - <p>allocates a CPU-side buffer for filling. The CPU side buffer is not strictly necessary if you upload the data already properly formatted. </p>
+</li>
+</ul>
+</dd>
+</dl>
+</p>
+</dd></dl>
+
+</div>
+</dd></dl>
 
 
 

@@ -55,17 +55,17 @@
 <p><dl class="docutils">
 <dt><strong>Parameters</strong></dt>
 <dd><ul class="breatheparameterlist first last">
-<li><code class="first docutils literal"><span class="pre">semantic</span></code> - <p>the &#8220;point&#8221; of the element. I&#8217;m not exactly sure what opengl does with this information, and i sometimes abuse them to mean the wrong thing to pass in data that i want. </p>
+<li><code class="first docutils literal"><span class="pre">semantic</span></code> - <p>the &#8220;point&#8221; of the element. I believe this is mostly legacy, before using named elements; I&#8217;m not exactly sure what opengl does with this information, and I sometimes abuse them to mean the wrong thing to pass in data that I want. </p>
 </li>
 <li><code class="first docutils literal"><span class="pre">src_type</span></code> - <p>the base type of the source array; that is the array that will be copied from the CPU, if any. </p>
 </li>
-<li><code class="first docutils literal"><span class="pre">count</span></code> - <p>the number of elements; so a &#8220;color&#8221; might be of &#8220;type&#8221; <code class="docutils literal"><span class="pre">UNSIGNED_SHORT</span></code> and of <code class="docutils literal"><span class="pre">count</span></code> 3. </p>
+<li><code class="first docutils literal"><span class="pre">count</span></code> - <p>each element is a vector of size [1,4]; so a &#8220;color&#8221; might be of <code class="docutils literal"><span class="pre">src_type/</span> </code> and of <code class="docutils literal"><span class="pre">count</span></code> 3. A <code class="docutils literal"><span class="pre">count</span></code> of 1 would mean a scalar. <code class="docutils literal"><span class="pre">count</span></code> must be at least 1 and at most 4. </p>
 </li>
 <li><code class="first docutils literal"><span class="pre">name</span></code> - <p>the name of the vertex element; it should be descriptive, like &#8220;color&#8221;, &#8220;normal&#8221;, or &#8220;extra-data1&#8221; etc. and no two names should conflict for the all the vertex-data (possibly multiple VertexBuffers and VertexDeclarations) when rendering. </p>
 </li>
-<li><code class="first docutils literal"><span class="pre">normalized</span></code> - <p>if the destination data is a floating point, and the source data is of integer type, setting this to true will automatically convert the data to be in the range of [0,1] for unsigned types, or [-1,1] for signed types. </p>
+<li><code class="first docutils literal"><span class="pre">normalized</span></code> - <p>if the destination data is a floating point, and the source data is of integer type, setting this to true will automatically convert the data to be in the range of [0,1] for unsigned types, or [-1,1] for signed types. Specifically, the number will be mapped from the full range of the source type to the normalized floating point range. </p>
 </li>
-<li><code class="first docutils literal"><span class="pre">dst_type</span></code> - <p>the type to convert to/store on the GPU; defaults to the same type on the CPU; opengl itself will sometimes unexpectedly convert it to something else first, even if your shader is expecting the same type as the CPU, and lose information as a result. See <a class="reference external" href="http://www.informit.com/articles/article.aspx?p=2033340&amp;seqNum=3">http://www.informit.com/articles/article.aspx?p=2033340&amp;seqNum=3</a> </p>
+<li><code class="first docutils literal"><span class="pre">dst_type</span></code> - <p>the type to convert to/store on the GPU; defaults to the same type on the CPU; opengl itself will sometimes unexpectedly convert it to something else first, even if your shader is expecting the same type as the CPU, and lose information as a result - unless you are careful. This library defaults to keeping them the same (no conversion) unless specified by changing this argument. See <a class="reference external" href="http://www.informit.com/articles/article.aspx?p=2033340&amp;seqNum=3">http://www.informit.com/articles/article.aspx?p=2033340&amp;seqNum=3</a> </p>
 </li>
 </ul>
 </dd>
