@@ -506,9 +506,11 @@ public:
     void SetNumVertices(std::size_t size, bool perseve_old_cpu_data = true);
     
 
-    void UpdateToCpu(uint8_t* data=0, int bytes=0);
+
     void UpdateToGpu(const uint8_t* data, int size);
     void UpdateToGpu();
+    void UpdateToCpu(uint8_t* data, int size);
+    void UpdateToCpu();
     void AllocateCpuMemory();
     void AllocateGpuMemory();
 
