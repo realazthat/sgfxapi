@@ -958,7 +958,7 @@ VertexDeclaration& VertexBuffer::Declaration()
 }
 
 
-void VertexBuffer::SetNumVertices(std::size_t size, bool perseve_old_cpu_data)
+void VertexBuffer::SetNumVertices(std::size_t size, bool preserve_old_cpu_data)
 {
 
     ///set the new number of vertices
@@ -968,7 +968,7 @@ void VertexBuffer::SetNumVertices(std::size_t size, bool perseve_old_cpu_data)
 
     if (HasCpuMemory())
     {
-        if (perseve_old_cpu_data && !!pimpl->m_cpuData && new_bytes > pimpl->m_cpuData->size())
+        if (preserve_old_cpu_data && !!pimpl->m_cpuData && new_bytes > pimpl->m_cpuData->size())
         {
             ///keep the old data around a bit
             std::shared_ptr<cpu_data_t> oldCpuData = pimpl->m_cpuData;

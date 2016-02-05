@@ -494,27 +494,75 @@ public:
     explicit VertexBuffer(std::weak_ptr<Mesh> mesh, int numVertices, const VertexDeclaration& dec, Usage usage, bool allocateCpu=true);
     ~VertexBuffer();
 
-    
-    std::string name;
-    
+    ///Returns the number of vertices in the VBO
     int NumVertices() const;
     
-    //int getSizeInBytes() const;
-
-    int VertexSizeBytes() const;
-
-    void SetNumVertices(std::size_t size, bool perseve_old_cpu_data = true);
+    /**
+     * Resize the VBO.
+     *
+     * @param preserve_old_cpu_data if true, this will preserve the old CPU data; slicing it as necessary.
+     */
+    void SetNumVertices(std::size_t size, bool preserve_old_cpu_data = true);
     
-
-
+    /**
+     * Send data to the GPU side of this buffer. HasGpuMemory() will return true after this call.
+     *
+     * This call ignores any allocated CPU buffer in the VBO and explicitly sends the
+     * specified buffer.
+     *
+     * @param data the buffer
+     * @param size the length of the buffer
+     *
+     * @see UpdateToGpu(), UpdateToCpu()
+     */
     void UpdateToGpu(const uint8_t* data, int size);
+    /**
+     * Send data to the GPU side of this buffer. HasGpuMemory() will return true after this call.
+     *
+     * This call used the allocated CPU side of the VBO. There must be an allocated CPU buffer
+     * to use this function
+     *
+     *
+     * @see UpdateToGpu(const uint8_t*,int), AllocateCpuMemory(), CpuPtr(), UpdateToCpu()
+     */
     void UpdateToGpu();
     void UpdateToCpu(uint8_t* data, int size);
     void UpdateToCpu();
+    /**
+     * If HasCpuMemory() returns false, this will allocate a CPU-side buffer to store
+     * the vertex-data for this VBO.
+     *
+     * HasCpuMemory() will return true after this call.
+     *
+     * @see UpdateToGpu(), UpdateToCpu()
+     */
     void AllocateCpuMemory();
+    
+    /**
+     * If HasGpuMemory() returns false, this will allocate a GPU-side buffer to store
+     * the vertex-data for this VBO.
+     *
+     * HasGpuMemory() will return true after this call.
+     *
+     * Note, that you can call UpdateToGpu(), even if there is no allocated GPU buffer yet;
+     * it will both allocate the GPU buffer and move the data there; making this function
+     * mostly redundant.
+     *
+     * @see UpdateToGpu(), UpdateToCpu()
+     */
     void AllocateGpuMemory();
-
+    
+    /**
+     * Returns true of there is an allocated CPU-side buffer for this VBO.
+     *
+     * @see AllocateCpuMemory()
+     */
     bool HasCpuMemory() const;
+    /**
+     * Returns true of there is an allocated GPU-side buffer for this VBO.
+     *
+     * @see AllocateGpuMemory(), UpdateToGpu()
+     */
     bool HasGpuMemory() const;
     
     const VertexDeclaration& Declaration() const;
