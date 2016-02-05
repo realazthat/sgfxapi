@@ -1065,7 +1065,20 @@ bool VertexBuffer::VAOIsBound() const
     return false;
 }
 
-void VertexBuffer::UpdateToGpu(const uint8_t* data, int bytes)
+void VertexBuffer::UpdateToGpu()
+{
+    if (!pimpl->m_cpuData)
+    {
+        throw std::runtime_error( "no cpu data to send to gpu" );
+    }
+    
+    
+    const uint8_t* data = pimpl->m_cpuData->data();
+    std::size_t size = pimpl->m_cpuData->size();
+    this->UpdateToGpu(data, size);
+}
+
+void VertexBuffer::UpdateToGpu(const uint8_t* data, int size)
 {
     assert(IsBound());
     checkOpenGLError();
@@ -1078,15 +1091,15 @@ void VertexBuffer::UpdateToGpu(const uint8_t* data, int bytes)
     if (!data)
     {
         data = pimpl->m_cpuData->data();
-        bytes = pimpl->m_cpuData->size();
+        size = pimpl->m_cpuData->size();
     }
 
 
-    assert(bytes == LogicalBufferSizeBytes());
-    glBufferData(GL_ARRAY_BUFFER, bytes, data, toGL(pimpl->m_usage));
+    assert(size == LogicalBufferSizeBytes());
+    glBufferData(GL_ARRAY_BUFFER, size, data, toGL(pimpl->m_usage));
     checkOpenGLError();
       
-    pimpl->m_gpuSize = bytes;
+    pimpl->m_gpuSize = size;
 }
 
 
