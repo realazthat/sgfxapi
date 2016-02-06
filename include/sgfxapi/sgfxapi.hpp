@@ -454,23 +454,23 @@ private:
 struct VertexBufferPimpl;
 
 /**
- * The VertexBuffer (VBO) actually holds the vertex data array sent to the GPU.
+ * The VertexBuffer (VBO) actually represents the vertex data array sent to the GPU.
  * The format of the data is as follows (n is the number of vertices in the mesh/chunk/draw call):
  *
- * ```
+ * \code
  * A VBO with n vertices:
  * | vertex 0 data || vertex 1 data || vertex 2 data || vertex 3 data |  ...  | vertex n data |
  * 
  * A single vertex's data, with k elements:
  * | vertex element 0 | vertex element 1 | vertex element 2 | ... | vertex element k |
- *
+ * 
  * Example VBO:
- *
+ * 
  * | pos.x | pos.y | pos.z | uv.u | uv.v | | pos.x | pos.y | pos.z | uv.u | uv.v | ...
  * In the above example the VertexDeclaration looks like:
  *
  * | "pos", float X 3 | "uv", float X 2 |
- * ```
+ * \endcode
  * 
  *
  */
@@ -488,7 +488,7 @@ public:
      * @param dec the layout of each vertex within the buffer's vertex-data-array.
      * @param usage indicates if this VBO will be subsequently read from, or written to during rendering.
      * @param allocateCpu allocates a CPU-side buffer for filling. The CPU side buffer is not strictly necessary
-     *          if you upload the data already properly formatted. @see UpdateToGpu(), UpdateToCpu().
+     *          if you upload the data already properly formatted. @see UpdateToGpu(), UpdateToCpu(), AllocateCpuMemory().
      *
      */
     explicit VertexBuffer(std::weak_ptr<Mesh> mesh, int numVertices, const VertexDeclaration& dec, Usage usage, bool allocateCpu=true);
@@ -534,17 +534,19 @@ public:
      *
      * HasCpuMemory() will return true after this call.
      *
-     * @see UpdateToGpu(), UpdateToCpu()
+     * @see UpdateToGpu(), UpdateToCpu(), VertexBuffer::VertexBuffer()
      */
     void AllocateCpuMemory();
     
     /**
+     * @note The VertexBuffer must be bound to call this method. @see Bind()
+     *
      * If HasGpuMemory() returns false, this will allocate a GPU-side buffer to store
      * the vertex-data for this VBO.
      *
      * HasGpuMemory() will return true after this call.
      *
-     * Note, that you can call UpdateToGpu(), even if there is no allocated GPU buffer yet;
+     * @note Note that you can call UpdateToGpu(), even if there is no allocated GPU buffer yet;
      * it will both allocate the GPU buffer and move the data there; making this function
      * mostly redundant.
      *
@@ -565,29 +567,44 @@ public:
      */
     bool HasGpuMemory() const;
     
+    /**
+     * Returns the VertexDeclaration associated with this buffer; the VertexDeclaration describes
+     * the layout of the individual elements in the array of vertex data.
+     */
     const VertexDeclaration& Declaration() const;
-    VertexDeclaration& Declaration();
     
-    
-    const unsigned char* CpuPtr() const;
+    ///Returns a raw pointer to the CPU data; throws a std::runtime_error if there is no CPU
+    /// data allocated for this VertexBuffer.
     unsigned char* CpuPtr();
+    
+    /// @copydoc CpuPtr()
+    const unsigned char* CpuPtr() const;
+    
     
     int LogicalBufferSizeBytes() const;
     int GpuSizeInBytes() const;
     int CpuSizeInBytes() const;
     
+    /**
+     * Binds this vertex buffer. Certain member functions require that the
+     * buffer is bound before usage.
+     * 
+     * @note Note that the VAO (Mesh object) must be bound before binding the
+     * VBO (VertexBuffer), and this function will assert (in debug mode) as such.
+     *
+     *
+     * @see AllocateGpuMemory(), UpdateToGpu(), VAOIsBound()
+     */
     void Bind();
     void UnBind();
+    ///Returns true if this VertexBuffer is bound.
     bool IsBound() const;
+    ///Returns true if associated Mesh/VAO is bound
     bool VAOIsBound() const;
     static void UnBindAll();
 
     typedef std::vector<unsigned char> cpu_data_t;
     std::unique_ptr<VertexBufferPimpl> pimpl;
-private:
-    
-    friend class Graphics;
-    friend class Mesh;
 };
 
 

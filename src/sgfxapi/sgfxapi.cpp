@@ -952,11 +952,6 @@ const VertexDeclaration& VertexBuffer::Declaration() const
 }
 
 
-VertexDeclaration& VertexBuffer::Declaration()
-{
-    return pimpl->m_declaration;
-}
-
 
 void VertexBuffer::SetNumVertices(std::size_t size, bool preserve_old_cpu_data)
 {
