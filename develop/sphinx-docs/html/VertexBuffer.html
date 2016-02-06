@@ -44,13 +44,23 @@
   <dl class="class">
 <dt id="_CPPv2N7SGFXAPI12VertexBufferE">
 <span id="SGFXAPI::VertexBuffer"></span><span class="target" id="sgfxapiclass_s_g_f_x_a_p_i_1_1_vertex_buffer"></span><em class="property">class </em><code class="descclassname">SGFXAPI::</code><code class="descname">VertexBuffer</code><a class="headerlink" href="#_CPPv2N7SGFXAPI12VertexBufferE" title="Permalink to this definition">¶</a></dt>
-<dd><p>The <a class="reference internal" href="#sgfxapiclass_s_g_f_x_a_p_i_1_1_vertex_buffer"><span>VertexBuffer</span></a> (VBO) actually holds the vertex data array sent to the GPU. </p>
+<dd><p>The <a class="reference internal" href="#sgfxapiclass_s_g_f_x_a_p_i_1_1_vertex_buffer"><span>VertexBuffer</span></a> (VBO) actually represents the vertex data array sent to the GPU. </p>
 <p>The format of the data is as follows (n is the number of vertices in the mesh/chunk/draw call):</p>
-<p>``` A VBO with n vertices: | vertex 0 data || vertex 1 data || vertex 2 data || vertex 3 data | ... | vertex n data |</p>
-<p>A single vertex&#8217;s data, with k elements: | vertex element 0 | vertex element 1 | vertex element 2 | ... | vertex element k |</p>
-<p>Example VBO:</p>
-<p>| pos.x | pos.y | pos.z | uv.u | uv.v | | pos.x | pos.y | pos.z | uv.u | uv.v | ... In the above example the <a class="reference internal" href="VertexDeclaration.html#sgfxapiclass_s_g_f_x_a_p_i_1_1_vertex_declaration"><span>VertexDeclaration</span></a> looks like:</p>
-<p>| &#8220;pos&#8221;, float X 3 | &#8220;uv&#8221;, float X 2 | ``` </p>
+<p> <div class="highlight-c++"><div class="highlight"><pre>A VBO with n vertices:
+| vertex 0 data || vertex 1 data || vertex 2 data || vertex 3 data |  ...  | vertex n data |
+
+A single vertex&#39;s data, with k elements:
+| vertex element 0 | vertex element 1 | vertex element 2 | ... | vertex element k |
+
+Example VBO:
+
+| pos.x | pos.y | pos.z | uv.u | uv.v | | pos.x | pos.y | pos.z | uv.u | uv.v | ...
+In the above example the VertexDeclaration looks like:
+
+| &quot;pos&quot;, float X 3 | &quot;uv&quot;, float X 2 |
+</pre></div>
+</div>
+</p>
 <div class="breathe-sectiondef container">
 <p class="breathe-sectiondef-title rubric">Public Functions</p>
 <dl class="function">
@@ -58,7 +68,7 @@
 <span id="SGFXAPI::VertexBuffer::VertexBuffer__std::weak_ptr:Mesh:.i.VertexDeclarationCR.Usage.b"></span><span class="target" id="sgfxapiclass_s_g_f_x_a_p_i_1_1_vertex_buffer_1ad947bfbb4b69a016b7d2426336688018"></span><code class="descname">VertexBuffer</code><span class="sig-paren">(</span>std::weak_ptr&lt;<a class="reference internal" href="Mesh.html#_CPPv2N7SGFXAPI4MeshE" title="SGFXAPI::Mesh">Mesh</a>&gt; <em>mesh</em>, int <em>numVertices</em>, <em class="property">const</em> <a class="reference internal" href="VertexDeclaration.html#_CPPv2N7SGFXAPI17VertexDeclarationE" title="SGFXAPI::VertexDeclaration">VertexDeclaration</a> &amp;<em>dec</em>, Usage <em>usage</em>, bool <em>allocateCpu</em><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv2N7SGFXAPI12VertexBuffer12VertexBufferENSt8weak_ptrI4MeshEEiRK17VertexDeclaration5Usageb" title="Permalink to this definition">¶</a></dt>
 <dd><p><dl class="docutils">
 <dt><strong>See</strong></dt>
-<dd>UpdateToGpu(), UpdateToCpu(). </dd>
+<dd><a class="reference internal" href="#sgfxapiclass_s_g_f_x_a_p_i_1_1_vertex_buffer_1a1647836a80a1f109c20af4af66b601eb"><span>UpdateToGpu()</span></a>, UpdateToCpu(), <a class="reference internal" href="#sgfxapiclass_s_g_f_x_a_p_i_1_1_vertex_buffer_1ae52c7406eef2279d43980ec3a2e01123"><span>AllocateCpuMemory()</span></a>. </dd>
 <dt><strong>Parameters</strong></dt>
 <dd><ul class="breatheparameterlist first last">
 <li><code class="first docutils literal"><span class="pre">mesh</span></code> - <p>the mesh this VBO will be rendered with; this is for safety, to check that the mesh&#8217;s VAO (vertex attributes object) is bound when doing VBO operations. </p>
@@ -75,6 +85,160 @@
 </dd>
 </dl>
 </p>
+</dd></dl>
+
+<dl class="function">
+<dt id="_CPPv2N7SGFXAPI12VertexBuffer11NumVerticesEv">
+<span id="SGFXAPI::VertexBuffer::NumVertices"></span><span class="target" id="sgfxapiclass_s_g_f_x_a_p_i_1_1_vertex_buffer_1a33f930b577550309d1e63459230fd304"></span>int <code class="descname">NumVertices</code><span class="sig-paren">(</span><span class="sig-paren">)</span> const<a class="headerlink" href="#_CPPv2N7SGFXAPI12VertexBuffer11NumVerticesEv" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns the number of vertices in the VBO. </p>
+</dd></dl>
+
+<dl class="function">
+<dt id="_CPPv2N7SGFXAPI12VertexBuffer14SetNumVerticesENSt6size_tEb">
+<span id="SGFXAPI::VertexBuffer::SetNumVertices__std::s.b"></span><span class="target" id="sgfxapiclass_s_g_f_x_a_p_i_1_1_vertex_buffer_1acead82c1442a7b7d80967c9dd57c160c"></span>void <code class="descname">SetNumVertices</code><span class="sig-paren">(</span>std::size_t <em>size</em>, bool <em>preserve_old_cpu_data</em><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv2N7SGFXAPI12VertexBuffer14SetNumVerticesENSt6size_tEb" title="Permalink to this definition">¶</a></dt>
+<dd><p>Resize the VBO. </p>
+<p><dl class="docutils">
+<dt><strong>Parameters</strong></dt>
+<dd><ul class="breatheparameterlist first last">
+<li><code class="first docutils literal"><span class="pre">preserve_old_cpu_data</span></code> - <p>if true, this will preserve the old CPU data; slicing it as necessary. </p>
+</li>
+</ul>
+</dd>
+</dl>
+</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="_CPPv2N7SGFXAPI12VertexBuffer11UpdateToGpuEPK7uint8_ti">
+<span id="SGFXAPI::VertexBuffer::UpdateToGpu__uint8_tCP.i"></span><span class="target" id="sgfxapiclass_s_g_f_x_a_p_i_1_1_vertex_buffer_1a4b465b218d4bbfe86fe6672309727073"></span>void <code class="descname">UpdateToGpu</code><span class="sig-paren">(</span><em class="property">const</em> uint8_t *<em>data</em>, int <em>size</em><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv2N7SGFXAPI12VertexBuffer11UpdateToGpuEPK7uint8_ti" title="Permalink to this definition">¶</a></dt>
+<dd><p>Send data to the GPU side of this buffer. </p>
+<p><a class="reference internal" href="#sgfxapiclass_s_g_f_x_a_p_i_1_1_vertex_buffer_1ac6534b5360c102fc65f9dc9ea060802c"><span>HasGpuMemory()</span></a> will return true after this call.</p>
+<p>This call ignores any allocated CPU buffer in the VBO and explicitly sends the specified buffer.</p>
+<p><dl class="docutils">
+<dt><strong>See</strong></dt>
+<dd><a class="reference internal" href="#sgfxapiclass_s_g_f_x_a_p_i_1_1_vertex_buffer_1a1647836a80a1f109c20af4af66b601eb"><span>UpdateToGpu()</span></a>, UpdateToCpu() </dd>
+<dt><strong>Parameters</strong></dt>
+<dd><ul class="breatheparameterlist first last">
+<li><code class="first docutils literal"><span class="pre">data</span></code> - <p>the buffer </p>
+</li>
+<li><code class="first docutils literal"><span class="pre">size</span></code> - <p>the length of the buffer</p>
+</li>
+</ul>
+</dd>
+</dl>
+</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="_CPPv2N7SGFXAPI12VertexBuffer11UpdateToGpuEv">
+<span id="SGFXAPI::VertexBuffer::UpdateToGpu"></span><span class="target" id="sgfxapiclass_s_g_f_x_a_p_i_1_1_vertex_buffer_1a1647836a80a1f109c20af4af66b601eb"></span>void <code class="descname">UpdateToGpu</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv2N7SGFXAPI12VertexBuffer11UpdateToGpuEv" title="Permalink to this definition">¶</a></dt>
+<dd><p>Send data to the GPU side of this buffer. </p>
+<p><a class="reference internal" href="#sgfxapiclass_s_g_f_x_a_p_i_1_1_vertex_buffer_1ac6534b5360c102fc65f9dc9ea060802c"><span>HasGpuMemory()</span></a> will return true after this call.</p>
+<p>This call used the allocated CPU side of the VBO. There must be an allocated CPU buffer to use this function</p>
+<p><dl class="docutils">
+<dt><strong>See</strong></dt>
+<dd><a class="reference internal" href="#sgfxapiclass_s_g_f_x_a_p_i_1_1_vertex_buffer_1a4b465b218d4bbfe86fe6672309727073"><span>UpdateToGpu(const uint8_t*,int)</span></a>, <a class="reference internal" href="#sgfxapiclass_s_g_f_x_a_p_i_1_1_vertex_buffer_1ae52c7406eef2279d43980ec3a2e01123"><span>AllocateCpuMemory()</span></a>, <a class="reference internal" href="#sgfxapiclass_s_g_f_x_a_p_i_1_1_vertex_buffer_1ab44da3ac1a13fe54df90a7ab22a3369e"><span>CpuPtr()</span></a>, UpdateToCpu() </dd>
+</dl>
+</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="_CPPv2N7SGFXAPI12VertexBuffer17AllocateCpuMemoryEv">
+<span id="SGFXAPI::VertexBuffer::AllocateCpuMemory"></span><span class="target" id="sgfxapiclass_s_g_f_x_a_p_i_1_1_vertex_buffer_1ae52c7406eef2279d43980ec3a2e01123"></span>void <code class="descname">AllocateCpuMemory</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv2N7SGFXAPI12VertexBuffer17AllocateCpuMemoryEv" title="Permalink to this definition">¶</a></dt>
+<dd><p>If <a class="reference internal" href="#sgfxapiclass_s_g_f_x_a_p_i_1_1_vertex_buffer_1a47635508c3f6a367a46e47a6bccf669e"><span>HasCpuMemory()</span></a> returns false, this will allocate a CPU-side buffer to store the vertex-data for this VBO. </p>
+<p><a class="reference internal" href="#sgfxapiclass_s_g_f_x_a_p_i_1_1_vertex_buffer_1a47635508c3f6a367a46e47a6bccf669e"><span>HasCpuMemory()</span></a> will return true after this call.</p>
+<p><dl class="docutils">
+<dt><strong>See</strong></dt>
+<dd><a class="reference internal" href="#sgfxapiclass_s_g_f_x_a_p_i_1_1_vertex_buffer_1a1647836a80a1f109c20af4af66b601eb"><span>UpdateToGpu()</span></a>, UpdateToCpu(), VertexBuffer::VertexBuffer() </dd>
+</dl>
+</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="_CPPv2N7SGFXAPI12VertexBuffer17AllocateGpuMemoryEv">
+<span id="SGFXAPI::VertexBuffer::AllocateGpuMemory"></span><span class="target" id="sgfxapiclass_s_g_f_x_a_p_i_1_1_vertex_buffer_1afe0d1114c81981c54c10c7c0db4d460c"></span>void <code class="descname">AllocateGpuMemory</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv2N7SGFXAPI12VertexBuffer17AllocateGpuMemoryEv" title="Permalink to this definition">¶</a></dt>
+<dd><p>
+If <a class="reference internal" href="#sgfxapiclass_s_g_f_x_a_p_i_1_1_vertex_buffer_1ac6534b5360c102fc65f9dc9ea060802c"><span>HasGpuMemory()</span></a> returns false, this will allocate a GPU-side buffer to store the vertex-data for this VBO.<dl class="docutils">
+<dt><strong>Note</strong></dt>
+<dd>The <a class="reference internal" href="#sgfxapiclass_s_g_f_x_a_p_i_1_1_vertex_buffer"><span>VertexBuffer</span></a> must be bound to call this method. </dd>
+<dt><strong>See</strong></dt>
+<dd><a class="reference internal" href="#sgfxapiclass_s_g_f_x_a_p_i_1_1_vertex_buffer_1aba4805f9e7a50de1de80b751b3424b57"><span>Bind()</span></a></dd>
+</dl>
+</p>
+<p><a class="reference internal" href="#sgfxapiclass_s_g_f_x_a_p_i_1_1_vertex_buffer_1ac6534b5360c102fc65f9dc9ea060802c"><span>HasGpuMemory()</span></a> will return true after this call.</p>
+<p><dl class="docutils">
+<dt><strong>Note</strong></dt>
+<dd>Note that you can call <a class="reference internal" href="#sgfxapiclass_s_g_f_x_a_p_i_1_1_vertex_buffer_1a1647836a80a1f109c20af4af66b601eb"><span>UpdateToGpu()</span></a>, even if there is no allocated GPU buffer yet; it will both allocate the GPU buffer and move the data there; making this function mostly redundant.</dd>
+<dt><strong>See</strong></dt>
+<dd><a class="reference internal" href="#sgfxapiclass_s_g_f_x_a_p_i_1_1_vertex_buffer_1a1647836a80a1f109c20af4af66b601eb"><span>UpdateToGpu()</span></a>, UpdateToCpu() </dd>
+</dl>
+</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="_CPPv2N7SGFXAPI12VertexBuffer12HasCpuMemoryEv">
+<span id="SGFXAPI::VertexBuffer::HasCpuMemory"></span><span class="target" id="sgfxapiclass_s_g_f_x_a_p_i_1_1_vertex_buffer_1a47635508c3f6a367a46e47a6bccf669e"></span>bool <code class="descname">HasCpuMemory</code><span class="sig-paren">(</span><span class="sig-paren">)</span> const<a class="headerlink" href="#_CPPv2N7SGFXAPI12VertexBuffer12HasCpuMemoryEv" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns true of there is an allocated CPU-side buffer for this VBO. </p>
+<p><dl class="docutils">
+<dt><strong>See</strong></dt>
+<dd><a class="reference internal" href="#sgfxapiclass_s_g_f_x_a_p_i_1_1_vertex_buffer_1ae52c7406eef2279d43980ec3a2e01123"><span>AllocateCpuMemory()</span></a> </dd>
+</dl>
+</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="_CPPv2N7SGFXAPI12VertexBuffer12HasGpuMemoryEv">
+<span id="SGFXAPI::VertexBuffer::HasGpuMemory"></span><span class="target" id="sgfxapiclass_s_g_f_x_a_p_i_1_1_vertex_buffer_1ac6534b5360c102fc65f9dc9ea060802c"></span>bool <code class="descname">HasGpuMemory</code><span class="sig-paren">(</span><span class="sig-paren">)</span> const<a class="headerlink" href="#_CPPv2N7SGFXAPI12VertexBuffer12HasGpuMemoryEv" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns true of there is an allocated GPU-side buffer for this VBO. </p>
+<p><dl class="docutils">
+<dt><strong>See</strong></dt>
+<dd><a class="reference internal" href="#sgfxapiclass_s_g_f_x_a_p_i_1_1_vertex_buffer_1afe0d1114c81981c54c10c7c0db4d460c"><span>AllocateGpuMemory()</span></a>, <a class="reference internal" href="#sgfxapiclass_s_g_f_x_a_p_i_1_1_vertex_buffer_1a1647836a80a1f109c20af4af66b601eb"><span>UpdateToGpu()</span></a> </dd>
+</dl>
+</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="_CPPv2N7SGFXAPI12VertexBuffer11DeclarationEv">
+<span id="SGFXAPI::VertexBuffer::Declaration"></span><span class="target" id="sgfxapiclass_s_g_f_x_a_p_i_1_1_vertex_buffer_1ad3ddf85c0271991de17c7b7b554c6ea4"></span><em class="property">const</em> <a class="reference internal" href="VertexDeclaration.html#_CPPv2N7SGFXAPI17VertexDeclarationE" title="SGFXAPI::VertexDeclaration">VertexDeclaration</a> &amp;<code class="descname">Declaration</code><span class="sig-paren">(</span><span class="sig-paren">)</span> const<a class="headerlink" href="#_CPPv2N7SGFXAPI12VertexBuffer11DeclarationEv" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns the <a class="reference internal" href="VertexDeclaration.html#sgfxapiclass_s_g_f_x_a_p_i_1_1_vertex_declaration"><span>VertexDeclaration</span></a> associated with this buffer; the <a class="reference internal" href="VertexDeclaration.html#sgfxapiclass_s_g_f_x_a_p_i_1_1_vertex_declaration"><span>VertexDeclaration</span></a> describes the layout of the individual elements in the array of vertex data. </p>
+</dd></dl>
+
+<dl class="function">
+<dt>
+<span class="target" id="sgfxapiclass_s_g_f_x_a_p_i_1_1_vertex_buffer_1ab44da3ac1a13fe54df90a7ab22a3369e"></span><code class="descname">unsigned char * SGFXAPI::VertexBuffer::CpuPtr()</code></dt>
+<dd><p>Returns a raw pointer to the CPU data; throws a std::runtime_error if there is no CPU data allocated for this <a class="reference internal" href="#sgfxapiclass_s_g_f_x_a_p_i_1_1_vertex_buffer"><span>VertexBuffer</span></a>. </p>
+</dd></dl>
+
+<dl class="function">
+<dt>
+<span class="target" id="sgfxapiclass_s_g_f_x_a_p_i_1_1_vertex_buffer_1a823c0c23569246492d1d52aae23ddf14"></span><code class="descname">const unsigned char * SGFXAPI::VertexBuffer::CpuPtr()</code> const</dt>
+<dd><p>Returns a raw pointer to the CPU data; throws a std::runtime_error if there is no CPU data allocated for this <a class="reference internal" href="#sgfxapiclass_s_g_f_x_a_p_i_1_1_vertex_buffer"><span>VertexBuffer</span></a>. </p>
+</dd></dl>
+
+<dl class="function">
+<dt id="_CPPv2N7SGFXAPI12VertexBuffer4BindEv">
+<span id="SGFXAPI::VertexBuffer::Bind"></span><span class="target" id="sgfxapiclass_s_g_f_x_a_p_i_1_1_vertex_buffer_1aba4805f9e7a50de1de80b751b3424b57"></span>void <code class="descname">Bind</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv2N7SGFXAPI12VertexBuffer4BindEv" title="Permalink to this definition">¶</a></dt>
+<dd><p>Binds this vertex buffer. </p>
+<p>Certain member functions require that the buffer is bound before usage.</p>
+<p><dl class="docutils">
+<dt><strong>Note</strong></dt>
+<dd>Note that the VAO (<a class="reference internal" href="Mesh.html#sgfxapiclass_s_g_f_x_a_p_i_1_1_mesh"><span>Mesh</span></a> object) must be bound before binding the VBO (<a class="reference internal" href="#sgfxapiclass_s_g_f_x_a_p_i_1_1_vertex_buffer"><span>VertexBuffer</span></a>), and this function will assert (in debug mode) as such.</dd>
+<dt><strong>See</strong></dt>
+<dd><a class="reference internal" href="#sgfxapiclass_s_g_f_x_a_p_i_1_1_vertex_buffer_1afe0d1114c81981c54c10c7c0db4d460c"><span>AllocateGpuMemory()</span></a>, <a class="reference internal" href="#sgfxapiclass_s_g_f_x_a_p_i_1_1_vertex_buffer_1a1647836a80a1f109c20af4af66b601eb"><span>UpdateToGpu()</span></a>, <a class="reference internal" href="#sgfxapiclass_s_g_f_x_a_p_i_1_1_vertex_buffer_1ab064c58332c00a16a09ebfeb85601a73"><span>VAOIsBound()</span></a> </dd>
+</dl>
+</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="_CPPv2N7SGFXAPI12VertexBuffer7IsBoundEv">
+<span id="SGFXAPI::VertexBuffer::IsBound"></span><span class="target" id="sgfxapiclass_s_g_f_x_a_p_i_1_1_vertex_buffer_1a0cb54177ec2f3793b60dcf610d979290"></span>bool <code class="descname">IsBound</code><span class="sig-paren">(</span><span class="sig-paren">)</span> const<a class="headerlink" href="#_CPPv2N7SGFXAPI12VertexBuffer7IsBoundEv" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns true if this <a class="reference internal" href="#sgfxapiclass_s_g_f_x_a_p_i_1_1_vertex_buffer"><span>VertexBuffer</span></a> is bound. </p>
+</dd></dl>
+
+<dl class="function">
+<dt id="_CPPv2N7SGFXAPI12VertexBuffer10VAOIsBoundEv">
+<span id="SGFXAPI::VertexBuffer::VAOIsBound"></span><span class="target" id="sgfxapiclass_s_g_f_x_a_p_i_1_1_vertex_buffer_1ab064c58332c00a16a09ebfeb85601a73"></span>bool <code class="descname">VAOIsBound</code><span class="sig-paren">(</span><span class="sig-paren">)</span> const<a class="headerlink" href="#_CPPv2N7SGFXAPI12VertexBuffer10VAOIsBoundEv" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns true if associated Mesh/VAO is bound. </p>
 </dd></dl>
 
 </div>
