@@ -593,14 +593,17 @@ public:
      * VBO (VertexBuffer), and this function will assert (in debug mode) as such.
      *
      *
-     * @see AllocateGpuMemory(), UpdateToGpu(), VAOIsBound()
+     * @see AllocateGpuMemory(), UpdateToGpu(), VAOIsBound(), UnBind()
      */
     void Bind();
+    
+    ///@see Bind()
     void UnBind();
     ///Returns true if this VertexBuffer is bound.
     bool IsBound() const;
     ///Returns true if associated Mesh/VAO is bound
     bool VAOIsBound() const;
+    ///@see Bind()
     static void UnBindAll();
 
     typedef std::vector<unsigned char> cpu_data_t;
@@ -613,6 +616,16 @@ public:
 struct IndexBufferPimpl;
 
 /**
+ * 
+ * The IndexBuffer (IBO) actually represents the index data array sent to the GPU.
+ *
+ * * The array is simply a list of integers.
+ * * The size of the integers is one of {8,16,32} bits; it can be chosen in the constructor.
+ * * Each integer is an index into the VBOs of the mesh.
+ * * In the most usual case, the mesh is a triangle mesh, and the IBO represents a series of triangles;
+ *      in this case, every 3 indices is another triangle.
+ *
+ *
  * @see getHandle(const IndexBuffer&)
  */
 class IndexBuffer
@@ -630,6 +643,7 @@ public:
     ~IndexBuffer();
         
     std::string name;
+    
     
     void UpdateToGpu(const uint8_t* data=0, int bytes=0);
     void UpdateToCpu(uint8_t* data=0, int bytes=0);
