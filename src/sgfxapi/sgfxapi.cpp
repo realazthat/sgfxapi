@@ -1559,9 +1559,8 @@ void ShaderProgram::Attach(Shader& shader)
 
 
 Mesh::Mesh(PrimitiveType primType)
-    : pimpl(new MeshPimpl{ /*.m_vao=*/ 0, /*.m_numVertices=*/ 0, /*.m_numRenderableVertices=*/ 0})
+    : pimpl(new MeshPimpl{ /*.m_vao=*/ 0, /*.m_numVertices=*/ 0, /*.m_numRenderableVertices=*/ 0, /*.m_declaration=*/ VertexDeclaration(), /*.m_primType=*/ primType})
 {
-    pimpl->m_primType = primType;
     glGenVertexArrays (1, &pimpl->m_vao); 
     checkOpenGLError();
 }
