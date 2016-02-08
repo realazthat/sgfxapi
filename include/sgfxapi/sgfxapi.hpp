@@ -884,9 +884,9 @@ struct TextureSampler
 
 
 /**
+ * Just bundled together a TextureElementType and TexturePixelFormat.
  *
- *
- *
+ * @see Texture
  */
 struct TextureFormat
 {
@@ -902,6 +902,8 @@ struct TextureFormat
 struct TexturePimpl;
 
 /**
+ * This class represents a GPU-side texture. Does not store the data on the CPU side.
+ *
  *
  * @see getHandle(const Texture&)
  */
@@ -912,24 +914,28 @@ class Texture
 public:
     /**
      * @param texture_type
-     *      The type of texture, 1D,2D,3D/arrays etc.
+     *      The type of texture, 1D,2D,3D,arrays etc.
      * @param internal_format
      *      A suggestion to the GPU of the type of format to store the image in, internally, on the GPU.
-     * @param usage
-     *      If this texture parameters will change (they won't, because the parameters are set in the ctor).
      * @param width
      *      The width of the image; for 1D, the length of the image.
      * @param height
-     *      The height of the image, for 1D, this will be 1.
+     *      The height of the image, for 1D, this will be 1. For a 1D array, this will be the length of the array.
      * @param depth
-     *      The depth of the image, for 1D,2D, this will be 1.
+     *      The depth of the image, for 1D,2D, this will be 1. For a 2D array, this will be the length of the array.
      * @param mipmaps
-     *      The number of mipmaps this texture will have.
+     *      The number of mipmaps this texture will have. If left out, it will expect to have the
+     *      maximum number of mipmaps.
      * @param rowalignment
-     *      The uploaded data will have this rowalignment. See @c UpdateToGpu(). Defaults to 4.
+     *      The data uploaded to the GPU is uploaded in "rows" of size @p width. Each row will have a "row alignment"
+     *      which means that if the row's length does not align with specified @p rowalignment, there will be padding until
+     *      it aligns. Can only be one of 1, 2, 4, or 8. Defaults to 4. See UpdateToGpu().
+     * @param usage
+     *      If the texture *parameters* will change or not (they won't change under normal use,
+     *      because the parameters are set in the ctor and cannot be changed). Defaults to UsageImmutable.
      */
-    Texture(TextureType texture_type, TextureInternalFormat internal_format, ResourceUsage usage
-           , int width, int height, int depth, int mipmaps=1000, int rowalignment = 4);
+    Texture(TextureType texture_type, TextureInternalFormat internal_format
+           , int width, int height, int depth, size_t mipmaps=size_t(-1), int rowalignment=4, ResourceUsage usage=ResourceUsage::UsageImmutable);
     ~Texture();
 
     ///Given the dimensions and type of texture, this function returns the maximum number of mipmap
@@ -937,18 +943,18 @@ public:
     int MaxMimpapLevels() const;
     
     /**
-     * Set a mipmap level of the texture.
+     * Set the data of a mipmap level of the texture.
      *
      * @param textureFormat
      *      The format of the data being uploaded. The data will be stored according to the @c internal_format
-     *      parameter in the ctor.
+     *      parameter in the ctor Texture::Texture().
      * @param data pointer to a buffer with the data for the texture.
      *        If a PBO is bound, data is the offset into the PBO.
      * @param dataBytesSize the size of the entire buffer. This is basically rowsize*width*height,
      *        where rowsize is (sizeperpixel*width) adjusted for @c rowalignment, specified in the ctor.
      * @param level this specifies the mipmap level to upload the data for. Level 0 *must* be uploaded.
-     *        Other levels are optional, depending on the @c mipmaps parameter specified in the ctor.
-     *        Call @c GenMipmaps() to automatically generate the mipmaps from level 0.
+     *        Other levels are optional, depending on the @c mipmaps parameter specified in the Texture() ctor.
+     *        Call GenMipmaps() to automatically generate the mipmaps from level 0.
      */
     void UpdateToGpu( int width, int height, int depth, TextureFormat textureFormat
                          , const uint8_t* data, size_t dataBytesSize, int level=0, const std::string& debugName=std::string());
@@ -966,7 +972,9 @@ public:
     */
     
     /**
-     * Automatically generate mipmaps.
+     * Automatically generate mipmaps. Call this after setting mipmap level 0.
+     *
+     * See UpdateToGpu()
      */
     void GenMipmaps();
 
@@ -986,17 +994,30 @@ public:
     ///@see Bind(), UnBind(), IsBound()
     static void UnBindAll();
 
-
-    const std::string& Name() const;
-    int Height() const;
+    ///Returns the width of the base-texture (mipmap level 0)
     int Width() const;
+    ///Returns the height of the base-texture (mipmap level 0).
+    ///
+    ///* If this is a 1D texture this will return a height of 1.
+    ///* If this is a 1D texture array, this will return the number of elements in the array.
+    int Height() const;
+    ///Returns the depth of the base-texture (mipmap level 0).
+    ///
+    ///* If this is a 1D texture this will return a depth of 1.
+    ///* If this is a 2D texture this will return a depth of 1.
+    ///* If this is a 2D texture array, this will return the number of elements in the array.
     int Depth() const;
+    
+    ///Returns the TextureFormat specified in the constructor Texture::Texture()
     TextureFormat Format() const;
-    int NumMipmaps() const;
+    
+    //Returns the number of mipmaps set for this Texture.
+    //int NumMipmaps() const;
     //void SetNumMipmaps(int numMipLevels, bool generateNewMipLevels=true);
-    int CpuSizeInBytes() const;
-    int GpuSizeInBytes() const;
-    void DisableMipmaps();
+    //void DisableMipmaps();
+    
+    ///Given the required parameters, this determines the expected size of the CPU-side buffer
+    /// expected to upload the data from.
     static int LogicalSizeBytes(int width, int height, int depth, TextureFormat format, int rowalignment);
 
     std::unique_ptr<TexturePimpl> pimpl;
@@ -1230,7 +1251,7 @@ public:
     ///This loops through all the indices and checks that they are valid.
     void CheckIndexBounds(int numIndices=-1, int startIndexOffset=0) const;
 
-    ///Return the effective vertex-declaration across all VBOs in the mesh.
+    ///Return the effective vertex-declaration across all VBOs in the mesh. Only valid after a call to GenerateVAO().
     const VertexDeclaration& Declaration() const;
 
     /**

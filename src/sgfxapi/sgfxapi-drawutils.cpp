@@ -453,8 +453,7 @@ std::shared_ptr<SGFXAPI::Mesh> basictexture()
     int height = 100;
     int depth = 1;
 
-    auto texture = std::make_shared<Texture>(TextureType::Texture2D, TextureInternalFormat::RGBA8, ResourceUsage::UsageImmutable
-                                              , width, height, depth);
+    auto texture = std::make_shared<Texture>(TextureType::Texture2D, TextureInternalFormat::RGBA8, width, height, depth);
 
     std::vector<float> bmp(width*height*depth*4, 0);
 
@@ -560,8 +559,7 @@ std::shared_ptr<SGFXAPI::Texture> gentesttexture(int width = 100, int height = 1
 
   int depth = 1;
 
-  auto texture = std::make_shared<Texture>(TextureType::Texture2D, TextureInternalFormat::RGBA8, ResourceUsage::UsageImmutable
-                                            , width, height, depth);
+  auto texture = std::make_shared<Texture>(TextureType::Texture2D, TextureInternalFormat::RGBA8, width, height, depth);
 
   std::vector<float> bmp(width*height*depth*4, 0);
 

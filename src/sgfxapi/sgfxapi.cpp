@@ -2162,10 +2162,13 @@ void PixelBuffer::UpdateToGpu(const uint8_t* data, int bytes, int gpuoffset) {
 
 
 
-Texture::Texture( TextureType texture_type, TextureInternalFormat internal_format, ResourceUsage usage
-                , int width, int height, int depth, int mipmaps, int rowalignment)
+Texture::Texture( TextureType texture_type, TextureInternalFormat internal_format
+           , int width, int height, int depth, size_t mipmaps, int rowalignment, ResourceUsage usage)
     : pimpl(new TexturePimpl())
 {
+    if (!(rowalignment == 1 || rowalignment == 2 || rowalignment == 4 || rowalignment == 8))
+        throw std::runtime_error("rowalignment: The GL_PACK/UNPACK_ALIGNMENTs can only be 1, 2, 4, or 8.");
+
     pimpl->m_tex = 0;
     pimpl->m_texture_type = texture_type;
     pimpl->m_internal_format = internal_format;
@@ -2176,8 +2179,8 @@ Texture::Texture( TextureType texture_type, TextureInternalFormat internal_forma
     pimpl->m_rowalignment = rowalignment;
     pimpl->m_mipmaps = mipmaps;
     
-    if (pimpl->m_mipmaps >= 1000)
-        pimpl->m_mipmaps = MaxMimpapLevels();
+    pimpl->m_mipmaps = std::min(pimpl->m_mipmaps, MaxMimpapLevels());
+        
 
     assert(width > 0);
     assert(height > 0);
@@ -2200,7 +2203,7 @@ Texture::Texture( TextureType texture_type, TextureInternalFormat internal_forma
     {
         _InitializeImmutableStorage();
     } else {
-
+        ///set the mimpap levels
         glTexParameteri(toGL(pimpl->m_texture_type), GL_TEXTURE_BASE_LEVEL, 0);
         glTexParameteri(toGL(pimpl->m_texture_type), GL_TEXTURE_MAX_LEVEL, pimpl->m_mipmaps-1);
     }
