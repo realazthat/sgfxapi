@@ -44,7 +44,15 @@
   <dl class="class">
 <dt id="_CPPv2N7SGFXAPI11IndexBufferE">
 <span id="SGFXAPI::IndexBuffer"></span><span class="target" id="sgfxapiclass_s_g_f_x_a_p_i_1_1_index_buffer"></span><em class="property">class </em><code class="descclassname">SGFXAPI::</code><code class="descname">IndexBuffer</code><a class="headerlink" href="#_CPPv2N7SGFXAPI11IndexBufferE" title="Permalink to this definition">¶</a></dt>
-<dd><p><dl class="docutils">
+<dd><p>The <a class="reference internal" href="#sgfxapiclass_s_g_f_x_a_p_i_1_1_index_buffer"><span>IndexBuffer</span></a> (IBO) actually represents the index data array sent to the GPU. </p>
+<p><ul class="simple">
+<li>The array is simply a list of integers.</li>
+<li>The size of the integers is one of {8,16,32} bits; it can be chosen in the constructor.</li>
+<li>Each integer is an index into the VBOs of the mesh.</li>
+<li>In the most usual case, the mesh is a triangle mesh, and the IBO represents a series of triangles; in this case, every 3 indices is another triangle.</li>
+</ul>
+</p>
+<p><dl class="docutils">
 <dt><strong>See</strong></dt>
 <dd>getHandle(const IndexBuffer&amp;) </dd>
 </dl>
