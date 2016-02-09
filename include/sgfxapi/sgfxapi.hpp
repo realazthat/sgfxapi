@@ -1105,7 +1105,7 @@ public:
      */
     void Attach(Shader& shader);
     
-    ///Get the index of a uniform variable in the shader. Each uniform variable has an index.
+    ///Get the index of a uniform variable in the shader program. Each uniform variable has an index.
     int GetUniformLocation(const char* name);
     
     ///Call this before drawing to activate the shader program.
@@ -1113,24 +1113,53 @@ public:
     ///Check if this shader program is in use.
     ///@see Use()
     bool InUse() const;
-    ///If this shader is in use, deactivate it. Note that this method will check with the driver if this
-    /// shader is in use before deactivating it; use DeselectAll() if you want to
+    ///If this shader program is in use, deactivate it. Note that this method will check with the driver if this
+    /// shader program is in use before deactivating it; use DeselectAll() if you want to
     /// deactivate *all* shaders from being in use.
     void Deselect();
     
-    ///Deselects all shaders
+    ///Deselects all shader programs
     static void DeselectAll();
 
-    void BindTexture(int index, TextureUnit& texture_unit, Texture& texture, const std::string& samplerName);
+    /**
+     *
+     * This binds a texture *to* this shader program, so that it can be used in a shader.
+     *
+     * @note The shader program must be in the InUse() state to call this function.
+     * @note The TextureUnit @p textureUnit parameter must be active to call this function.
+     * @note The Texture @p texture parameter must be bound to call this function.
+     *
+     * @param index the texture unit index
+     * @param textureUnit the TextureUnit associated with the Texture
+     * @param texture the texture to bind
+     * @param samplerName the name of the texture/sampler within the shaders
+     */
+    void BindTexture(int index, TextureUnit& textureUnit, Texture& texture, const std::string& samplerName);
 
+    ///set a uniform variable by name
     void SetUniform(const float4x4& matrix, const std::string& name);
+    ///set a uniform variable by name
     void SetUniform(const float value, const std::string& name);
+    ///set a uniform variable by name
     void SetUniform(const int value, const std::string& name);
+    ///set a uniform variable by name
     void SetUniform(const float v1, const float v2, const float v3, const std::string& name);
 
+    ///set a uniform variable by uniform location index, this static method
+    /// operates on the currently bound texture.
+    ///@see GetUniformLocation()
     static void SetFloat4x4(int parameterIndex, const float4x4& matrix);
+    ///set a uniform variable by uniform location index, this static method
+    /// operates on the currently bound texture.
+    ///@see GetUniformLocation()
     static void SetFloat(int parameterIndex, const float value);
+    ///set a uniform variable by uniform location index, this static method
+    /// operates on the currently bound texture.
+    ///@see GetUniformLocation()
     static void SetInt(int parameterIndex, const int value);
+    ///set a uniform variable by uniform location index, this static method
+    /// operates on the currently bound texture.
+    ///@see GetUniformLocation()
     static void SetFloat3(int parameterIndex, const float v1, const float v2, const float v3);
 
     std::unique_ptr<ShaderProgramPimpl> pimpl;

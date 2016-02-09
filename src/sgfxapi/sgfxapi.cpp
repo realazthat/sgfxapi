@@ -1528,18 +1528,19 @@ void ShaderProgram::SetInt(int parameterIndex, const int value)
     glUniform1i(parameterIndex, value);    
 }
 
-void ShaderProgram::BindTexture(int index, TextureUnit& texture_unit, Texture& texture, const std::string& samplerName)
+void ShaderProgram::BindTexture(int index, TextureUnit& textureUnit, Texture& texture, const std::string& samplerName)
 {
     assert(!(index < 0));
     assert(InUse());
-    assert(texture_unit.IsActive());
+    assert(textureUnit.IsActive());
     assert(texture.IsBound());
-    assert(index == texture_unit.Index());
+    assert(index == textureUnit.Index());
     checkOpenGLError();
 
-
+    ///Gets the uniform location of the sampler
     GLint location = glGetUniformLocation(pimpl->m_programHandle, samplerName.c_str());
-    assert(location != -1);
+    if (location == -1)
+        throw std::runtime_error("samplerName does not exist in any of the shaders in this shader program");
     glUniform1i(location, index);
     checkOpenGLError();
 }
@@ -1561,6 +1562,7 @@ void ShaderProgram::Attach(Shader& shader)
 Mesh::Mesh(PrimitiveType primType)
     : pimpl(new MeshPimpl{ /*.m_vao=*/ 0, /*.m_numVertices=*/ 0, /*.m_numRenderableVertices=*/ 0, /*.m_declaration=*/ VertexDeclaration(), /*.m_primType=*/ primType})
 {
+    pimpl->m_primType = primType;
     glGenVertexArrays (1, &pimpl->m_vao); 
     checkOpenGLError();
 }
