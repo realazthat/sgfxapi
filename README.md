@@ -1,6 +1,7 @@
 
-sgfxapi
+sgfxapi (http://realazthat.github.io/sgfxapi/)
 ---
+
 
 Simple wrapper around opengl 4, based off of [clb](http://clb.demon.fi)'s [gfxapi docs](http://clb.demon.fi/gfxapi/).
 
@@ -10,6 +11,8 @@ Branch   | docs |
 ---      | --- 
 master   | [docs](http://realazthat.github.io/sgfxapi/master/sphinx-docs/html/)
 develop  | [docs](http://realazthat.github.io/sgfxapi/develop/sphinx-docs/html/)
+
+
 
 
 License
