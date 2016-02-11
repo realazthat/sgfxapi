@@ -53,6 +53,17 @@
 </dd></dl>
 
 </div>
+<div class="breathe-sectiondef container">
+<p class="breathe-sectiondef-title rubric">Public Members</p>
+<dl class="member">
+<dt id="_CPPv2N7SGFXAPI11PixelBuffer5pimplE">
+<span id="SGFXAPI::PixelBuffer::pimpl__std::unique_ptr:PixelBufferPimpl:"></span><span class="target" id="sgfxapiclass_s_g_f_x_a_p_i_1_1_pixel_buffer_1a362188ee59273c397936c988f4a87dfe"></span>std::unique_ptr&lt;PixelBufferPimpl&gt; <code class="descname">pimpl</code><a class="headerlink" href="#_CPPv2N7SGFXAPI11PixelBuffer5pimplE" title="Permalink to this definition">¶</a></dt>
+<dd><p>Locks the GPU buffer, and returns a pointer to the memory on the CPU. </p>
+<p>Must call UnMap() when reading/writing is complete.</p>
+<p>Allows calls to glReadPixels(), while bound, and it will not block until the PBO is mapped. </p>
+</dd></dl>
+
+</div>
 </dd></dl>
 
 
@@ -68,7 +79,7 @@
 
     <div class="footer" role="contentinfo">
         &copy; Copyright 2016, Azriel Fasten.
-      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.3.4.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.3.5.
     </div>
   </body>
 </html>

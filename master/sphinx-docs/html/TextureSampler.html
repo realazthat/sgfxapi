@@ -46,7 +46,7 @@
 <span id="SGFXAPI::TextureSampler"></span><span class="target" id="sgfxapistruct_s_g_f_x_a_p_i_1_1_texture_sampler"></span><em class="property">struct </em><code class="descclassname">SGFXAPI::</code><code class="descname">TextureSampler</code><a class="headerlink" href="#_CPPv2N7SGFXAPI14TextureSamplerE" title="Permalink to this definition">¶</a></dt>
 <dd><p>Describes how the GPU should sample the texture. </p>
 <p>See <a class="reference external" href="http://www.geeks3d.com/20110908/opengl-3-3-sampler-objects-control-your-texture-units/">OpenGL 3.3 Sampler Objects: Control your Texture Units</a></p>
-<p>Usage:  <div class="highlight-c++"><div class="highlight"><pre><span class="k">auto</span> <span class="n">sampler</span> <span class="o">=</span> <span class="n">std</span><span class="o">::</span><span class="n">make_shared</span><span class="o">&lt;</span><span class="n">TextureSampler</span><span class="o">&gt;</span><span class="p">();</span>
+<p>Usage: <div class="highlight-c++"><div class="highlight"><pre><span class="k">auto</span> <span class="n">sampler</span> <span class="o">=</span> <span class="n">std</span><span class="o">::</span><span class="n">make_shared</span><span class="o">&lt;</span><span class="n">TextureSampler</span><span class="o">&gt;</span><span class="p">();</span>
 
 <span class="c1">// the texture should wrap around in the u-direction</span>
 <span class="n">sampler</span><span class="o">-&gt;</span><span class="n">addressU</span> <span class="o">=</span> <span class="n">TextureAddressMode</span><span class="o">::</span><span class="n">TextureAddressWrap</span><span class="p">;</span>
@@ -58,6 +58,11 @@
 <span class="k">auto</span> <span class="n">mesh_texture</span> <span class="o">=</span> <span class="n">std</span><span class="o">::</span><span class="n">make_shared</span><span class="o">&lt;</span><span class="n">MeshTexture</span><span class="o">&gt;</span><span class="p">(</span><span class="n">texture</span><span class="p">,</span> <span class="n">texture_unit</span><span class="p">,</span> <span class="n">sampler</span><span class="p">,</span> <span class="n">sampler_name</span><span class="p">);</span>
 </pre></div>
 </div>
+</p>
+<p><dl class="docutils">
+<dt><strong>See</strong></dt>
+<dd>getHandle(const TextureSampler&amp;) </dd>
+</dl>
 </p>
 <div class="breathe-sectiondef container">
 <p class="breathe-sectiondef-title rubric">Public Functions</p>
@@ -88,43 +93,42 @@
 <p><a class="reference internal" href="#sgfxapistruct_s_g_f_x_a_p_i_1_1_texture_sampler_1ab29ba7fedb4f6ba1e1e0e400aa8685fd"><span>GenerateParams()</span></a> &#8220;saves&#8221; the values to the GPU-side. </p>
 </dd></dl>
 
-<dl class="function">
-<dt id="_CPPv2N7SGFXAPI14TextureSampler6HandleEv">
-<span id="SGFXAPI::TextureSampler::Handle"></span><span class="target" id="sgfxapistruct_s_g_f_x_a_p_i_1_1_texture_sampler_1a5134fb15384da510c0eeb9f4355d1b16"></span>GLuint <code class="descname">Handle</code><span class="sig-paren">(</span><span class="sig-paren">)</span> const<a class="headerlink" href="#_CPPv2N7SGFXAPI14TextureSampler6HandleEv" title="Permalink to this definition">¶</a></dt>
-<dd><p>Retrieve the opengl handle for the sampler. </p>
-</dd></dl>
-
 </div>
 <div class="breathe-sectiondef container">
 <p class="breathe-sectiondef-title rubric">Public Members</p>
 <dl class="member">
 <dt id="_CPPv2N7SGFXAPI14TextureSampler8addressUE">
-<span id="SGFXAPI::TextureSampler::addressU__TextureAddressMode"></span><span class="target" id="sgfxapistruct_s_g_f_x_a_p_i_1_1_texture_sampler_1a14f6007e157e0b4d6eabbee17e027fa2"></span>TextureAddressMode <code class="descname">addressU</code><a class="headerlink" href="#_CPPv2N7SGFXAPI14TextureSampler8addressUE" title="Permalink to this definition">¶</a></dt>
+<span id="SGFXAPI::TextureSampler::addressU__TextureAddressMode"></span><span class="target" id="sgfxapistruct_s_g_f_x_a_p_i_1_1_texture_sampler_1a14f6007e157e0b4d6eabbee17e027fa2"></span><a class="reference internal" href="enums.html#_CPPv2N7SGFXAPI18TextureAddressModeE" title="SGFXAPI::TextureAddressMode">TextureAddressMode</a> <code class="descname">addressU</code><a class="headerlink" href="#_CPPv2N7SGFXAPI14TextureSampler8addressUE" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="member">
 <dt id="_CPPv2N7SGFXAPI14TextureSampler8addressVE">
-<span id="SGFXAPI::TextureSampler::addressV__TextureAddressMode"></span><span class="target" id="sgfxapistruct_s_g_f_x_a_p_i_1_1_texture_sampler_1a182ba6f6ba55a32d454ad7dd394ab847"></span>TextureAddressMode <code class="descname">addressV</code><a class="headerlink" href="#_CPPv2N7SGFXAPI14TextureSampler8addressVE" title="Permalink to this definition">¶</a></dt>
+<span id="SGFXAPI::TextureSampler::addressV__TextureAddressMode"></span><span class="target" id="sgfxapistruct_s_g_f_x_a_p_i_1_1_texture_sampler_1a182ba6f6ba55a32d454ad7dd394ab847"></span><a class="reference internal" href="enums.html#_CPPv2N7SGFXAPI18TextureAddressModeE" title="SGFXAPI::TextureAddressMode">TextureAddressMode</a> <code class="descname">addressV</code><a class="headerlink" href="#_CPPv2N7SGFXAPI14TextureSampler8addressVE" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="member">
 <dt id="_CPPv2N7SGFXAPI14TextureSampler8addressWE">
-<span id="SGFXAPI::TextureSampler::addressW__TextureAddressMode"></span><span class="target" id="sgfxapistruct_s_g_f_x_a_p_i_1_1_texture_sampler_1a4e60d677b9b7c9d7d8ff9448ae670b71"></span>TextureAddressMode <code class="descname">addressW</code><a class="headerlink" href="#_CPPv2N7SGFXAPI14TextureSampler8addressWE" title="Permalink to this definition">¶</a></dt>
+<span id="SGFXAPI::TextureSampler::addressW__TextureAddressMode"></span><span class="target" id="sgfxapistruct_s_g_f_x_a_p_i_1_1_texture_sampler_1a4e60d677b9b7c9d7d8ff9448ae670b71"></span><a class="reference internal" href="enums.html#_CPPv2N7SGFXAPI18TextureAddressModeE" title="SGFXAPI::TextureAddressMode">TextureAddressMode</a> <code class="descname">addressW</code><a class="headerlink" href="#_CPPv2N7SGFXAPI14TextureSampler8addressWE" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="member">
 <dt id="_CPPv2N7SGFXAPI14TextureSampler9minFilterE">
-<span id="SGFXAPI::TextureSampler::minFilter__TextureFilterMode"></span><span class="target" id="sgfxapistruct_s_g_f_x_a_p_i_1_1_texture_sampler_1a3593b0a2f7500ab5089a8f51f9216dc3"></span>TextureFilterMode <code class="descname">minFilter</code><a class="headerlink" href="#_CPPv2N7SGFXAPI14TextureSampler9minFilterE" title="Permalink to this definition">¶</a></dt>
+<span id="SGFXAPI::TextureSampler::minFilter__TextureFilterMode"></span><span class="target" id="sgfxapistruct_s_g_f_x_a_p_i_1_1_texture_sampler_1a3593b0a2f7500ab5089a8f51f9216dc3"></span><a class="reference internal" href="enums.html#_CPPv2N7SGFXAPI17TextureFilterModeE" title="SGFXAPI::TextureFilterMode">TextureFilterMode</a> <code class="descname">minFilter</code><a class="headerlink" href="#_CPPv2N7SGFXAPI14TextureSampler9minFilterE" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="member">
 <dt id="_CPPv2N7SGFXAPI14TextureSampler9mipFilterE">
-<span id="SGFXAPI::TextureSampler::mipFilter__TextureFilterMode"></span><span class="target" id="sgfxapistruct_s_g_f_x_a_p_i_1_1_texture_sampler_1a8ff2b2a105a43dd6c2f0f21046a3355b"></span>TextureFilterMode <code class="descname">mipFilter</code><a class="headerlink" href="#_CPPv2N7SGFXAPI14TextureSampler9mipFilterE" title="Permalink to this definition">¶</a></dt>
+<span id="SGFXAPI::TextureSampler::mipFilter__TextureFilterMode"></span><span class="target" id="sgfxapistruct_s_g_f_x_a_p_i_1_1_texture_sampler_1a8ff2b2a105a43dd6c2f0f21046a3355b"></span><a class="reference internal" href="enums.html#_CPPv2N7SGFXAPI17TextureFilterModeE" title="SGFXAPI::TextureFilterMode">TextureFilterMode</a> <code class="descname">mipFilter</code><a class="headerlink" href="#_CPPv2N7SGFXAPI14TextureSampler9mipFilterE" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="member">
 <dt id="_CPPv2N7SGFXAPI14TextureSampler9magFilterE">
-<span id="SGFXAPI::TextureSampler::magFilter__TextureFilterMode"></span><span class="target" id="sgfxapistruct_s_g_f_x_a_p_i_1_1_texture_sampler_1af581f6e5d6af1d2fd6d59ffcb1c25994"></span>TextureFilterMode <code class="descname">magFilter</code><a class="headerlink" href="#_CPPv2N7SGFXAPI14TextureSampler9magFilterE" title="Permalink to this definition">¶</a></dt>
+<span id="SGFXAPI::TextureSampler::magFilter__TextureFilterMode"></span><span class="target" id="sgfxapistruct_s_g_f_x_a_p_i_1_1_texture_sampler_1af581f6e5d6af1d2fd6d59ffcb1c25994"></span><a class="reference internal" href="enums.html#_CPPv2N7SGFXAPI17TextureFilterModeE" title="SGFXAPI::TextureFilterMode">TextureFilterMode</a> <code class="descname">magFilter</code><a class="headerlink" href="#_CPPv2N7SGFXAPI14TextureSampler9magFilterE" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="member">
+<dt id="_CPPv2N7SGFXAPI14TextureSampler5pimplE">
+<span id="SGFXAPI::TextureSampler::pimpl__std::unique_ptr:TextureSamplerPimpl:"></span><span class="target" id="sgfxapistruct_s_g_f_x_a_p_i_1_1_texture_sampler_1af325ef9ad7b23843914c11a91b92ae7b"></span>std::unique_ptr&lt;TextureSamplerPimpl&gt; <code class="descname">pimpl</code><a class="headerlink" href="#_CPPv2N7SGFXAPI14TextureSampler5pimplE" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 </div>
@@ -143,7 +147,7 @@
 
     <div class="footer" role="contentinfo">
         &copy; Copyright 2016, Azriel Fasten.
-      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.3.4.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.3.5.
     </div>
   </body>
 </html>

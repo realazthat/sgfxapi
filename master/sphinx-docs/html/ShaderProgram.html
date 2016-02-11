@@ -45,6 +45,11 @@
 <dt id="_CPPv2N7SGFXAPI13ShaderProgramE">
 <span id="SGFXAPI::ShaderProgram"></span><span class="target" id="sgfxapiclass_s_g_f_x_a_p_i_1_1_shader_program"></span><em class="property">class </em><code class="descclassname">SGFXAPI::</code><code class="descname">ShaderProgram</code><a class="headerlink" href="#_CPPv2N7SGFXAPI13ShaderProgramE" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bundles up shaders and links them into a single &#8220;program&#8221; for the GPU pipeline to use. </p>
+<p><dl class="docutils">
+<dt><strong>See</strong></dt>
+<dd>getHandle(const ShaderProgram&amp; sp) </dd>
+</dl>
+</p>
 <div class="breathe-sectiondef container">
 <p class="breathe-sectiondef-title rubric">Public Functions</p>
 <dl class="function">
@@ -52,6 +57,139 @@
 <span id="SGFXAPI::ShaderProgram::Attach__ShaderR"></span><span class="target" id="sgfxapiclass_s_g_f_x_a_p_i_1_1_shader_program_1a9df6891176021a37118067af9d5749c9"></span>void <code class="descname">Attach</code><span class="sig-paren">(</span><a class="reference internal" href="Shader.html#_CPPv2N7SGFXAPI6ShaderE" title="SGFXAPI::Shader">Shader</a> &amp;<em>shader</em><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv2N7SGFXAPI13ShaderProgram6AttachER6Shader" title="Permalink to this definition">¶</a></dt>
 <dd><p>Attaches a shader to this <a class="reference internal" href="#sgfxapiclass_s_g_f_x_a_p_i_1_1_shader_program"><span>ShaderProgram</span></a>. </p>
 <p>Note on lifetimes: it is safe to delete the shader right after attaching it to the <a class="reference internal" href="#sgfxapiclass_s_g_f_x_a_p_i_1_1_shader_program"><span>ShaderProgram</span></a>. </p>
+</dd></dl>
+
+<dl class="function">
+<dt id="_CPPv2N7SGFXAPI13ShaderProgram18GetUniformLocationEPKc">
+<span id="SGFXAPI::ShaderProgram::GetUniformLocation__cCP"></span><span class="target" id="sgfxapiclass_s_g_f_x_a_p_i_1_1_shader_program_1af912042f6ab63e5524132402d3e6c004"></span>int <code class="descname">GetUniformLocation</code><span class="sig-paren">(</span><em class="property">const</em> char *<em>name</em><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv2N7SGFXAPI13ShaderProgram18GetUniformLocationEPKc" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get the index of a uniform variable in the shader program. Each uniform variable has an index. </p>
+</dd></dl>
+
+<dl class="function">
+<dt id="_CPPv2N7SGFXAPI13ShaderProgram3UseEv">
+<span id="SGFXAPI::ShaderProgram::Use"></span><span class="target" id="sgfxapiclass_s_g_f_x_a_p_i_1_1_shader_program_1a0b631f9b0be7bdf016e3d77b0f18301b"></span>void <code class="descname">Use</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv2N7SGFXAPI13ShaderProgram3UseEv" title="Permalink to this definition">¶</a></dt>
+<dd><p>Call this before drawing to activate the shader program. </p>
+</dd></dl>
+
+<dl class="function">
+<dt id="_CPPv2N7SGFXAPI13ShaderProgram5InUseEv">
+<span id="SGFXAPI::ShaderProgram::InUse"></span><span class="target" id="sgfxapiclass_s_g_f_x_a_p_i_1_1_shader_program_1a2ba4a9aa66d350c77637ca364e5b9d16"></span>bool <code class="descname">InUse</code><span class="sig-paren">(</span><span class="sig-paren">)</span> const<a class="headerlink" href="#_CPPv2N7SGFXAPI13ShaderProgram5InUseEv" title="Permalink to this definition">¶</a></dt>
+<dd><p>Check if this shader program is in use. </p>
+<p><dl class="docutils">
+<dt><strong>See</strong></dt>
+<dd><a class="reference internal" href="#sgfxapiclass_s_g_f_x_a_p_i_1_1_shader_program_1a0b631f9b0be7bdf016e3d77b0f18301b"><span>Use()</span></a> </dd>
+</dl>
+</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="_CPPv2N7SGFXAPI13ShaderProgram8DeselectEv">
+<span id="SGFXAPI::ShaderProgram::Deselect"></span><span class="target" id="sgfxapiclass_s_g_f_x_a_p_i_1_1_shader_program_1a36c3a7e1587d30b81ab5480ca3f76c05"></span>void <code class="descname">Deselect</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv2N7SGFXAPI13ShaderProgram8DeselectEv" title="Permalink to this definition">¶</a></dt>
+<dd><p>If this shader program is in use, deactivate it. </p>
+<p>Note that this method will check with the driver if this shader program is in use before deactivating it; use <a class="reference internal" href="#sgfxapiclass_s_g_f_x_a_p_i_1_1_shader_program_1ab9d0423ee524c83bd2321bdf0400a68d"><span>DeselectAll()</span></a> if you want to deactivate <em>all</em> shaders from being in use. </p>
+</dd></dl>
+
+<dl class="function">
+<dt id="_CPPv2N7SGFXAPI13ShaderProgram11BindTextureEiR11TextureUnitR7TextureRKNSt6stringE">
+<span id="SGFXAPI::ShaderProgram::BindTexture__i.TextureUnitR.TextureR.ssCR"></span><span class="target" id="sgfxapiclass_s_g_f_x_a_p_i_1_1_shader_program_1aaad22e7a2a158b12717d5a7ff0ce0f92"></span>void <code class="descname">BindTexture</code><span class="sig-paren">(</span>int <em>index</em>, TextureUnit &amp;<em>textureUnit</em>, <a class="reference internal" href="Texture.html#_CPPv2N7SGFXAPI7TextureE" title="SGFXAPI::Texture">Texture</a> &amp;<em>texture</em>, <em class="property">const</em> std::string &amp;<em>samplerName</em><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv2N7SGFXAPI13ShaderProgram11BindTextureEiR11TextureUnitR7TextureRKNSt6stringE" title="Permalink to this definition">¶</a></dt>
+<dd><p>This binds a texture <em>to</em> this shader program, so that it can be used in a shader. </p>
+<p><dl class="docutils">
+<dt><strong>Note</strong></dt>
+<dd><p class="first">The shader program must be in the <a class="reference internal" href="#sgfxapiclass_s_g_f_x_a_p_i_1_1_shader_program_1a2ba4a9aa66d350c77637ca364e5b9d16"><span>InUse()</span></a> state to call this function. </p>
+<p>The TextureUnit <code class="docutils literal"><span class="pre">textureUnit</span></code> parameter must be active to call this function. </p>
+<p class="last">The <a class="reference internal" href="Texture.html#sgfxapiclass_s_g_f_x_a_p_i_1_1_texture"><span>Texture</span></a> <code class="docutils literal"><span class="pre">texture</span></code> parameter must be bound to call this function.</p>
+</dd>
+<dt><strong>Parameters</strong></dt>
+<dd><ul class="breatheparameterlist first last">
+<li><code class="first docutils literal"><span class="pre">index</span></code> - <p>the texture unit index </p>
+</li>
+<li><code class="first docutils literal"><span class="pre">textureUnit</span></code> - <p>the TextureUnit associated with the <a class="reference internal" href="Texture.html#sgfxapiclass_s_g_f_x_a_p_i_1_1_texture"><span>Texture</span></a> </p>
+</li>
+<li><code class="first docutils literal"><span class="pre">texture</span></code> - <p>the texture to bind </p>
+</li>
+<li><code class="first docutils literal"><span class="pre">samplerName</span></code> - <p>the name of the texture/sampler within the shaders </p>
+</li>
+</ul>
+</dd>
+</dl>
+</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="_CPPv2N7SGFXAPI13ShaderProgram10SetUniformERK8float4x4RKNSt6stringE">
+<span id="SGFXAPI::ShaderProgram::SetUniform__float4x4CR.ssCR"></span><span class="target" id="sgfxapiclass_s_g_f_x_a_p_i_1_1_shader_program_1a83ffca0ace0aaadf01b74c83385e5c35"></span>void <code class="descname">SetUniform</code><span class="sig-paren">(</span><em class="property">const</em> float4x4 &amp;<em>matrix</em>, <em class="property">const</em> std::string &amp;<em>name</em><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv2N7SGFXAPI13ShaderProgram10SetUniformERK8float4x4RKNSt6stringE" title="Permalink to this definition">¶</a></dt>
+<dd><p>set a uniform variable by name </p>
+</dd></dl>
+
+<dl class="function">
+<dt id="_CPPv2N7SGFXAPI13ShaderProgram10SetUniformEKfRKNSt6stringE">
+<span id="SGFXAPI::ShaderProgram::SetUniform__floatC.ssCR"></span><span class="target" id="sgfxapiclass_s_g_f_x_a_p_i_1_1_shader_program_1af6f5cd0adb7414e0e3e512456424422d"></span>void <code class="descname">SetUniform</code><span class="sig-paren">(</span><em class="property">const</em> float <em>value</em>, <em class="property">const</em> std::string &amp;<em>name</em><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv2N7SGFXAPI13ShaderProgram10SetUniformEKfRKNSt6stringE" title="Permalink to this definition">¶</a></dt>
+<dd><p>set a uniform variable by name </p>
+</dd></dl>
+
+<dl class="function">
+<dt id="_CPPv2N7SGFXAPI13ShaderProgram10SetUniformEKiRKNSt6stringE">
+<span id="SGFXAPI::ShaderProgram::SetUniform__iC.ssCR"></span><span class="target" id="sgfxapiclass_s_g_f_x_a_p_i_1_1_shader_program_1a951a4d8c54e525eb61a21d9447a8f634"></span>void <code class="descname">SetUniform</code><span class="sig-paren">(</span><em class="property">const</em> int <em>value</em>, <em class="property">const</em> std::string &amp;<em>name</em><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv2N7SGFXAPI13ShaderProgram10SetUniformEKiRKNSt6stringE" title="Permalink to this definition">¶</a></dt>
+<dd><p>set a uniform variable by name </p>
+</dd></dl>
+
+<dl class="function">
+<dt id="_CPPv2N7SGFXAPI13ShaderProgram10SetUniformEKfKfKfRKNSt6stringE">
+<span id="SGFXAPI::ShaderProgram::SetUniform__floatC.floatC.floatC.ssCR"></span><span class="target" id="sgfxapiclass_s_g_f_x_a_p_i_1_1_shader_program_1a757c516854ca5eae2ebc54463d6753d1"></span>void <code class="descname">SetUniform</code><span class="sig-paren">(</span><em class="property">const</em> float <em>v1</em>, <em class="property">const</em> float <em>v2</em>, <em class="property">const</em> float <em>v3</em>, <em class="property">const</em> std::string &amp;<em>name</em><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv2N7SGFXAPI13ShaderProgram10SetUniformEKfKfKfRKNSt6stringE" title="Permalink to this definition">¶</a></dt>
+<dd><p>set a uniform variable by name </p>
+</dd></dl>
+
+</div>
+<div class="breathe-sectiondef container">
+<p class="breathe-sectiondef-title rubric">Public Static Functions</p>
+<dl class="function">
+<dt id="_CPPv2N7SGFXAPI13ShaderProgram11DeselectAllEv">
+<span id="SGFXAPI::ShaderProgram::DeselectAll"></span><span class="target" id="sgfxapiclass_s_g_f_x_a_p_i_1_1_shader_program_1ab9d0423ee524c83bd2321bdf0400a68d"></span>void <code class="descname">DeselectAll</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv2N7SGFXAPI13ShaderProgram11DeselectAllEv" title="Permalink to this definition">¶</a></dt>
+<dd><p>Deselects all shader programs. </p>
+</dd></dl>
+
+<dl class="function">
+<dt id="_CPPv2N7SGFXAPI13ShaderProgram11SetFloat4x4EiRK8float4x4">
+<span id="SGFXAPI::ShaderProgram::SetFloat4x4__i.float4x4CR"></span><span class="target" id="sgfxapiclass_s_g_f_x_a_p_i_1_1_shader_program_1acfba6e07699b2bfb392e56b0e4eaafc2"></span>void <code class="descname">SetFloat4x4</code><span class="sig-paren">(</span>int <em>parameterIndex</em>, <em class="property">const</em> float4x4 &amp;<em>matrix</em><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv2N7SGFXAPI13ShaderProgram11SetFloat4x4EiRK8float4x4" title="Permalink to this definition">¶</a></dt>
+<dd><p>set a uniform variable by uniform location index, this static method operates on the currently bound texture. </p>
+<p><dl class="docutils">
+<dt><strong>See</strong></dt>
+<dd><a class="reference internal" href="#sgfxapiclass_s_g_f_x_a_p_i_1_1_shader_program_1af912042f6ab63e5524132402d3e6c004"><span>GetUniformLocation()</span></a> </dd>
+</dl>
+</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="_CPPv2N7SGFXAPI13ShaderProgram8SetFloatEiKf">
+<span id="SGFXAPI::ShaderProgram::SetFloat__i.floatC"></span><span class="target" id="sgfxapiclass_s_g_f_x_a_p_i_1_1_shader_program_1a136eade32f4b0d9e5658350a26b7d5f9"></span>void <code class="descname">SetFloat</code><span class="sig-paren">(</span>int <em>parameterIndex</em>, <em class="property">const</em> float <em>value</em><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv2N7SGFXAPI13ShaderProgram8SetFloatEiKf" title="Permalink to this definition">¶</a></dt>
+<dd><p>set a uniform variable by uniform location index, this static method operates on the currently bound texture. </p>
+<p><dl class="docutils">
+<dt><strong>See</strong></dt>
+<dd><a class="reference internal" href="#sgfxapiclass_s_g_f_x_a_p_i_1_1_shader_program_1af912042f6ab63e5524132402d3e6c004"><span>GetUniformLocation()</span></a> </dd>
+</dl>
+</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="_CPPv2N7SGFXAPI13ShaderProgram6SetIntEiKi">
+<span id="SGFXAPI::ShaderProgram::SetInt__i.iC"></span><span class="target" id="sgfxapiclass_s_g_f_x_a_p_i_1_1_shader_program_1a1aaa062d5bbb066a3fcf27b852ad2893"></span>void <code class="descname">SetInt</code><span class="sig-paren">(</span>int <em>parameterIndex</em>, <em class="property">const</em> int <em>value</em><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv2N7SGFXAPI13ShaderProgram6SetIntEiKi" title="Permalink to this definition">¶</a></dt>
+<dd><p>set a uniform variable by uniform location index, this static method operates on the currently bound texture. </p>
+<p><dl class="docutils">
+<dt><strong>See</strong></dt>
+<dd><a class="reference internal" href="#sgfxapiclass_s_g_f_x_a_p_i_1_1_shader_program_1af912042f6ab63e5524132402d3e6c004"><span>GetUniformLocation()</span></a> </dd>
+</dl>
+</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="_CPPv2N7SGFXAPI13ShaderProgram9SetFloat3EiKfKfKf">
+<span id="SGFXAPI::ShaderProgram::SetFloat3__i.floatC.floatC.floatC"></span><span class="target" id="sgfxapiclass_s_g_f_x_a_p_i_1_1_shader_program_1a6b7ce653371738d997ef3a9d2936a531"></span>void <code class="descname">SetFloat3</code><span class="sig-paren">(</span>int <em>parameterIndex</em>, <em class="property">const</em> float <em>v1</em>, <em class="property">const</em> float <em>v2</em>, <em class="property">const</em> float <em>v3</em><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv2N7SGFXAPI13ShaderProgram9SetFloat3EiKfKfKf" title="Permalink to this definition">¶</a></dt>
+<dd><p>set a uniform variable by uniform location index, this static method operates on the currently bound texture. </p>
+<p><dl class="docutils">
+<dt><strong>See</strong></dt>
+<dd><a class="reference internal" href="#sgfxapiclass_s_g_f_x_a_p_i_1_1_shader_program_1af912042f6ab63e5524132402d3e6c004"><span>GetUniformLocation()</span></a> </dd>
+</dl>
+</p>
 </dd></dl>
 
 </div>
@@ -70,7 +208,7 @@
 
     <div class="footer" role="contentinfo">
         &copy; Copyright 2016, Azriel Fasten.
-      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.3.4.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.3.5.
     </div>
   </body>
 </html>
