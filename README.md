@@ -1,10 +1,18 @@
 
-sgfxapi
+sgfxapi (http://realazthat.github.io/sgfxapi/)
 ---
+
 
 Simple wrapper around opengl 4, based off of [clb](http://clb.demon.fi)'s [gfxapi docs](http://clb.demon.fi/gfxapi/).
 
 The wrapper can help users understand the requirements of OpenGL4 API and to learn the OpenGL4 API.
+
+Branch   | docs |
+---      | --- 
+master   | [docs](http://realazthat.github.io/sgfxapi/master/sphinx-docs/html/)
+develop  | [docs](http://realazthat.github.io/sgfxapi/develop/sphinx-docs/html/)
+
+
 
 
 License
@@ -153,6 +161,8 @@ likely also work this way):
     # for example, like so:
     cmake -L # list all the user-definable variables
     cmake . -DGLFW3_INCLUDE_DIR=/path/to/cppformat/include -DGLFW3_LIB=glfw3 -DGLFW3_LIB_DIR=/path/to/glfw/build/src
+    #on some systems, you must additionally link pthreads after gtest, so let's store pthread in GTEST_LIB
+    cmake . "-DGTEST_LIB=gtest;pthread"
     # .. and so on for each dependency that is not in the ./libs directory and not installed in the system
 
     

@@ -1,4 +1,5 @@
 #include "sgfxapi/sgfxapi.hpp"
+#include "sgfxapi/sgfxapi-gl.hpp"
 
 #include <GLFW/glfw3.h>
 
@@ -20,6 +21,79 @@
 namespace SGFXAPI {
 
 
+////////////////////////////////////////////////////////////////////////////////
+// Pimpl declarations
+////////////////////////////////////////////////////////////////////////////////
+struct ShaderProgramPimpl{
+    GLuint m_programHandle;
+};
+
+struct TexturePimpl{
+    GLuint m_tex;
+    TextureType m_texture_type;
+    TextureInternalFormat m_internal_format;
+    ResourceUsage m_usage;
+    int m_width, m_height, m_depth, m_rowalignment, m_mipmaps;
+};
+
+struct TextureSamplerPimpl{
+    GLuint m_smplr;
+};
+struct ShaderPimpl{
+    GLuint m_shaderHandle;
+    ShaderType m_type;
+};
+
+struct MeshPimpl{
+
+    GLuint m_vao;
+    int m_numVertices;
+    ///If GenerateVAO() is called with a startVertexOffset > 0, the number
+    /// of renderable vertices will be less.
+    int m_numRenderableVertices;
+    VertexDeclaration m_declaration;
+
+    /**
+    * The primitive type that is used for rendering.
+    */
+    PrimitiveType m_primType;
+};
+
+struct VertexBufferPimpl{
+    std::weak_ptr<Mesh> m_mesh;
+    
+    int m_numVertices;
+    VertexDeclaration m_declaration;
+    Usage m_usage;
+    GLuint m_vbo;
+    int m_gpuSize;
+    std::shared_ptr< VertexBuffer::cpu_data_t > m_cpuData;
+};
+struct IndexBufferPimpl{
+    std::weak_ptr<Mesh> m_mesh;
+    int m_numIndices;
+    PrimitiveIndexType m_indexType;
+    Usage m_usage;
+
+    std::shared_ptr< IndexBuffer::cpu_data_t > m_indexData;
+    
+    GLuint m_indexBuffer;
+    int m_gpuSize;
+};
+struct PixelBufferPimpl{
+    GLuint m_pbo;
+    Usage m_usage;
+    std::size_t m_logicalBytes;
+    int m_gpuSize;
+
+
+    std::shared_ptr< PixelBuffer::cpu_data_t > m_cpuData;
+};
+
+struct FencePimpl{
+    GLsync m_fence;
+    bool m_signaled;
+};
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 void initializeGlew()
@@ -188,7 +262,7 @@ GLenum toGL(TexturePixelFormat pixelformat)
     return GL_NONE;
 }
 
-int toGLCount(TexturePixelFormat pixelformat)
+int toGLDim(TexturePixelFormat pixelformat)
 {
     switch (pixelformat)
     {
@@ -246,6 +320,8 @@ GLenum toGLBinding(TextureType texturetype)
         case (TextureType::Texture2DArray): return GL_TEXTURE_BINDING_2D_ARRAY;
         case (TextureType::TextureRectangle): return GL_TEXTURE_BINDING_RECTANGLE;
         case (TextureType::Texture3D): return GL_TEXTURE_BINDING_3D;
+        case (TextureType::TextureCubeMap): return GL_TEXTURE_BINDING_CUBE_MAP;
+        case (TextureType::TextureCubeMapArray): return GL_TEXTURE_BINDING_CUBE_MAP_ARRAY;
     }
     assert(false);
     return GL_NONE;
@@ -396,6 +472,43 @@ GLenum toGL(PrimitiveIndexType primitiveindextype)
     return GL_NONE;
 }
 
+GLenum toGL(ShaderType type)
+{
+    switch (type)
+    {
+        case (ShaderType::GeometryShader): return GL_GEOMETRY_SHADER;
+        case (ShaderType::VertexShader): return GL_VERTEX_SHADER;
+        case (ShaderType::PixelShader): return GL_FRAGMENT_SHADER;
+        case (ShaderType::ComputeShader): return GL_COMPUTE_SHADER;
+        case (ShaderType::TessControlShader): return GL_TESS_CONTROL_SHADER;
+        case (ShaderType::TessEvalShader): return GL_TESS_EVALUATION_SHADER;
+        case (ShaderType::NullShader): return GL_NONE;
+    }
+    assert(false);
+    return GL_NONE;
+}
+
+
+
+GLuint getHandle(const ShaderProgram& sp)
+{
+    return sp.pimpl->m_programHandle;
+}
+
+GLuint getHandle(const Texture& texture)
+{
+    return texture.pimpl->m_tex;
+}
+
+GLuint getHandle(const TextureSampler& sampler)
+{
+    return sampler.pimpl->m_smplr;
+}
+
+GLuint getHandle(const Shader& shader)
+{
+    return shader.pimpl->m_shaderHandle;
+}
 
 std::map<PrimitiveIndexType, const char*> genGLSTRMAP()
 {
@@ -538,7 +651,7 @@ void Graphics::Clear(bool clearDepth, bool clearStencil, bool clearColor,
 
 VertexElement::VertexElement( VertexDataSemantic semantic
                             , VertexDataType src_type
-                            , int count
+                            , int dimension
                             , const std::string& name
                             , bool normalized
                             , GPUVertexDataType dst_type)
@@ -546,9 +659,12 @@ VertexElement::VertexElement( VertexDataSemantic semantic
     , m_src_type(src_type)
     , m_dst_type(dst_type)
     , m_normalized(normalized)
-    , m_count(count)
+    , m_dimension(dimension)
     , m_name(name)
 {
+    assert(dimension >= 1);
+    assert(dimension <= 4);
+    
     if (m_dst_type == GPUVertexDataType::DEFAULT_TO_SRC)
         m_dst_type = toDefaultGPUDataType(m_src_type);
 
@@ -670,13 +786,13 @@ int VertexElement::SizeBytes() const
         break;
     }
 
-    return size * m_count;
+    return size * m_dimension;
 }
 
 
-int VertexElement::SizeElems() const
+int VertexElement::SizeDimension() const
 {
-    return m_count;
+    return m_dimension;
 }
 
 VertexDataSemantic VertexElement::Semantic() const
@@ -715,7 +831,9 @@ std::string VertexElement::ToString() const
         
     }
     
-    out << ", count: " << element.SizeElems();
+    out << ", count: " << element.SizeDimension();
+    
+    return out;
 }
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -761,14 +879,17 @@ const std::vector<VertexElement>& VertexDeclaration::Elements() const
 
 
 VertexBuffer::VertexBuffer(std::weak_ptr<Mesh> mesh, int numVertices, const VertexDeclaration& dec, Usage usage, bool allocateCpu)
-    : m_mesh(mesh)
-    , m_numVertices(numVertices)
-    , m_declaration(dec)
-    , m_usage(usage)
-    , m_vbo(0)
-    , m_gpuSize(0)
+    : pimpl(new VertexBufferPimpl())
+      
 {
-    glGenBuffers(1, &m_vbo); 
+    pimpl->m_mesh = (mesh);
+    pimpl->m_numVertices = (numVertices);
+    pimpl->m_declaration = (dec);
+    pimpl->m_usage = (usage);
+    pimpl->m_vbo = (0);
+    pimpl->m_gpuSize = (0);
+    
+    glGenBuffers(1, &pimpl->m_vbo); 
     checkOpenGLError();
 
     if (allocateCpu)
@@ -778,86 +899,81 @@ VertexBuffer::VertexBuffer(std::weak_ptr<Mesh> mesh, int numVertices, const Vert
 
 VertexBuffer::~VertexBuffer()
 {
-    if(m_vbo)
+    if(pimpl->m_vbo)
     {
-        glDeleteBuffers(1, &m_vbo);
-        m_vbo = 0;
+        glDeleteBuffers(1, &pimpl->m_vbo);
+        pimpl->m_vbo = 0;
     }
 }
 
 
 int VertexBuffer::NumVertices() const
 {
-    return m_numVertices;
+    return pimpl->m_numVertices;
 }
    
 
 int VertexBuffer::LogicalBufferSizeBytes() const
 {
-    return m_numVertices * m_declaration.Stride();
+    return pimpl->m_numVertices * pimpl->m_declaration.Stride();
 }
 
 
 const unsigned char* VertexBuffer::CpuPtr() const
 {
-    if (!m_cpuData)
+    if (!pimpl->m_cpuData)
     {
         throw std::runtime_error( "no cpu data" );
     }
-    return m_cpuData->data();
+    return pimpl->m_cpuData->data();
 }
 
 
 unsigned char* VertexBuffer::CpuPtr()
 {
-    if (!m_cpuData)
+    if (!pimpl->m_cpuData)
     {
         throw std::runtime_error( "no cpu data" );
     }
 
-    return m_cpuData->data();
+    return pimpl->m_cpuData->data();
 }
 
 
 int VertexBuffer::GpuSizeInBytes() const
 {
-    return m_gpuSize;
+    return pimpl->m_gpuSize;
 }
 
 
 const VertexDeclaration& VertexBuffer::Declaration() const
 {
-    return m_declaration;
+    return pimpl->m_declaration;
 }
 
 
-VertexDeclaration& VertexBuffer::Declaration()
-{
-    return m_declaration;
-}
 
-
-void VertexBuffer::SetNumVertices(std::size_t size, bool perseve_old_cpu_data)
+void VertexBuffer::SetNumVertices(std::size_t size, bool preserve_old_cpu_data)
 {
 
     ///set the new number of vertices
-    m_numVertices = size;
+    pimpl->m_numVertices = size;
 
     std::size_t new_bytes = LogicalBufferSizeBytes();
 
     if (HasCpuMemory())
     {
-        if (perseve_old_cpu_data && !!m_cpuData && new_bytes > m_cpuData->size())
+        if (preserve_old_cpu_data && !!pimpl->m_cpuData && new_bytes > pimpl->m_cpuData->size())
         {
             ///keep the old data around a bit
-            std::shared_ptr<cpu_data_t> oldCpuData = m_cpuData;
+            std::shared_ptr<cpu_data_t> oldCpuData = pimpl->m_cpuData;
              
                 
             ///allocate the buffer
             AllocateCpuMemory();
 
             ///copy the old buffer to the new one
-            memcpy(m_cpuData->data(), oldCpuData->data(), oldCpuData->size());
+            memcpy(pimpl->m_cpuData->data(), oldCpuData->data(), oldCpuData->size());
         } 
         else 
         {
@@ -871,14 +987,14 @@ void VertexBuffer::AllocateCpuMemory()
 {
     std::size_t bytes = LogicalBufferSizeBytes();
    
-    if (!m_cpuData)
+    if (!pimpl->m_cpuData)
     {
-        m_cpuData = std::make_shared< cpu_data_t >(bytes);
+        pimpl->m_cpuData = std::make_shared< cpu_data_t >(bytes);
     }
     else
     {
-        if (m_cpuData->size() != bytes)
-            m_cpuData->resize(bytes);
+        if (pimpl->m_cpuData->size() != bytes)
+            pimpl->m_cpuData->resize(bytes);
     }
 }
 
@@ -891,16 +1007,16 @@ void VertexBuffer::AllocateGpuMemory()
 
     int bytes = LogicalBufferSizeBytes();
 
-    glBufferData(GL_ARRAY_BUFFER, bytes, NULL, toGL(m_usage));
+    glBufferData(GL_ARRAY_BUFFER, bytes, NULL, toGL(pimpl->m_usage));
     checkOpenGLError();
          
-    m_gpuSize = bytes;
+    pimpl->m_gpuSize = bytes;
 
 }
 
 bool VertexBuffer::HasCpuMemory() const
 {
-    return !!m_cpuData; 
+    return !!(pimpl->m_cpuData); 
 }
 
 void VertexBuffer::Bind(){
@@ -909,7 +1025,7 @@ void VertexBuffer::Bind(){
     /// so a VAO must be bound before binding a buffer here".
     assert(VAOIsBound());
     checkOpenGLError();
-    glBindBuffer(GL_ARRAY_BUFFER, m_vbo); 
+    glBindBuffer(GL_ARRAY_BUFFER, pimpl->m_vbo); 
     checkOpenGLError();
     assert(IsBound());
 }
@@ -931,12 +1047,12 @@ bool VertexBuffer::IsBound() const
     GLint boundvbo = 0;
     glGetIntegerv(GL_ARRAY_BUFFER_BINDING, &boundvbo);
     checkOpenGLError();
-    return boundvbo != 0 && boundvbo == m_vbo;
+    return boundvbo != 0 && boundvbo == pimpl->m_vbo;
 }
 
 bool VertexBuffer::VAOIsBound() const
 {
-    if (auto mesh = m_mesh.lock())
+    if (auto mesh = pimpl->m_mesh.lock())
     {
         return mesh->IsBound();
     }
@@ -944,11 +1060,24 @@ bool VertexBuffer::VAOIsBound() const
     return false;
 }
 
-void VertexBuffer::UpdateToGpu(const uint8_t* data, int bytes)
+void VertexBuffer::UpdateToGpu()
+{
+    if (!pimpl->m_cpuData)
+    {
+        throw std::runtime_error( "no cpu data to send to gpu" );
+    }
+    
+    
+    const uint8_t* data = pimpl->m_cpuData->data();
+    std::size_t size = pimpl->m_cpuData->size();
+    this->UpdateToGpu(data, size);
+}
+
+void VertexBuffer::UpdateToGpu(const uint8_t* data, int size)
 {
     assert(IsBound());
     checkOpenGLError();
-    if (!data && !m_cpuData)
+    if (!data && !pimpl->m_cpuData)
     {
         throw std::runtime_error( "no cpu data to send to gpu" );
     }
@@ -956,16 +1085,16 @@ void VertexBuffer::UpdateToGpu(const uint8_t* data, int bytes)
 
     if (!data)
     {
-        data = m_cpuData->data();
-        bytes = m_cpuData->size();
+        data = pimpl->m_cpuData->data();
+        size = pimpl->m_cpuData->size();
     }
 
 
-    assert(bytes == LogicalBufferSizeBytes());
-    glBufferData(GL_ARRAY_BUFFER, bytes, data, toGL(m_usage));
+    assert(size == LogicalBufferSizeBytes());
+    glBufferData(GL_ARRAY_BUFFER, size, data, toGL(pimpl->m_usage));
     checkOpenGLError();
       
-    m_gpuSize = bytes;
+    pimpl->m_gpuSize = size;
 }
 
 
@@ -973,14 +1102,18 @@ void VertexBuffer::UpdateToGpu(const uint8_t* data, int bytes)
 
 
 IndexBuffer::IndexBuffer(std::weak_ptr<Mesh> mesh, int numIndices, PrimitiveIndexType type, Usage usage, bool allocateCpu)
-    : m_mesh(mesh)
-    , m_numIndices(numIndices)
-    , m_indexType(type)
-    , m_usage(usage)
-    , m_indexBuffer(0)
-    , m_gpuSize(0)
+    : pimpl(new IndexBufferPimpl())
+     
 {
-    glGenBuffers(1, &m_indexBuffer);
+    pimpl->m_mesh = (mesh);
+    pimpl->m_numIndices = numIndices;
+    pimpl->m_indexBuffer = 0;
+    pimpl->m_indexType = (type);
+    pimpl->m_usage = (usage);
+    pimpl->m_gpuSize = 0;
+    
+    
+    glGenBuffers(1, &pimpl->m_indexBuffer);
     checkOpenGLError();
 
     if (allocateCpu)
@@ -990,23 +1123,23 @@ IndexBuffer::IndexBuffer(std::weak_ptr<Mesh> mesh, int numIndices, PrimitiveInde
 
 IndexBuffer::~IndexBuffer(void)
 {
-    if(m_indexBuffer)
+    if(pimpl->m_indexBuffer)
     {
-        glDeleteBuffers(1, &m_indexBuffer);
-        m_indexBuffer = 0;
+        glDeleteBuffers(1, &pimpl->m_indexBuffer);
+        pimpl->m_indexBuffer = 0;
     }
 }
 
 
 int IndexBuffer::NumIndices() const
 {
-    return m_numIndices;
+    return pimpl->m_numIndices;
 }
 
 
 PrimitiveIndexType IndexBuffer::IndexType() const
 {
-    return m_indexType;
+    return pimpl->m_indexType;
 }
 
 
@@ -1014,7 +1147,7 @@ int IndexBuffer::IndexSizeBytes() const
 {
     int32_t size = 0;
 
-    switch(m_indexType)
+    switch(pimpl->m_indexType)
     {
     case PrimitiveIndexType::IndicesNone:
         size = 0;
@@ -1037,7 +1170,7 @@ int IndexBuffer::IndexSizeBytes() const
 
 bool IndexBuffer::HasCpuMemory() const
 {
-    return !!m_indexData;
+    return !!pimpl->m_indexData;
 }
 int IndexBuffer::LogicalBufferSizeBytes() const
 {
@@ -1048,13 +1181,13 @@ void IndexBuffer::AllocateCpuMemory()
 {
     int bytes = LogicalBufferSizeBytes();
    
-    if (!m_indexData)
+    if (!pimpl->m_indexData)
     {
-        m_indexData = std::make_shared< cpu_data_t >(bytes);
+        pimpl->m_indexData = std::make_shared< cpu_data_t >(bytes);
     }
     else 
     {
-        m_indexData->resize(bytes);
+        pimpl->m_indexData->resize(bytes);
     }
 }
 
@@ -1063,22 +1196,22 @@ void IndexBuffer::SetNumIndices(std::size_t size, bool perseve_old_cpu_data)
 {
 
     ///set the new number of vertices
-    m_numIndices = size;
+    pimpl->m_numIndices = size;
 
     std::size_t newBytes = LogicalBufferSizeBytes();
 
     if (HasCpuMemory())
     {
-        if (perseve_old_cpu_data && !!m_indexData && newBytes > m_indexData->size())
+        if (perseve_old_cpu_data && !!pimpl->m_indexData && newBytes > pimpl->m_indexData->size())
         {
             ///keep the old data around a bit
-            std::shared_ptr<cpu_data_t> oldCpuData = m_indexData;
+            std::shared_ptr<cpu_data_t> oldCpuData = pimpl->m_indexData;
 
             ///allocate the buffer
             AllocateCpuMemory();
 
             ///copy the old buffer to the new one
-            memcpy(m_indexData->data(), oldCpuData->data(), oldCpuData->size());
+            memcpy(pimpl->m_indexData->data(), oldCpuData->data(), oldCpuData->size());
         } 
         else 
         {
@@ -1090,27 +1223,27 @@ void IndexBuffer::SetNumIndices(std::size_t size, bool perseve_old_cpu_data)
 
 unsigned char * IndexBuffer::CpuPtr()
 {
-    if ( !m_indexData )
+    if ( !pimpl->m_indexData )
     {
         throw std::runtime_error( "no cpu data" );
     }
-    return m_indexData->data();
+    return pimpl->m_indexData->data();
 }
 
 
 const unsigned char * IndexBuffer::CpuPtr() const
 {
-    if ( !m_indexData )
+    if ( !pimpl->m_indexData )
     {
         throw std::runtime_error( "no cpu data" );
     }
-    return m_indexData->data();
+    return pimpl->m_indexData->data();
 }
 
 
 bool IndexBuffer::VAOIsBound() const
 {
-    if (auto mesh = m_mesh.lock())
+    if (auto mesh = pimpl->m_mesh.lock())
     {
         return mesh->IsBound();
     }
@@ -1126,7 +1259,7 @@ void IndexBuffer::Bind()
     assert(VAOIsBound());
     checkOpenGLError();
 
-    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, m_indexBuffer);
+    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, pimpl->m_indexBuffer);
     checkOpenGLError();
 }
 
@@ -1150,7 +1283,7 @@ bool IndexBuffer::IsBound() const
     GLint boundibo = 0;
     glGetIntegerv(GL_ELEMENT_ARRAY_BUFFER_BINDING, &boundibo);
     checkOpenGLError();
-    return boundibo != 0 && boundibo == m_indexBuffer;
+    return boundibo != 0 && boundibo == pimpl->m_indexBuffer;
 }
 
 void IndexBuffer::AllocateGpuMemory()
@@ -1160,10 +1293,10 @@ void IndexBuffer::AllocateGpuMemory()
 
     int bytes = LogicalBufferSizeBytes();
 
-    glBufferData(GL_ELEMENT_ARRAY_BUFFER, bytes, NULL, toGL(m_usage)); 
+    glBufferData(GL_ELEMENT_ARRAY_BUFFER, bytes, NULL, toGL(pimpl->m_usage)); 
     checkOpenGLError();
          
-    m_gpuSize = bytes;
+    pimpl->m_gpuSize = bytes;
 }
 
 
@@ -1171,23 +1304,23 @@ void IndexBuffer::UpdateToGpu(const uint8_t* data, int bytes)
 {
     assert(IsBound());
     checkOpenGLError();
-    if (!data && !m_indexData)
+    if (!data && !pimpl->m_indexData)
     {
         throw std::runtime_error( "no cpu data to send to gpu" );
     }
 
     if (!data)
     {
-        data = m_indexData->data();
-        bytes = m_indexData->size();
+        data = pimpl->m_indexData->data();
+        bytes = pimpl->m_indexData->size();
     }
     
 
     assert(bytes == LogicalBufferSizeBytes());
-    glBufferData(GL_ELEMENT_ARRAY_BUFFER, bytes, data, toGL(m_usage));
+    glBufferData(GL_ELEMENT_ARRAY_BUFFER, bytes, data, toGL(pimpl->m_usage));
     checkOpenGLError();
       
-    m_gpuSize = bytes;
+    pimpl->m_gpuSize = bytes;
 }
 
 
@@ -1195,26 +1328,19 @@ void IndexBuffer::UpdateToGpu(const uint8_t* data, int bytes)
 
 
 Shader::Shader(ShaderType type)
-    : m_shaderHandle(0)
-    , m_type(type)
+    : pimpl(new ShaderPimpl{ /*.m_shaderHandle=*/ 0, /*.m_type=*/ type })
 {
-    if (type == ShaderType::VertexShader)
+
+    if (type != ShaderType::NullShader)
     {
-        m_shaderHandle = glCreateShader (GL_VERTEX_SHADER);
-        //assert(m_shaderHandle != -1);
+        pimpl->m_shaderHandle = glCreateShader (toGL(type));
         checkOpenGLError();
     } 
-    else if (type == ShaderType::PixelShader) 
-    {
-        m_shaderHandle = glCreateShader (GL_FRAGMENT_SHADER);
-        //assert(m_shaderHandle != -1);
-        checkOpenGLError();
-    }
     else
     {
         throw std::runtime_error("Cannot create Shader: Invalid shader type");
     }
-    assert(m_shaderHandle);
+    assert(pimpl->m_shaderHandle);
 }
 
     
@@ -1225,31 +1351,31 @@ void Shader::LoadFromString(ShaderType type,
 {
     assert(entryPoint == 0);
     assert(profile == 0);        
-    if (type != m_type)
+    if (type != pimpl->m_type)
     {
         throw std::runtime_error("Cannot load Shader: Invalid shader type; does not match type indicated in constructor");
     }
          
-    assert(m_shaderHandle);
+    assert(pimpl->m_shaderHandle);
          
-    glShaderSource(m_shaderHandle, 1, &shaderData, NULL); 
+    glShaderSource(pimpl->m_shaderHandle, 1, &shaderData, NULL); 
     checkOpenGLError();
-    glCompileShader(m_shaderHandle); checkOpenGLError();
+    glCompileShader(pimpl->m_shaderHandle); checkOpenGLError();
         
     GLint params = 0;
-    glGetShaderiv(m_shaderHandle,GL_COMPILE_STATUS, &params); 
+    glGetShaderiv(pimpl->m_shaderHandle,GL_COMPILE_STATUS, &params); 
     checkOpenGLError();
         
     if (params == GL_FALSE)
     {
         GLint maxLength = 0;
-        glGetShaderiv(m_shaderHandle, GL_INFO_LOG_LENGTH, &maxLength);
+        glGetShaderiv(pimpl->m_shaderHandle, GL_INFO_LOG_LENGTH, &maxLength);
 
         std::vector<GLchar> errorLog(maxLength);
-        glGetShaderInfoLog(m_shaderHandle, maxLength, &maxLength, &errorLog[0]);
+        glGetShaderInfoLog(pimpl->m_shaderHandle, maxLength, &maxLength, &errorLog[0]);
 
-        glDeleteShader(m_shaderHandle);
-        m_shaderHandle = 0;
+        glDeleteShader(pimpl->m_shaderHandle);
+        pimpl->m_shaderHandle = 0;
         throw std::runtime_error(std::string("Shader: Failed to compile. ") + errorLog.data());
     }
 }
@@ -1280,9 +1406,9 @@ void Shader::LoadFromFile(ShaderType type,
 
 Shader::~Shader(void)
 {
-    glDeleteShader(m_shaderHandle); 
+    glDeleteShader(pimpl->m_shaderHandle); 
     checkOpenGLError();
-    m_shaderHandle = 0;
+    pimpl->m_shaderHandle = 0;
 }
 
 
@@ -1290,32 +1416,28 @@ Shader::~Shader(void)
 
 
 ShaderProgram::ShaderProgram(void)
-    : m_programHandle(0)
+    : pimpl( new ShaderProgramPimpl{0} )
 {
-    m_programHandle = glCreateProgram();
+    pimpl->m_programHandle = glCreateProgram();
     checkOpenGLError();
-    assert(m_programHandle);
+    assert(pimpl->m_programHandle);
     
 }
 
 
 ShaderProgram::~ShaderProgram(void)
 {
-    glDeleteProgram(m_programHandle);
+    glDeleteProgram(pimpl->m_programHandle);
     checkOpenGLError();
 }
 
 
-GLuint ShaderProgram::Handle() const
-{
-    return m_programHandle;
-}
 
 void ShaderProgram::Use()
 {
-    assert(m_programHandle);
+    assert(pimpl->m_programHandle);
     checkOpenGLError();
-    glUseProgram(m_programHandle);
+    glUseProgram(pimpl->m_programHandle);
     checkOpenGLError();
 }
 
@@ -1325,14 +1447,15 @@ bool ShaderProgram::InUse() const
     GLint boundsp = 0;
     glGetIntegerv(GL_CURRENT_PROGRAM, &boundsp);
     checkOpenGLError();
-    return boundsp != 0 && boundsp == m_programHandle;
+    return boundsp != 0 && boundsp == pimpl->m_programHandle;
 }
 
 
 void ShaderProgram::Deselect()
 {
     checkOpenGLError();
-    glUseProgram(0);
+    if (InUse())
+        glUseProgram(0);
     checkOpenGLError();
 }
 
@@ -1346,7 +1469,7 @@ void ShaderProgram::DeselectAll()
 
 int ShaderProgram::GetUniformLocation(const char* name)
 {
-    return glGetUniformLocation(m_programHandle, name);
+    return glGetUniformLocation(pimpl->m_programHandle, name);
 }
 
 void ShaderProgram::SetUniform(const float4x4& matrix, const std::string& name)
@@ -1405,29 +1528,30 @@ void ShaderProgram::SetInt(int parameterIndex, const int value)
     glUniform1i(parameterIndex, value);    
 }
 
-void ShaderProgram::BindTexture(int index, TextureUnit& texture_unit, Texture& texture, const std::string& samplerName)
+void ShaderProgram::BindTexture(int index, TextureUnit& textureUnit, Texture& texture, const std::string& samplerName)
 {
     assert(!(index < 0));
     assert(InUse());
-    assert(texture_unit.IsActive());
+    assert(textureUnit.IsActive());
     assert(texture.IsBound());
-    assert(index == texture_unit.Index());
+    assert(index == textureUnit.Index());
     checkOpenGLError();
 
-
-    GLint location = glGetUniformLocation(m_programHandle, samplerName.c_str());
-    assert(location != -1);
+    ///Gets the uniform location of the sampler
+    GLint location = glGetUniformLocation(pimpl->m_programHandle, samplerName.c_str());
+    if (location == -1)
+        throw std::runtime_error("samplerName does not exist in any of the shaders in this shader program");
     glUniform1i(location, index);
     checkOpenGLError();
 }
 
 void ShaderProgram::Attach(Shader& shader)
 {
-    assert(m_programHandle);
+    assert(pimpl->m_programHandle);
     checkOpenGLError();
 
 
-    glAttachShader (m_programHandle, shader.m_shaderHandle);
+    glAttachShader (pimpl->m_programHandle, getHandle(shader));
     checkOpenGLError();
 }
 
@@ -1436,24 +1560,24 @@ void ShaderProgram::Attach(Shader& shader)
 
 
 Mesh::Mesh(PrimitiveType primType)
-    : m_vao(0), m_numVertices(0), m_numRenderableVertices(0)
-    , m_primType(primType)
+    : pimpl(new MeshPimpl{ /*.m_vao=*/ 0, /*.m_numVertices=*/ 0, /*.m_numRenderableVertices=*/ 0, /*.m_declaration=*/ VertexDeclaration(), /*.m_primType=*/ primType})
 {
-    glGenVertexArrays (1, &m_vao); 
+    pimpl->m_primType = primType;
+    glGenVertexArrays (1, &pimpl->m_vao); 
     checkOpenGLError();
 }
 
 
 Mesh::~Mesh(void)
 {
-    glDeleteVertexArrays (1, &m_vao); 
+    glDeleteVertexArrays (1, &pimpl->m_vao); 
     checkOpenGLError();
 }
 
 
 PrimitiveType Mesh::PrimType() const
 {
-    return m_primType;
+    return pimpl->m_primType;
 }
 
 
@@ -1463,15 +1587,15 @@ void Mesh::GenerateVAO(int startVertexOffset)
 
     ///determine numVertices
     {
-        m_numVertices = std::numeric_limits<int>::max();
+        pimpl->m_numVertices = std::numeric_limits<int>::max();
  
         for(const auto& vb : vbs)
         {
-            m_numVertices = std::min(vb->NumVertices(), m_numVertices);
+            pimpl->m_numVertices = std::min(vb->NumVertices(), pimpl->m_numVertices);
         }
     }
 
-    m_numRenderableVertices = m_numVertices - startVertexOffset;
+    pimpl->m_numRenderableVertices = pimpl->m_numVertices - startVertexOffset;
     CheckValid();
     CheckValidVBO(startVertexOffset);
 
@@ -1483,7 +1607,7 @@ void Mesh::GenerateVAO(int startVertexOffset)
         for(const auto& vb : vbs)
         {
             for(const auto& element : vb->Declaration().Elements())
-                m_declaration.Add(element);
+                pimpl->m_declaration.Add(element);
         }
     }
 
@@ -1528,7 +1652,7 @@ void Mesh::GenerateVAO(int startVertexOffset)
 
                 assert( valid_src_types.count(toGL(element.SrcType())) );
                 glVertexAttribIPointer (attr_index,
-                                       element.SizeElems(),
+                                       element.SizeDimension(),
                                        toGL(element.SrcType()),
                                        stride,
                                        (void*)(startVertexOffset + offset)); 
@@ -1538,13 +1662,13 @@ void Mesh::GenerateVAO(int startVertexOffset)
 
                 assert( valid_src_types.count(toGL(element.SrcType())) );
                 glVertexAttribLPointer  (attr_index,
-                                       element.SizeElems(),
+                                       element.SizeDimension(),
                                        toGL(element.SrcType()),
                                        stride,
                                        (void*)(startVertexOffset + offset)); 
             } else if (element.DstType() == GPUVertexDataType::FLOAT) {
                 glVertexAttribPointer (attr_index,
-                                       element.SizeElems(),
+                                       element.SizeDimension(),
                                        toGL(element.SrcType()),
                                        element.Normalized() ? GL_TRUE : GL_FALSE,
                                        stride,
@@ -1610,7 +1734,7 @@ void Mesh::LinkShaders()
 
     assert(IsBound());
 
-    GLint programHandle = sp->Handle();
+    GLint programHandle = getHandle(*sp);
 
     int attr_index = 0;
 
@@ -1635,10 +1759,10 @@ void Mesh::LinkShaders()
 void Mesh::Bind()
 {
     checkOpenGLError();
-    if (m_vao == 0)
+    if (pimpl->m_vao == 0)
         throw std::runtime_error("Can't bind the mesh: no VAO");
     
-    glBindVertexArray(m_vao);
+    glBindVertexArray(pimpl->m_vao);
     checkOpenGLError();
     assert(IsBound());
 }
@@ -1663,7 +1787,7 @@ bool Mesh::IsBound() const
     GLint boundvao = 0;
     glGetIntegerv(GL_VERTEX_ARRAY_BINDING, &boundvao);
     checkOpenGLError();
-    return boundvao != 0 && boundvao == m_vao;
+    return boundvao != 0 && boundvao == pimpl->m_vao;
 }
 
 void Mesh::Draw(int numIndices, int startIndexOffset)
@@ -1672,7 +1796,7 @@ void Mesh::Draw(int numIndices, int startIndexOffset)
     checkOpenGLError();
     CheckValid();
     
-    if (m_vao == 0)
+    if (pimpl->m_vao == 0)
         throw std::runtime_error("Can't render the mesh: no VAO");
             
         
@@ -1734,15 +1858,15 @@ void Mesh::Draw(int numIndices, int startIndexOffset)
         switch(PrimType())
         {
             case PrimitiveType::TriangleList:
-                glDrawArrays (GL_TRIANGLES, startIndexOffset, m_numVertices); 
+                glDrawArrays (GL_TRIANGLES, startIndexOffset, pimpl->m_numVertices); 
                 checkOpenGLError();
                 break;
             case PrimitiveType::LineList:
-                glDrawArrays (GL_LINES, 0, m_numVertices); 
+                glDrawArrays (GL_LINES, 0, pimpl->m_numVertices); 
                 checkOpenGLError();
                 break;
             case PrimitiveType::Point:
-                glDrawArrays (GL_POINTS, 0, m_numVertices); 
+                glDrawArrays (GL_POINTS, 0, pimpl->m_numVertices); 
                 checkOpenGLError();
                 break;
             default: {
@@ -1784,7 +1908,7 @@ void Mesh::_CheckIndexBounds(int numIndices, int startIndexOffset) const
         //    << ", numIndices: " << numIndices
         //    << ", m_numRenderableVertices: " << m_numRenderableVertices
         //    << std::endl;
-        if (!(index < m_numRenderableVertices))
+        if (!(index < pimpl->m_numRenderableVertices))
             throw std::runtime_error("Index out of range");
     }
 
@@ -1812,13 +1936,13 @@ void Mesh::CheckIndexBounds(int numIndices, int startIndexOffset) const
 void Mesh::CheckValidVBO(int startVertexOffset) const
 {
 
-    if (!(startVertexOffset < m_numVertices)) {
+    if (!(startVertexOffset < pimpl->m_numVertices)) {
         throw std::runtime_error("cannot start with a vertex offset greater than the number of vertices");
     }
 
     if (!ib)
     {
-        if (m_numRenderableVertices % 3 != 0)
+        if (pimpl->m_numRenderableVertices % 3 != 0)
             throw std::runtime_error("empty index buffer, but vbo has a non-divisible-by-3 length");
     }
 }
@@ -1877,12 +2001,19 @@ void Input::poll()
 
 
 PixelBuffer::PixelBuffer(Usage usage, std::size_t bytes, bool allocateCpu)
-    : m_pbo(0), m_usage(usage), m_logicalBytes(bytes)
+    : pimpl(new PixelBufferPimpl())
 {
+    
+    pimpl->m_pbo = 0;
+    pimpl->m_usage = usage;
+    pimpl->m_logicalBytes = bytes;
+    pimpl->m_gpuSize = 0;
+    pimpl->m_cpuData = std::shared_ptr<PixelBuffer::cpu_data_t>();
+    
     /// READ THIS:
     ///https://developer.apple.com/library/mac/documentation/GraphicsImaging/Conceptual/OpenGL-MacProgGuide/opengl_texturedata/opengl_texturedata.html
 
-    glGenBuffers(1, &m_pbo); 
+    glGenBuffers(1, &pimpl->m_pbo); 
     checkOpenGLError();
 
     if (allocateCpu)
@@ -1892,41 +2023,41 @@ PixelBuffer::PixelBuffer(Usage usage, std::size_t bytes, bool allocateCpu)
 
 PixelBuffer::~PixelBuffer()
 {
-    if (m_pbo)
-        glDeleteBuffers(1, &m_pbo);
-    m_pbo = 0;
+    if (pimpl->m_pbo)
+        glDeleteBuffers(1, &pimpl->m_pbo);
+    pimpl->m_pbo = 0;
 }
 
 int PixelBuffer::LogicalBufferSizeBytes() const
 {
-    return m_logicalBytes;
+    return pimpl->m_logicalBytes;
 }
 
 int PixelBuffer::CpuSizeInBytes() const
 {
-    if (!m_cpuData)
+    if (!pimpl->m_cpuData)
         return 0;
-    return m_cpuData->size();
+    return pimpl->m_cpuData->size();
 }
 
 int PixelBuffer::GpuSizeInBytes() const
 {
-    return m_gpuSize;
+    return pimpl->m_gpuSize;
 }
 
 bool PixelBuffer::HasGpuMemory() const
 {
-    return m_gpuSize;
+    return pimpl->m_gpuSize;
 }
 bool PixelBuffer::HasCpuMemory() const
 {
-    return !!m_cpuData;
+    return !!pimpl->m_cpuData;
 }
 
 void PixelBuffer::Bind()
 {
     checkOpenGLError();
-    glBindBuffer(GL_PIXEL_UNPACK_BUFFER, m_pbo);
+    glBindBuffer(GL_PIXEL_UNPACK_BUFFER, pimpl->m_pbo);
     checkOpenGLError();
     assert(IsBound());
 }
@@ -1949,26 +2080,26 @@ bool PixelBuffer::IsBound() const
     GLint boundpbo = 0;
     glGetIntegerv(GL_PIXEL_UNPACK_BUFFER_BINDING, &boundpbo);
     checkOpenGLError();
-    return boundpbo != 0 && boundpbo == m_pbo;
+    return boundpbo != 0 && boundpbo == pimpl->m_pbo;
 }
 
 void PixelBuffer::AllocateCpuMemory()
 {
     int bytes = LogicalBufferSizeBytes();
    
-    if (!m_cpuData)
+    if (!pimpl->m_cpuData)
     {
-        m_cpuData = std::make_shared< cpu_data_t >(bytes);
+        pimpl->m_cpuData = std::make_shared< cpu_data_t >(bytes);
     }
     else 
     {
-        m_cpuData->resize(bytes);
+        pimpl->m_cpuData->resize(bytes);
     }
 }
 
 void PixelBuffer::AllocateGpuMemory()
 {
-    assert(m_pbo);
+    assert(pimpl->m_pbo);
     assert(IsBound());
     checkOpenGLError();
 
@@ -1976,32 +2107,32 @@ void PixelBuffer::AllocateGpuMemory()
     int bytes = LogicalBufferSizeBytes();
 
     ///Create and initialize the data store of the buffer object by calling the function glBufferData
-    glBufferData(GL_PIXEL_UNPACK_BUFFER, bytes, 0, toGL(m_usage));
+    glBufferData(GL_PIXEL_UNPACK_BUFFER, bytes, 0, toGL(pimpl->m_usage));
     checkOpenGLError();
-    m_gpuSize = bytes;
+    pimpl->m_gpuSize = bytes;
 }
 
 void PixelBuffer::Resize(std::size_t bytes)
 {
-    m_logicalBytes = bytes;
+    pimpl->m_logicalBytes = bytes;
 }
 
 void PixelBuffer::UpdateToGpu() {
 
-    if (!m_cpuData)
+    if (!pimpl->m_cpuData)
     {
         throw std::runtime_error( "no cpu data to send to gpu" );
     }
 
 
-    const uint8_t* data = m_cpuData->data();
-    std::size_t bytes = m_cpuData->size();
+    const uint8_t* data = pimpl->m_cpuData->data();
+    std::size_t bytes = pimpl->m_cpuData->size();
     
     this->UpdateToGpu(data,bytes,0);
 
 }
 void PixelBuffer::UpdateToGpu(const uint8_t* data, int bytes, int gpuoffset) {
-    assert(m_pbo);
+    assert(pimpl->m_pbo);
     assert(data);
     assert(bytes > 0);
     assert(IsBound());
@@ -2032,23 +2163,35 @@ void PixelBuffer::UpdateToGpu(const uint8_t* data, int bytes, int gpuoffset) {
 
 
 
-Texture::Texture( TextureType texture_type, TextureInternalFormat internal_format, ResourceUsage usage
-                , int width, int height, int depth, int mipmaps, int rowalignment)
-    : m_tex(0), m_texture_type(texture_type), m_internal_format(internal_format), m_usage(usage)
-    , m_width(width), m_height(height), m_depth(depth), m_rowalignment(rowalignment), m_mipmaps(mipmaps)
+Texture::Texture( TextureType texture_type, TextureInternalFormat internal_format
+           , int width, int height, int depth, size_t mipmaps, int rowalignment, ResourceUsage usage)
+    : pimpl(new TexturePimpl())
 {
-    if (m_mipmaps >= 1000)
-        m_mipmaps = MaxMimpapLevels();
+    if (!(rowalignment == 1 || rowalignment == 2 || rowalignment == 4 || rowalignment == 8))
+        throw std::runtime_error("rowalignment: The GL_PACK/UNPACK_ALIGNMENTs can only be 1, 2, 4, or 8.");
+
+    pimpl->m_tex = 0;
+    pimpl->m_texture_type = texture_type;
+    pimpl->m_internal_format = internal_format;
+    pimpl->m_usage = usage;
+    pimpl->m_width = width;
+    pimpl->m_height = height;
+    pimpl->m_depth = depth;
+    pimpl->m_rowalignment = rowalignment;
+    pimpl->m_mipmaps = mipmaps;
+    
+    pimpl->m_mipmaps = std::min(pimpl->m_mipmaps, MaxMimpapLevels());
+        
 
     assert(width > 0);
     assert(height > 0);
     assert(depth > 0);
-    assert(m_mipmaps > 0);
-    assert(m_mipmaps <= MaxMimpapLevels());
+    assert(pimpl->m_mipmaps > 0);
+    assert(pimpl->m_mipmaps <= MaxMimpapLevels());
     checkOpenGLError();
-    glGenTextures(1, &m_tex);
+    glGenTextures(1, &pimpl->m_tex);
 
-    assert(m_mipmaps > 0);
+    assert(pimpl->m_mipmaps > 0);
     Bind();
 
 
@@ -2057,13 +2200,13 @@ Texture::Texture( TextureType texture_type, TextureInternalFormat internal_forma
         _SetRowAlignment(rowalignment);
     }
 
-    if (m_usage == ResourceUsage::UsageImmutable)
+    if (pimpl->m_usage == ResourceUsage::UsageImmutable)
     {
         _InitializeImmutableStorage();
     } else {
-
-        glTexParameteri(toGL(m_texture_type), GL_TEXTURE_BASE_LEVEL, 0);
-        glTexParameteri(toGL(m_texture_type), GL_TEXTURE_MAX_LEVEL, m_mipmaps-1);
+        ///set the mimpap levels
+        glTexParameteri(toGL(pimpl->m_texture_type), GL_TEXTURE_BASE_LEVEL, 0);
+        glTexParameteri(toGL(pimpl->m_texture_type), GL_TEXTURE_MAX_LEVEL, pimpl->m_mipmaps-1);
     }
 
     checkOpenGLError();
@@ -2082,32 +2225,32 @@ namespace detail{
 
 int Texture::Width() const
 {
-    return m_width;
+    return pimpl->m_width;
 }
 int Texture::Height() const
 {
-    return m_height;
+    return pimpl->m_height;
 }
 int Texture::Depth() const
 {
-    return m_depth;
+    return pimpl->m_depth;
 }
 
 
 int Texture::MaxMimpapLevels() const
 {
-    if (m_texture_type == TextureType::Texture1D || m_texture_type == TextureType::Texture1DArray) {
-        return detail::log2i(m_width) + 1;
-    } else if (m_texture_type == TextureType::Texture2D
-            || m_texture_type == TextureType::TextureRectangle
-            || m_texture_type == TextureType::TextureCubeMap
-            || m_texture_type == TextureType::Texture2DArray
-            || m_texture_type == TextureType::TextureCubeMapArray) {
+    if (pimpl->m_texture_type == TextureType::Texture1D || pimpl->m_texture_type == TextureType::Texture1DArray) {
+        return detail::log2i(pimpl->m_width) + 1;
+    } else if (pimpl->m_texture_type == TextureType::Texture2D
+            || pimpl->m_texture_type == TextureType::TextureRectangle
+            || pimpl->m_texture_type == TextureType::TextureCubeMap
+            || pimpl->m_texture_type == TextureType::Texture2DArray
+            || pimpl->m_texture_type == TextureType::TextureCubeMapArray) {
 
-        return detail::log2i(std::max(m_width, m_height)) + 1;
-    } else if (m_texture_type == TextureType::Texture3D) {
+        return detail::log2i(std::max(pimpl->m_width, pimpl->m_height)) + 1;
+    } else if (pimpl->m_texture_type == TextureType::Texture3D) {
 
-        return detail::log2i(std::max(m_width, std::max(m_height, m_depth))) + 1;
+        return detail::log2i(std::max(pimpl->m_width, std::max(pimpl->m_height, pimpl->m_depth))) + 1;
     } else {
         assert (false);
         return 1;
@@ -2117,43 +2260,44 @@ int Texture::MaxMimpapLevels() const
 void Texture::_InitializeImmutableStorage()
 {
     assert(IsBound());
-    assert(m_width > 0);
-    assert(m_height > 0);
-    assert(m_depth > 0);
-    assert(m_mipmaps <= MaxMimpapLevels());
+    assert(pimpl->m_width > 0);
+    assert(pimpl->m_height > 0);
+    assert(pimpl->m_depth > 0);
+    assert(pimpl->m_mipmaps <= MaxMimpapLevels());
     checkOpenGLError();
 
 
     
     ///see decription of https://www.opengl.org/sdk/docs/man/html/glGetTexImage.xhtml
-    if (m_texture_type == TextureType::Texture1D) {
+    if (pimpl->m_texture_type == TextureType::Texture1D) {
 
 
-        glTexStorage1D(toGL(m_texture_type),
-                        m_mipmaps,
-                        toGL(m_internal_format),
-                        m_width);
-        assert(m_height == 1 && m_depth == 1);
+        glTexStorage1D(toGL(pimpl->m_texture_type),
+                        pimpl->m_mipmaps,
+                        toGL(pimpl->m_internal_format),
+                        pimpl->m_width);
+        assert(pimpl->m_height == 1 && pimpl->m_depth == 1);
     }
-    else if (m_texture_type == TextureType::Texture2D || m_texture_type == TextureType::Texture1DArray
-            || m_texture_type == TextureType::TextureRectangle || m_texture_type == TextureType::TextureCubeMap)
+    else if (pimpl->m_texture_type == TextureType::Texture2D || pimpl->m_texture_type == TextureType::Texture1DArray
+            || pimpl->m_texture_type == TextureType::TextureRectangle || pimpl->m_texture_type == TextureType::TextureCubeMap)
     {
 
-        glTexStorage2D(toGL(m_texture_type),
-                        m_mipmaps,
-                        toGL(m_internal_format),
-                        m_width,
-                        m_height);
+        glTexStorage2D(toGL(pimpl->m_texture_type),
+                        pimpl->m_mipmaps,
+                        toGL(pimpl->m_internal_format),
+                        pimpl->m_width,
+                        pimpl->m_height);
 
-        assert(m_depth == 1);
-    } else if (m_texture_type == TextureType::Texture3D || m_texture_type == TextureType::Texture2DArray || m_texture_type == TextureType::TextureCubeMapArray) {
+        assert(pimpl->m_depth == 1);
+    } else if (pimpl->m_texture_type == TextureType::Texture3D || pimpl->m_texture_type == TextureType::Texture2DArray
+                || pimpl->m_texture_type == TextureType::TextureCubeMapArray) {
 
-        glTexStorage3D(toGL(m_texture_type),
-                        m_mipmaps,
-                        toGL(m_internal_format),
-                        m_width,
-                        m_height,
-                        m_depth);
+        glTexStorage3D(toGL(pimpl->m_texture_type),
+                        pimpl->m_mipmaps,
+                        toGL(pimpl->m_internal_format),
+                        pimpl->m_width,
+                        pimpl->m_height,
+                        pimpl->m_depth);
     } else {
         assert(false);
     }
@@ -2162,15 +2306,15 @@ void Texture::_InitializeImmutableStorage()
 }
 Texture::~Texture()
 {
-    if (m_tex)
-        glDeleteTextures(1, &m_tex);
-    m_tex = 0;
+    if (pimpl->m_tex)
+        glDeleteTextures(1, &pimpl->m_tex);
+    pimpl->m_tex = 0;
 }
 
 void Texture::Bind()
 {
     checkOpenGLError();
-    glBindTexture(toGL(m_texture_type), m_tex);
+    glBindTexture(toGL(pimpl->m_texture_type), pimpl->m_tex);
     checkOpenGLError();
 }
 
@@ -2178,7 +2322,8 @@ void Texture::Bind()
 void Texture::UnBind()
 {
     checkOpenGLError();
-    glBindTexture(toGL(m_texture_type), 0);
+    if (IsBound())
+        glBindTexture(toGL(pimpl->m_texture_type), 0);
     checkOpenGLError();
 }
 
@@ -2186,9 +2331,9 @@ bool Texture::IsBound() const
 {
     checkOpenGLError();
     GLint boundtex = 0;
-    glGetIntegerv(toGLBinding(m_texture_type), &boundtex);
+    glGetIntegerv(toGLBinding(pimpl->m_texture_type), &boundtex);
     checkOpenGLError();
-    return boundtex != 0 && boundtex == m_tex;
+    return boundtex != 0 && boundtex == pimpl->m_tex;
 }
 
 
@@ -2219,15 +2364,15 @@ void Texture::UpdateToGpu( int width, int height, int depth, TextureFormat textu
 {
 
     if (level == 0)
-        assert(width == m_width && height == m_height);
+        assert(width == pimpl->m_width && height == pimpl->m_height);
     assert(width > 0);
     assert(height > 0);
     assert(depth > 0);
     assert(IsBound());
-    assert(m_rowalignment == _GetRowAlignment());
-    assert (LogicalSizeBytes(width, height, depth, textureFormat, m_rowalignment) == dataBytesSize);
+    assert(pimpl->m_rowalignment == _GetRowAlignment());
+    assert (LogicalSizeBytes(width, height, depth, textureFormat, pimpl->m_rowalignment) == dataBytesSize);
 
-    if (m_usage == ResourceUsage::UsageImmutable)
+    if (pimpl->m_usage == ResourceUsage::UsageImmutable)
     {
         this->_ImmutableUpdateToGpu(width, height, depth, textureFormat, data, dataBytesSize, level, debugName);
     } else {
@@ -2247,9 +2392,9 @@ void Texture::_ImmutableUpdateToGpu( int width, int height, int depth, TextureFo
     int border = 0;
 
     ///see decription of https://www.opengl.org/sdk/docs/man/html/glGetTexImage.xhtml
-    if (m_texture_type == TextureType::Texture1D) {
+    if (pimpl->m_texture_type == TextureType::Texture1D) {
 
-        glTexSubImage1D(toGL(m_texture_type),
+        glTexSubImage1D(toGL(pimpl->m_texture_type),
                         level,
                         0, width,
                         toGL(textureFormat.pixelformat),
@@ -2258,11 +2403,11 @@ void Texture::_ImmutableUpdateToGpu( int width, int height, int depth, TextureFo
 
         assert(height == 1 && depth == 1);
     }
-    else if (m_texture_type == TextureType::Texture2D || m_texture_type == TextureType::Texture1DArray
-            || m_texture_type == TextureType::TextureRectangle || m_texture_type == TextureType::TextureCubeMap)
+    else if (pimpl->m_texture_type == TextureType::Texture2D || pimpl->m_texture_type == TextureType::Texture1DArray
+            || pimpl->m_texture_type == TextureType::TextureRectangle || pimpl->m_texture_type == TextureType::TextureCubeMap)
     {
 
-        glTexSubImage2D(toGL(m_texture_type),
+        glTexSubImage2D(toGL(pimpl->m_texture_type),
                         level,
                         0, 0, width, height,
                         toGL(textureFormat.pixelformat),
@@ -2270,9 +2415,10 @@ void Texture::_ImmutableUpdateToGpu( int width, int height, int depth, TextureFo
                         data);
 
         assert(depth == 1);
-    } else if (m_texture_type == TextureType::Texture3D || m_texture_type == TextureType::Texture2DArray || m_texture_type == TextureType::TextureCubeMapArray) {
+    } else if (pimpl->m_texture_type == TextureType::Texture3D || pimpl->m_texture_type == TextureType::Texture2DArray
+                || pimpl->m_texture_type == TextureType::TextureCubeMapArray) {
 
-        glTexSubImage3D(toGL(m_texture_type),
+        glTexSubImage3D(toGL(pimpl->m_texture_type),
                         level,
                         0, 0, 0, width, height, depth,
                         toGL(textureFormat.pixelformat),
@@ -2298,24 +2444,25 @@ void Texture::_MutableUpdateToGpu( int width, int height, int depth, TextureForm
     int border = 0;
 
     ///see decription of https://www.opengl.org/sdk/docs/man/html/glGetTexImage.xhtml
-    if (m_texture_type == TextureType::Texture1D) {
+    if (pimpl->m_texture_type == TextureType::Texture1D) {
 
-        glTexImage1D(GL_TEXTURE_1D, level, toGL(m_internal_format), width, border
+        glTexImage1D(GL_TEXTURE_1D, level, toGL(pimpl->m_internal_format), width, border
                         , toGL(textureFormat.pixelformat), toGL(textureFormat.elementtype), data);
 
         assert(height == 1 && depth == 1);
     }
-    else if (m_texture_type == TextureType::Texture2D || m_texture_type == TextureType::Texture1DArray
-            || m_texture_type == TextureType::TextureRectangle || m_texture_type == TextureType::TextureCubeMap)
+    else if (pimpl->m_texture_type == TextureType::Texture2D || pimpl->m_texture_type == TextureType::Texture1DArray
+            || pimpl->m_texture_type == TextureType::TextureRectangle || pimpl->m_texture_type == TextureType::TextureCubeMap)
     {
-        glTexImage2D(toGL(m_texture_type), level, toGL(m_internal_format), width, height, border
+        glTexImage2D(toGL(pimpl->m_texture_type), level, toGL(pimpl->m_internal_format), width, height, border
                         , toGL(textureFormat.pixelformat), toGL(textureFormat.elementtype), data);
 
 
         assert(depth == 1);
-    } else if (m_texture_type == TextureType::Texture3D || m_texture_type == TextureType::Texture2DArray || m_texture_type == TextureType::TextureCubeMapArray) {
+    } else if (pimpl->m_texture_type == TextureType::Texture3D || pimpl->m_texture_type == TextureType::Texture2DArray
+                || pimpl->m_texture_type == TextureType::TextureCubeMapArray) {
 
-        glTexImage3D(toGL(m_texture_type), level, toGL(m_internal_format), width, height, depth, border
+        glTexImage3D(toGL(pimpl->m_texture_type), level, toGL(pimpl->m_internal_format), width, height, depth, border
                         , toGL(textureFormat.pixelformat), toGL(textureFormat.elementtype), data);
     } else {
         assert(false);
@@ -2328,23 +2475,19 @@ void Texture::_MutableUpdateToGpu( int width, int height, int depth, TextureForm
 void Texture::GenMipmaps()
 {
     assert(IsBound());
-    assert(m_mipmaps > 0);
+    assert(pimpl->m_mipmaps > 0);
     checkOpenGLError();
 
 
-    if (m_mipmaps > 1)
+    if (pimpl->m_mipmaps > 1)
     {
-        glGenerateMipmap(toGL(m_texture_type));
+        glGenerateMipmap(toGL(pimpl->m_texture_type));
         checkOpenGLError();
     }
 }
 
 
 
-GLuint Texture::Handle() const
-{
-    return m_tex;
-}
 
 int Texture::LogicalSizeBytes(int width, int height, int depth, TextureFormat format, int rowalignment)
 {
@@ -2356,7 +2499,7 @@ int Texture::LogicalSizeBytes(int width, int height, int depth, TextureFormat fo
     ///The GL_PACK/UNPACK_ALIGNMENTs can only be 1, 2, 4, or 8. So an alignment of 3 is not allowed.
     assert((rowalignment == 1 || rowalignment == 2 || rowalignment == 4 || rowalignment == 8) && "The GL_PACK/UNPACK_ALIGNMENTs can only be 1, 2, 4, or 8.");
 
-    int baserowsize = width*toGLCount(format.pixelformat)*toGLBytes(format.elementtype);
+    int baserowsize = width*toGLDim(format.pixelformat)*toGLBytes(format.elementtype);
     int unalignedbytes = baserowsize % rowalignment;
     int alignmentadjustment = (rowalignment - unalignedbytes) % rowalignment;
 
@@ -2374,26 +2517,21 @@ TextureSampler::TextureSampler()
     , minFilter(TextureFilterMode::Linear)
     , mipFilter(TextureFilterMode::Linear)
     , magFilter(TextureFilterMode::Linear)
-    , m_smplr(0)
+    , pimpl(new TextureSamplerPimpl{/*.m_smplr=*/0})
 {
     checkOpenGLError();
-    glGenSamplers(1, &m_smplr);
+    glGenSamplers(1, &pimpl->m_smplr);
     checkOpenGLError();
 }
 
 TextureSampler::~TextureSampler()
 {
-    if (m_smplr)
-        glDeleteSamplers(1, &m_smplr);
-    m_smplr = 0;
+    if (pimpl->m_smplr)
+        glDeleteSamplers(1, &pimpl->m_smplr);
+    pimpl->m_smplr = 0;
 }
 
 
-
-GLuint TextureSampler::Handle() const
-{
-    return m_smplr;
-}
 
 void TextureSampler::GenerateParams()
 {
@@ -2412,11 +2550,11 @@ void TextureSampler::GenerateParams()
     assert(magfilters.count(magFilter) && "magFilter is not valid");
 
     checkOpenGLError();
-    glSamplerParameteri(m_smplr, GL_TEXTURE_WRAP_S, toGL(addressU));
-    glSamplerParameteri(m_smplr, GL_TEXTURE_WRAP_T, toGL(addressV));
-    glSamplerParameteri(m_smplr, GL_TEXTURE_WRAP_R, toGL(addressW));
-    glSamplerParameteri(m_smplr, GL_TEXTURE_MAG_FILTER, toGL(magFilter));
-    glSamplerParameteri(m_smplr, GL_TEXTURE_MIN_FILTER, toGL(minFilter));
+    glSamplerParameteri(pimpl->m_smplr, GL_TEXTURE_WRAP_S, toGL(addressU));
+    glSamplerParameteri(pimpl->m_smplr, GL_TEXTURE_WRAP_T, toGL(addressV));
+    glSamplerParameteri(pimpl->m_smplr, GL_TEXTURE_WRAP_R, toGL(addressW));
+    glSamplerParameteri(pimpl->m_smplr, GL_TEXTURE_MAG_FILTER, toGL(magFilter));
+    glSamplerParameteri(pimpl->m_smplr, GL_TEXTURE_MIN_FILTER, toGL(minFilter));
     checkOpenGLError();
 
 }
@@ -2451,7 +2589,7 @@ void TextureUnit::BindSampler(const TextureSampler& sampler)
 {
     
     checkOpenGLError();
-    glBindSampler(Index(), sampler.Handle());
+    glBindSampler(Index(), getHandle(sampler));
     checkOpenGLError();
 }
 void TextureUnit::UnBindSampler()
@@ -2497,7 +2635,7 @@ int TextureUnit::MaxTextureUnits()
 }
 
 Fence::Fence(bool initialize)
-    : m_fence(0)
+    : pimpl(new FencePimpl{ /*.m_fence=*/ 0, /*.m_signaled=*/ false })
 {
     if (initialize)
         this->Reset(true);
@@ -2506,24 +2644,24 @@ Fence::Fence(bool initialize)
 
 Fence::~Fence()
 {
-    if (m_fence)
-        glDeleteSync(m_fence);
-    m_fence = 0;
+    if (pimpl->m_fence)
+        glDeleteSync(pimpl->m_fence);
+    pimpl->m_fence = 0;
 }
 
 void Fence::Reset(bool initialize)
 {
     if (Initialized())
     {
-        if (m_fence)
-            glDeleteSync(m_fence);
-        m_fence = 0;
-        m_signaled = false;
+        if (pimpl->m_fence)
+            glDeleteSync(pimpl->m_fence);
+        pimpl->m_fence = 0;
+        pimpl->m_signaled = false;
     }
 
     if (initialize) {
-        m_fence = glFenceSync(GL_SYNC_GPU_COMMANDS_COMPLETE, 0);
-        m_signaled = false;
+        pimpl->m_fence = glFenceSync(GL_SYNC_GPU_COMMANDS_COMPLETE, 0);
+        pimpl->m_signaled = false;
     }
 }
 
@@ -2531,27 +2669,27 @@ bool Fence::CheckWaiting()
 {
     if (!Initialized())
         return false;
-    if (m_signaled)
+    if (pimpl->m_signaled)
         return false;
 
     GLint fence_signal = 0;
-    glGetSynciv(m_fence, GL_SYNC_STATUS, 1, NULL, &fence_signal);
-    m_signaled = fence_signal == GL_SIGNALED;
+    glGetSynciv(pimpl->m_fence, GL_SYNC_STATUS, 1, NULL, &fence_signal);
+    pimpl->m_signaled = fence_signal == GL_SIGNALED;
 
-    return !m_signaled;
+    return !pimpl->m_signaled;
 }
 
 
 
 bool Fence::Waiting() const
 {
-    return (m_fence != 0 && !m_signaled);
+    return (pimpl->m_fence != 0 && !pimpl->m_signaled);
 }
 
 
 bool Fence::Initialized() const
 {
-    return m_fence != 0;
+    return pimpl->m_fence != 0;
 }
 
 

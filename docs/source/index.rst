@@ -18,9 +18,9 @@ Contents:
    :maxdepth: 2
    
    reference
+   enums
   
-#.. doxygenindex::
-#   :project: sgfxapi
+  
 
 Indices and tables
 ==================

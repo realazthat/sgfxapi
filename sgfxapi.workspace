@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CodeLite_Workspace Name="sgfxapi" Database="">
+  <Project Name="sgfxapi" Path="sgfxapi.project" Active="No"/>
+  <Project Name="sgfxapi-drawutils" Path="sgfxapi-drawutils.project" Active="No"/>
+  <Project Name="sgfxdemo" Path="sgfxdemo.project" Active="Yes"/>
+  <BuildMatrix>
+    <WorkspaceConfiguration Name="Debug" Selected="yes">
+      <Environment/>
+      <Project Name="sgfxapi" ConfigName="Debug"/>
+      <Project Name="sgfxapi-drawutils" ConfigName="Debug"/>
+      <Project Name="sgfxdemo" ConfigName="Debug"/>
+    </WorkspaceConfiguration>
+    <WorkspaceConfiguration Name="Release" Selected="yes">
+      <Environment/>
+      <Project Name="sgfxapi" ConfigName="Release"/>
+      <Project Name="sgfxapi-drawutils" ConfigName="Release"/>
+      <Project Name="sgfxdemo" ConfigName="Release"/>
+    </WorkspaceConfiguration>
+  </BuildMatrix>
+</CodeLite_Workspace>
