@@ -33,7 +33,7 @@ struct TexturePimpl{
     TextureType m_texture_type;
     TextureInternalFormat m_internal_format;
     ResourceUsage m_usage;
-    int m_width, m_height, m_depth, m_rowalignment, m_mipmaps;
+    std::size_t m_width, m_height, m_depth, m_rowalignment, m_mipmaps;
 };
 
 struct TextureSamplerPimpl{
@@ -2178,9 +2178,10 @@ Texture::Texture( TextureType texture_type, TextureInternalFormat internal_forma
     pimpl->m_height = height;
     pimpl->m_depth = depth;
     pimpl->m_rowalignment = rowalignment;
+    
+    mipmaps = std::min<std::size_t>(mipmaps, MaxMimpapLevels());
     pimpl->m_mipmaps = mipmaps;
     
-    pimpl->m_mipmaps = std::min(pimpl->m_mipmaps, MaxMimpapLevels());
         
 
     assert(width > 0);
@@ -2204,6 +2205,8 @@ Texture::Texture( TextureType texture_type, TextureInternalFormat internal_forma
     {
         _InitializeImmutableStorage();
     } else {
+        assert(pimpl->m_mipmaps > 0);
+        
         ///set the mimpap levels
         glTexParameteri(toGL(pimpl->m_texture_type), GL_TEXTURE_BASE_LEVEL, 0);
         glTexParameteri(toGL(pimpl->m_texture_type), GL_TEXTURE_MAX_LEVEL, pimpl->m_mipmaps-1);
@@ -2263,6 +2266,7 @@ void Texture::_InitializeImmutableStorage()
     assert(pimpl->m_width > 0);
     assert(pimpl->m_height > 0);
     assert(pimpl->m_depth > 0);
+    assert(pimpl->m_mipmaps > 0);
     assert(pimpl->m_mipmaps <= MaxMimpapLevels());
     checkOpenGLError();
 
